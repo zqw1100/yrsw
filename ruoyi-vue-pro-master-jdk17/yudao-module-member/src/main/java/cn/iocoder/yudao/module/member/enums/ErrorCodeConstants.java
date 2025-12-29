@@ -24,6 +24,9 @@ public interface ErrorCodeConstants {
     // ========== 用户收件地址 1-004-004-000 ==========
     ErrorCode ADDRESS_NOT_EXISTS = new ErrorCode(1_004_004_000, "用户收件地址不存在");
 
+    // ========== 居民报装房屋信息 1-004-005-000 ==========
+    ErrorCode WATER_HOUSE_NOT_EXISTS = new ErrorCode(1_004_005_000, "居民报装房屋信息不存在");
+
     //========== 用户标签 1-004-006-000 ==========
     ErrorCode TAG_NOT_EXISTS = new ErrorCode(1_004_006_000, "用户标签不存在");
     ErrorCode TAG_NAME_EXISTS = new ErrorCode(1_004_006_001, "用户标签已经存在");

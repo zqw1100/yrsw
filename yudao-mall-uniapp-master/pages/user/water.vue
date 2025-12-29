@@ -4,6 +4,7 @@
     class="water-wrap"
     :bgStyle="{ color: '#f2f5fa' }"
     navbar="inner"
+    tabbar="/pages/index/user"
   >
     <view class="header">
       <view class="user-card ss-flex ss-col-center">
@@ -17,12 +18,7 @@
     </view>
 
     <view class="card quick-card">
-      <view
-        v-for="item in quickMenus"
-        :key="item.title"
-        class="quick-item"
-        @tap="onPlaceholder"
-      >
+      <view v-for="item in quickMenus" :key="item.title" class="quick-item" @tap="item.action">
         <view class="icon-circle">
           <uni-icons :type="item.icon" size="22" color="#3c7eff" />
         </view>
@@ -81,9 +77,9 @@
   const displayAccount = computed(() => userInfo.value.mobile || '');
 
   const quickMenus = [
-    { title: '居民报装', icon: 'compose' },
-    { title: '报装记录', icon: 'list' },
-    { title: '用水历史', icon: 'clock' },
+    { title: '居民报装', icon: 'compose', action: () => sheep.$router.go('/pages/user/water-apply') },
+    { title: '报装记录', icon: 'list', action: onPlaceholder },
+    { title: '用水历史', icon: 'clock', action: onPlaceholder },
   ];
 
   onShow(() => {
