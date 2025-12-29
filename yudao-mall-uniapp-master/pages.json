@@ -353,6 +353,18 @@
 						"title": "用户积分",
 						"group": "用户中心"
 					}
+				},
+				{
+					"path": "water",
+					"style": {
+						"navigationBarTitleText": "我的水务"
+					},
+					"meta": {
+						"auth": true,
+						"sync": true,
+						"title": "我的水务",
+						"group": "用户中心"
+					}
 				}
 			]
 		},
