@@ -96,6 +96,7 @@
   const formRef = ref(null);
   const state = reactive({
     packageList: [],
+    applyDraft: null,
     model: {
       id: undefined,
       ownerName: '',
@@ -141,8 +142,22 @@
   const onSubmit = async () => {
     const valid = await formRef.value?.validate().catch(() => false);
     if (!valid) return;
-    const { code } = await WaterApplyApi.completeApply(state.model);
+    let applyId = state.model.id;
+    if (!applyId) {
+      if (!state.applyDraft) {
+        uni.showToast({ title: '缺少报装信息，请重新填写', icon: 'none' });
+        return;
+      }
+      const { code, data } = await WaterApplyApi.createApply(state.applyDraft);
+      if (code !== 0) return;
+      applyId = data;
+    }
+    const { code } = await WaterApplyApi.completeApply({
+      ...state.model,
+      id: applyId,
+    });
     if (code !== 0) return;
+    uni.removeStorageSync('waterApplyDraft');
     uni.showToast({ title: '提交成功', icon: 'success' });
     setTimeout(() => {
       uni.redirectTo({ url: '/pages/user/water' });
@@ -153,6 +168,12 @@
     if (options?.id) {
       state.model.id = Number(options.id);
     } else {
+      const draft = uni.getStorageSync('waterApplyDraft');
+      if (draft) {
+        state.applyDraft = draft;
+      }
+    }
+    if (!state.model.id && !state.applyDraft) {
       uni.showToast({ title: '缺少申请信息', icon: 'none' });
       setTimeout(() => uni.navigateBack(), 800);
     }

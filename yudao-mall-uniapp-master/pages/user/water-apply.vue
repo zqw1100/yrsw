@@ -154,7 +154,6 @@
   import { onLoad } from '@dcloudio/uni-app';
   import AreaApi from '@/sheep/api/system/area';
   import WaterHouseApi from '@/sheep/api/water/house';
-  import WaterApplyApi from '@/sheep/api/water/apply';
 
   const formRef = ref(null);
   const state = reactive({
@@ -347,10 +346,9 @@
       uni.showToast({ title: '请先阅读并同意开通协议', icon: 'none' });
       return;
     }
-    const { code, data } = await WaterApplyApi.createApply(state.model);
-    if (code !== 0) return;
+    uni.setStorageSync('waterApplyDraft', { ...state.model });
     uni.navigateTo({
-      url: `/pages/user/water-apply-owner?id=${data}`,
+      url: `/pages/user/water-apply-owner`,
     });
   };
 
@@ -363,6 +361,10 @@
   };
 
   onLoad(() => {
+    const draft = uni.getStorageSync('waterApplyDraft');
+    if (draft) {
+      Object.assign(state.model, draft);
+    }
     if (!uni.getStorageSync('areaData')) {
       AreaApi.getAreaTree().then((res) => {
         if (res.code === 0) {
