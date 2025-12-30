@@ -4085,3 +4085,28 @@ INSERT INTO `yudao_demo03_student` (`id`, `name`, `sex`, `birthday`, `descriptio
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
+-- 居民报装房屋信息
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_house`;
+CREATE TABLE `member_water_house` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `area_id` bigint NOT NULL COMMENT '地区编号（区县）',
+  `area_name` varchar(255) NOT NULL COMMENT '地区名称',
+  `community_name` varchar(128) NOT NULL COMMENT '小区名称',
+  `building_name` varchar(128) NOT NULL COMMENT '楼栋名称',
+  `unit_name` varchar(128) NOT NULL COMMENT '单元名称',
+  `room_no` varchar(64) NOT NULL COMMENT '房间号',
+  `install_status` tinyint NOT NULL DEFAULT 0 COMMENT '报装状态（0 未报装 1 已报装）',
+  `sort` int DEFAULT 0 COMMENT '排序',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋信息';
