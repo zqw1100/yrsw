@@ -4,11 +4,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.validation.ValidationUtils;
 import cn.hutool.core.collection.CollUtil;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseCreateReqVO;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportExcelVO;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportRespVO;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHousePageReqVO;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseUpdateReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.*;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterHouseRoomRespVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterHouseConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseDO;
@@ -119,11 +115,15 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
                 .eq(MemberWaterHouseDO::getCommunityName, communityName)
                 .eq(MemberWaterHouseDO::getBuildingName, buildingName)
                 .eq(MemberWaterHouseDO::getUnitName, unitName));
-        return list.stream()
-                .sorted(Comparator.comparing(MemberWaterHouseDO::getSort, Comparator.nullsLast(Integer::compareTo))
-                        .thenComparing(MemberWaterHouseDO::getRoomNo, Comparator.nullsLast(String::compareTo)))
+        List<MemberWaterHouseRespVO> respList = list.stream()
+                .sorted(
+                        Comparator
+                                .comparing(MemberWaterHouseDO::getSort, Comparator.nullsLast(Integer::compareTo))
+                                .thenComparing(MemberWaterHouseDO::getRoomNo, Comparator.nullsLast(String::compareTo))
+                )
                 .map(MemberWaterHouseConvert.INSTANCE::convert)
                 .collect(Collectors.toList());
+        return MemberWaterHouseConvert.INSTANCE.convertToAppRoomList(respList);
     }
 
     @Override
