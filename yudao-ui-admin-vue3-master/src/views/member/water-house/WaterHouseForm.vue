@@ -40,6 +40,9 @@
       <el-form-item label="备注" prop="remark">
         <el-input type="textarea" v-model="formData.remark" placeholder="请输入备注" />
       </el-form-item>
+      <el-form-item label="描述" prop="description">
+        <el-input type="textarea" v-model="formData.description" placeholder="请输入描述" />
+      </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
@@ -73,6 +76,7 @@ const formData = ref({
   installStatus: 0,
   sort: 0,
   remark: ''
+  description: ''
 })
 
 const formRules = reactive({
@@ -150,7 +154,8 @@ const resetForm = () => {
     roomNo: '',
     installStatus: 0,
     sort: 0,
-    remark: ''
+  remark: ''
+  description: ''
   }
   formRef.value?.resetFields()
 }

@@ -3,7 +3,6 @@ package cn.iocoder.yudao.module.member.service.water;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseCreateReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHousePageReqVO;
-import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterHouseRoomRespVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterHouseConvert;
@@ -110,13 +109,11 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
                 .eq(MemberWaterHouseDO::getCommunityName, communityName)
                 .eq(MemberWaterHouseDO::getBuildingName, buildingName)
                 .eq(MemberWaterHouseDO::getUnitName, unitName));
-
-        List<MemberWaterHouseRespVO> collect = list.stream()
+        return list.stream()
                 .sorted(Comparator.comparing(MemberWaterHouseDO::getSort, Comparator.nullsLast(Integer::compareTo))
                         .thenComparing(MemberWaterHouseDO::getRoomNo, Comparator.nullsLast(String::compareTo)))
                 .map(MemberWaterHouseConvert.INSTANCE::convert)
                 .collect(Collectors.toList());
-        return MemberWaterHouseConvert.INSTANCE.convertToAppRoomList(collect);
     }
 
     private void validateWaterHouseExists(Long id) {

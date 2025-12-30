@@ -4100,11 +4100,13 @@ CREATE TABLE `member_water_house` (
   `room_no` varchar(64) NOT NULL COMMENT '房间号',
   `install_status` tinyint NOT NULL DEFAULT 0 COMMENT '报装状态（0 未报装 1 已报装）',
   `sort` int DEFAULT 0 COMMENT '排序',
-  `remark` varchar(255) DEFAULT '' COMMENT '备注',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
   `creator` varchar(64) DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` varchar(64) DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋信息';

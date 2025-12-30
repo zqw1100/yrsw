@@ -11,6 +11,7 @@ export interface WaterHouseVO {
   installStatus: number
   sort?: number
   remark?: string
+  description?: string
 }
 
 export const getWaterHousePage = async (params: any) => {

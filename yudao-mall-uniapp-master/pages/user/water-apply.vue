@@ -105,10 +105,10 @@
     </uni-forms>
 
     <view class="agreement">
-      <label class="checkbox" @tap="state.agreementChecked = !state.agreementChecked">
-        <checkbox :checked="state.agreementChecked" color="#3c7eff" />
+      <checkbox-group class="checkbox" @change="onAgreementChange">
+        <checkbox value="agree" :checked="state.agreementChecked" color="#3c7eff" />
         <text>我已阅读并同意</text>
-      </label>
+      </checkbox-group>
       <text class="agreement-link" @tap="openAgreement">《开通协议》</text>
     </view>
 
@@ -331,6 +331,10 @@
     });
   };
 
+  const onAgreementChange = (e) => {
+    state.agreementChecked = e.detail.value.includes('agree');
+  };
+
   const openAgreement = () => {
     agreementPopup.value?.open();
   };
@@ -342,7 +346,7 @@
       uni.showToast({ title: '请先阅读并同意开通协议', icon: 'none' });
       return;
     }
-    agreementPopup.value?.open();
+    uni.showToast({ title: '已进入下一步', icon: 'none' });
   };
 
   const onConfirmAgreement = () => {

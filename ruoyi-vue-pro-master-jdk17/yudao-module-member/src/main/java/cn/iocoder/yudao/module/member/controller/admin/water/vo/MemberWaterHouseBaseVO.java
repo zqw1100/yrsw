@@ -45,4 +45,7 @@ public class MemberWaterHouseBaseVO {
     @Schema(description = "备注", example = "一期")
     private String remark;
 
+    @Schema(description = "描述", example = "一期开通")
+    private String description;
+
 }
