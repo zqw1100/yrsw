@@ -37,6 +37,10 @@ public class MemberWaterHouseOwnerDO extends TenantBaseDO {
      */
     private Long applyId;
     /**
+     * 用户编号
+     */
+    private Long userId;
+    /**
      * 户主姓名
      */
     private String ownerName;

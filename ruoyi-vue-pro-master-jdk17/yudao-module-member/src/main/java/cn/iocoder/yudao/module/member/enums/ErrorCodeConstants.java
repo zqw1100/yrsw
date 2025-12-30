@@ -30,6 +30,7 @@ public interface ErrorCodeConstants {
     ErrorCode WATER_HOUSE_ALREADY_INSTALLED = new ErrorCode(1_004_005_002, "该房间已完成报装");
     ErrorCode WATER_APPLY_NOT_EXISTS = new ErrorCode(1_004_005_003, "居民报装申请不存在");
     ErrorCode WATER_RECHARGE_PACKAGE_NOT_EXISTS = new ErrorCode(1_004_005_004, "居民报装充值套餐不存在");
+    ErrorCode WATER_APPLY_NOT_ALLOW = new ErrorCode(1_004_005_005, "居民报装申请不属于当前用户");
 
     //========== 用户标签 1-004-006-000 ==========
     ErrorCode TAG_NOT_EXISTS = new ErrorCode(1_004_006_000, "用户标签不存在");

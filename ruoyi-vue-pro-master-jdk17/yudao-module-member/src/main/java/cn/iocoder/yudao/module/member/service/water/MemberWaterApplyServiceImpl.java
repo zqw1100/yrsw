@@ -65,9 +65,13 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void completeApply(AppWaterApplyCompleteReqVO completeReqVO) {
+        Long userId = SecurityFrameworkUtils.getLoginUserId();
         MemberWaterApplyDO apply = applyMapper.selectById(completeReqVO.getId());
         if (apply == null) {
             throw exception(WATER_APPLY_NOT_EXISTS);
+        }
+        if (!userId.equals(apply.getUserId())) {
+            throw exception(WATER_APPLY_NOT_ALLOW);
         }
         MemberWaterRechargePackageDO packageDO = rechargePackageMapper.selectById(completeReqVO.getRechargePackageId());
         if (packageDO == null) {
@@ -81,6 +85,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .id(owner == null ? null : owner.getId())
                 .applyId(apply.getId())
                 .waterHouseId(apply.getWaterHouseId())
+                .userId(userId)
                 .ownerName(completeReqVO.getOwnerName())
                 .ownerIdCard(completeReqVO.getOwnerIdCard())
                 .contractImageUrls(completeReqVO.getContractImageUrls())
