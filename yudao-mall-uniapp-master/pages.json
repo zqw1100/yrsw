@@ -379,6 +379,18 @@
 					}
 				},
 				{
+					"path": "water-apply-owner",
+					"style": {
+						"navigationBarTitleText": "资料上传"
+					},
+					"meta": {
+						"auth": true,
+						"sync": true,
+						"title": "资料上传",
+						"group": "用户中心"
+					}
+				},
+				{
 					"path": "water-room-select",
 					"style": {
 						"navigationBarTitleText": "选择门牌号"

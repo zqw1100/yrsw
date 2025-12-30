@@ -4110,3 +4110,76 @@ CREATE TABLE `member_water_house` (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋信息';
+
+-- ----------------------------
+-- 居民报装申请
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_apply`;
+CREATE TABLE `member_water_apply` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `user_id` bigint NOT NULL COMMENT '用户编号',
+  `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
+  `area_id` bigint NOT NULL COMMENT '地区编号（区县）',
+  `area_name` varchar(255) NOT NULL COMMENT '地区名称',
+  `community_name` varchar(128) NOT NULL COMMENT '小区名称',
+  `building_name` varchar(128) NOT NULL COMMENT '楼栋名称',
+  `unit_name` varchar(128) NOT NULL COMMENT '单元名称',
+  `room_no` varchar(64) NOT NULL COMMENT '房间号',
+  `contact_name` varchar(64) NOT NULL COMMENT '联系人姓名',
+  `contact_mobile` varchar(32) NOT NULL COMMENT '联系人手机号',
+  `referrer` varchar(64) NOT NULL DEFAULT '' COMMENT '推荐人',
+  `apply_status` tinyint NOT NULL DEFAULT 0 COMMENT '申请状态（0 待补充资料 1 已提交）',
+  `recharge_package_id` bigint DEFAULT NULL COMMENT '首次充值套餐编号',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装申请';
+
+-- ----------------------------
+-- 居民报装房屋户主信息
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_house_owner`;
+CREATE TABLE `member_water_house_owner` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
+  `apply_id` bigint NOT NULL COMMENT '申请编号',
+  `owner_name` varchar(64) NOT NULL COMMENT '户主姓名',
+  `owner_id_card` varchar(32) NOT NULL COMMENT '户主身份证号',
+  `contract_image_urls` varchar(1024) NOT NULL DEFAULT '' COMMENT '合同图片地址列表',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋户主信息';
+
+-- ----------------------------
+-- 居民报装充值套餐
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_recharge_package`;
+CREATE TABLE `member_water_recharge_package` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `name` varchar(128) NOT NULL COMMENT '套餐名称',
+  `price` decimal(10,2) NOT NULL COMMENT '套餐售价',
+  `water_volume` int NOT NULL COMMENT '基础水量(升)',
+  `gift_water_volume` int NOT NULL DEFAULT 0 COMMENT '赠送水量(升)',
+  `discount_amount` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT '优惠金额',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态（0 停用 1 启用）',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装充值套餐';
