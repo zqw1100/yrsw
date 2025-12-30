@@ -40,6 +40,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createApply(AppWaterApplyCreateReqVO createReqVO) {
+        Long userId = SecurityFrameworkUtils.getLoginUserId();
         MemberWaterHouseDO waterHouse = waterHouseMapper.selectByUnique(createReqVO.getAreaId(),
                 createReqVO.getCommunityName(), createReqVO.getBuildingName(),
                 createReqVO.getUnitName(), createReqVO.getRoomNo());
@@ -49,8 +50,12 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (Integer.valueOf(1).equals(waterHouse.getInstallStatus())) {
             throw exception(WATER_HOUSE_ALREADY_INSTALLED);
         }
+        MemberWaterApplyDO existingApply = applyMapper.selectLatestByUserAndHouse(userId, waterHouse.getId(), 0);
+        if (existingApply != null) {
+            return existingApply.getId();
+        }
         MemberWaterApplyDO apply = MemberWaterApplyConvert.INSTANCE.convert(createReqVO);
-        apply.setUserId(SecurityFrameworkUtils.getLoginUserId());
+        apply.setUserId(userId);
         apply.setWaterHouseId(waterHouse.getId());
         apply.setApplyStatus(0);
         applyMapper.insert(apply);
