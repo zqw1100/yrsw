@@ -60,8 +60,11 @@
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
         <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
-        <el-button type="primary" @click="openForm('create')" >
+        <el-button type="primary" @click="openForm('create')" v-hasPermi="['member:water-house:create']">
           <Icon icon="ep:plus" class="mr-5px" /> 新增
+        </el-button>
+        <el-button type="primary" @click="openImport">
+          <Icon icon="ep:upload" class="mr-5px" /> 导入
         </el-button>
       </el-form-item>
     </el-form>
@@ -96,6 +99,7 @@
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
+            v-hasPermi="['member:water-house:update']"
           >
             编辑
           </el-button>
@@ -103,6 +107,7 @@
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
+            v-hasPermi="['member:water-house:delete']"
           >
             删除
           </el-button>
@@ -118,12 +123,14 @@
   </ContentWrap>
 
   <WaterHouseForm ref="formRef" @success="getList" />
+  <WaterHouseImportForm ref="importFormRef" @success="getList" />
 </template>
 
 <script setup lang="ts" name="MemberWaterHouse">
 import { dateFormatter } from '@/utils/formatTime'
 import * as WaterHouseApi from '@/api/member/water-house'
 import WaterHouseForm from './WaterHouseForm.vue'
+import WaterHouseImportForm from './WaterHouseImportForm.vue'
 import * as AreaApi from '@/api/system/area'
 import { defaultProps } from '@/utils/tree'
 
@@ -173,6 +180,11 @@ const resetQuery = () => {
 const formRef = ref()
 const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
+}
+
+const importFormRef = ref()
+const openImport = () => {
+  importFormRef.value.open()
 }
 
 const handleDelete = async (id: number) => {

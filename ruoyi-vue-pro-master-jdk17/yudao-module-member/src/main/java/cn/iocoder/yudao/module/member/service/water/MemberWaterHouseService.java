@@ -2,6 +2,8 @@ package cn.iocoder.yudao.module.member.service.water;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseCreateReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportExcelVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHousePageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterHouseRoomRespVO;
@@ -31,4 +33,8 @@ public interface MemberWaterHouseService {
     List<String> getUnitNameList(Long areaId, String communityName, String buildingName);
 
     List<AppWaterHouseRoomRespVO> getRoomList(Long areaId, String communityName, String buildingName, String unitName);
+
+    MemberWaterHouseImportRespVO importWaterHouseList(List<MemberWaterHouseImportExcelVO> importList, boolean updateSupport);
+
+    List<MemberWaterHouseImportExcelVO> getImportTemplate();
 }

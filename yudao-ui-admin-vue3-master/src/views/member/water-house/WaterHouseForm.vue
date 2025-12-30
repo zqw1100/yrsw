@@ -75,7 +75,7 @@ const formData = ref({
   roomNo: '',
   installStatus: 0,
   sort: 0,
-  remark: '',
+  remark: ''
   description: ''
 })
 
@@ -154,7 +154,7 @@ const resetForm = () => {
     roomNo: '',
     installStatus: 0,
     sort: 0,
-  remark: '',
+  remark: ''
   description: ''
   }
   formRef.value?.resetFields()

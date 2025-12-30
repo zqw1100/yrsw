@@ -113,7 +113,7 @@
     </view>
 
     <view class="footer">
-<!--      <button class="ghost-btn" @tap="onMyContract">我的签约</button>-->
+      <button class="ghost-btn" @tap="onMyContract">我的签约</button>
       <button class="primary-btn" @tap="onSubmit">信息提交</button>
     </view>
 
@@ -123,7 +123,7 @@
       @confirm="onRegionConfirm"
     />
 
-    <uni-popup ref="agreementPopup" type="center" v-if="state.showAgreementPopup">
+    <uni-popup ref="agreementPopup" type="center">
       <view class="agreement-popup">
         <view class="popup-title">开通协议</view>
         <scroll-view scroll-y class="popup-content">
@@ -159,7 +159,6 @@
   const agreementPopup = ref(null);
   const state = reactive({
     showRegion: false,
-    showAgreementPopup:false,
     agreementChecked: false,
     communityOptions: [],
     buildingOptions: [],
@@ -337,7 +336,7 @@
   };
 
   const openAgreement = () => {
-    state.showAgreementPopup = true;
+    agreementPopup.value?.open();
   };
 
   const onSubmit = async () => {
@@ -351,7 +350,8 @@
   };
 
   const onConfirmAgreement = () => {
-    state.showAgreementPopup = false;
+    agreementPopup.value?.close();
+    uni.showToast({ title: '已进入下一步', icon: 'none' });
   };
 
   const onMyContract = () => {

@@ -25,4 +25,13 @@ public interface MemberWaterHouseMapper extends BaseMapperX<MemberWaterHouseDO> 
                 .orderByDesc(MemberWaterHouseDO::getId));
     }
 
+    default MemberWaterHouseDO selectByUnique(Long areaId, String communityName, String buildingName, String unitName, String roomNo) {
+        return selectOne(new LambdaQueryWrapperX<MemberWaterHouseDO>()
+                .eq(MemberWaterHouseDO::getAreaId, areaId)
+                .eq(MemberWaterHouseDO::getCommunityName, communityName)
+                .eq(MemberWaterHouseDO::getBuildingName, buildingName)
+                .eq(MemberWaterHouseDO::getUnitName, unitName)
+                .eq(MemberWaterHouseDO::getRoomNo, roomNo));
+    }
+
 }

@@ -33,3 +33,8 @@ export const updateWaterHouse = async (data: WaterHouseVO) => {
 export const deleteWaterHouse = async (id: number) => {
   return await request.delete({ url: '/member/water-house/delete?id=' + id })
 }
+
+// 下载居民报装房屋导入模板
+export const importWaterHouseTemplate = () => {
+  return request.download({ url: '/member/water-house/get-import-template' })
+}
