@@ -123,7 +123,7 @@
       @confirm="onRegionConfirm"
     />
 
-    <uni-popup ref="agreementPopup" type="center">
+    <uni-popup  type="bottom"  v-if="state.agreementPopup">
       <view class="agreement-popup">
         <view class="popup-title">开通协议</view>
         <scroll-view scroll-y class="popup-content">
@@ -156,9 +156,9 @@
   import WaterHouseApi from '@/sheep/api/water/house';
 
   const formRef = ref(null);
-  const agreementPopup = ref(null);
   const state = reactive({
     showRegion: false,
+    agreementPopup: false,
     agreementChecked: false,
     communityOptions: [],
     buildingOptions: [],
@@ -336,7 +336,7 @@
   };
 
   const openAgreement = () => {
-    agreementPopup.value?.open();
+    state.agreementPopup = true;
   };
 
   const onSubmit = async () => {
@@ -350,8 +350,7 @@
   };
 
   const onConfirmAgreement = () => {
-    agreementPopup.value?.close();
-    uni.showToast({ title: '已进入下一步', icon: 'none' });
+    state.agreementPopup = false;
   };
 
   const onMyContract = () => {
@@ -485,6 +484,7 @@
 
     .agreement-popup {
       width: 620rpx;
+      margin: 0 auto;
       background: #ffffff;
       border-radius: 24rpx;
       padding: 24rpx;
