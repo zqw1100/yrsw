@@ -26,5 +26,5 @@ public interface MemberWaterHouseConvert {
 
     PageResult<MemberWaterHouseRespVO> convertPage(PageResult<MemberWaterHouseDO> page);
 
-    AppWaterHouseRoomRespVO convert(MemberWaterHouseDO bean);
+    List<AppWaterHouseRoomRespVO> convertToAppRoomList(List<MemberWaterHouseRespVO> list);
 }
