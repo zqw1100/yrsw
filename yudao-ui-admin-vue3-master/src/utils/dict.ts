@@ -167,6 +167,7 @@ export enum DICT_TYPE {
   // ========== Member 会员模块 ==========
   MEMBER_POINT_BIZ_TYPE = 'member_point_biz_type', // 积分的业务类型
   MEMBER_EXPERIENCE_BIZ_TYPE = 'member_experience_biz_type', // 会员经验业务类型
+  MEMBER_WATER_APPLY_STATUS = 'member_water_apply_status', // 居民报装处理状态
 
   // ========== MALL - 商品模块 ==========
   PRODUCT_SPU_STATUS = 'product_spu_status', //商品状态

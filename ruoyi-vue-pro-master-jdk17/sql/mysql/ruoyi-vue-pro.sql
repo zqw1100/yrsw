@@ -1093,6 +1093,10 @@ INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `st
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3033, 51, 'Vben5.0 Element Plus 标准模版', '51', 'infra_codegen_front_type', 0, '', '', '', '1', '2025-09-04 23:26:49', '1', '2025-09-04 23:26:49', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3034, 1, 'ttt', 'tt', 'iot_ota_task_record_status', 0, 'success', '', NULL, '1', '2025-09-06 00:02:21', '1', '2025-09-06 00:02:31', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3035, 40, '支付宝小程序', '40', 'system_social_type', 0, '', '', '', '1', '2023-11-04 13:05:38', '1', '2023-11-04 13:07:16', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3036, 1, '待分配工单', '0', 'member_water_apply_status', 0, 'warning', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3037, 2, '已分配工单', '1', 'member_water_apply_status', 0, 'primary', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3038, 3, '施工中', '2', 'member_water_apply_status', 0, 'info', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3039, 4, '施工完成', '3', 'member_water_apply_status', 0, 'success', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
 COMMIT;
 
 -- ----------------------------
@@ -1229,6 +1233,7 @@ INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creat
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2005, 'IoT 固件升级记录状态', 'iot_ota_task_record_status', 0, '', '1', '2025-07-02 09:45:02', '1', '2025-07-02 09:45:02', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2006, 'IoT 定位类型', 'iot_location_type', 0, '', '1', '2025-07-05 09:56:25', '1', '2025-07-05 09:56:25', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2007, 'AI MCP 客户端名字', 'ai_mcp_client_name', 0, '', '1', '2025-08-28 13:57:40', '1', '2025-08-28 13:57:40', b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2008, '居民报装处理状态', 'member_water_apply_status', 0, '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0', '1970-01-01 00:00:00');
 COMMIT;
 
 -- ----------------------------
@@ -1801,6 +1806,14 @@ INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_i
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2328, '会员等级更新', 'member:level:update', 3, 3, 2325, '', '', '', NULL, 0, b'1', b'1', b'1', '', '2023-08-22 12:41:02', '', '2023-08-22 12:41:02', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2329, '会员等级删除', 'member:level:delete', 3, 4, 2325, '', '', '', NULL, 0, b'1', b'1', b'1', '', '2023-08-22 12:41:02', '', '2023-08-22 12:41:02', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2330, '会员分组', '', 2, 3, 2262, 'group', 'fa:group', 'member/group/index', 'MemberGroup', 0, b'1', b'1', b'1', '', '2023-08-22 13:50:06', '1', '2023-10-01 23:42:01', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5052, '用户报装信息', '', 2, 21, 2262, 'water-apply', 'ep:document', 'member/water-apply/index', 'MemberWaterApply', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5053, '用户报装信息查询', 'member:water-apply:query', 3, 1, 5052, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5054, '用户报装信息状态修改', 'member:water-apply:update-status', 3, 2, 5052, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5047, '报装充值套餐', '', 2, 20, 2262, 'water-recharge-package', 'ep:coin', 'member/water-recharge-package/index', 'MemberWaterRechargePackage', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5048, '报装充值套餐查询', 'member:water-recharge-package:query', 3, 1, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5049, '报装充值套餐新增', 'member:water-recharge-package:create', 3, 2, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5050, '报装充值套餐修改', 'member:water-recharge-package:update', 3, 3, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5051, '报装充值套餐删除', 'member:water-recharge-package:delete', 3, 4, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2331, '用户分组查询', 'member:group:query', 3, 1, 2330, '', '', '', NULL, 0, b'1', b'1', b'1', '', '2023-08-22 13:50:06', '', '2023-08-22 13:50:06', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2332, '用户分组创建', 'member:group:create', 3, 2, 2330, '', '', '', NULL, 0, b'1', b'1', b'1', '', '2023-08-22 13:50:06', '', '2023-08-22 13:50:06', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (2333, '用户分组更新', 'member:group:update', 3, 3, 2330, '', '', '', NULL, 0, b'1', b'1', b'1', '', '2023-08-22 13:50:06', '', '2023-08-22 13:50:06', b'0');
@@ -4110,3 +4123,78 @@ CREATE TABLE `member_water_house` (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋信息';
+
+-- ----------------------------
+-- 居民报装申请
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_apply`;
+CREATE TABLE `member_water_apply` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `user_id` bigint NOT NULL COMMENT '用户编号',
+  `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
+  `area_id` bigint NOT NULL COMMENT '地区编号（区县）',
+  `area_name` varchar(255) NOT NULL COMMENT '地区名称',
+  `community_name` varchar(128) NOT NULL COMMENT '小区名称',
+  `building_name` varchar(128) NOT NULL COMMENT '楼栋名称',
+  `unit_name` varchar(128) NOT NULL COMMENT '单元名称',
+  `room_no` varchar(64) NOT NULL COMMENT '房间号',
+  `contact_name` varchar(64) NOT NULL COMMENT '联系人姓名',
+  `contact_mobile` varchar(32) NOT NULL COMMENT '联系人手机号',
+  `referrer` varchar(64) NOT NULL DEFAULT '' COMMENT '推荐人',
+  `apply_status` tinyint NOT NULL DEFAULT 0 COMMENT '申请状态（0 待补充资料 1 已提交）',
+  `process_status` tinyint NOT NULL DEFAULT 0 COMMENT '处理状态',
+  `recharge_package_id` bigint DEFAULT NULL COMMENT '首次充值套餐编号',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装申请';
+
+-- ----------------------------
+-- 居民报装房屋户主信息
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_house_owner`;
+CREATE TABLE `member_water_house_owner` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
+  `apply_id` bigint NOT NULL COMMENT '申请编号',
+  `user_id` bigint NOT NULL COMMENT '用户编号',
+  `owner_name` varchar(64) NOT NULL COMMENT '户主姓名',
+  `owner_id_card` varchar(32) NOT NULL COMMENT '户主身份证号',
+  `contract_image_urls` varchar(1024) NOT NULL DEFAULT '' COMMENT '合同图片地址列表',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋户主信息';
+
+-- ----------------------------
+-- 居民报装充值套餐
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_recharge_package`;
+CREATE TABLE `member_water_recharge_package` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `name` varchar(128) NOT NULL COMMENT '套餐名称',
+  `price` decimal(10,2) NOT NULL COMMENT '套餐售价',
+  `water_volume` int NOT NULL COMMENT '基础水量(升)',
+  `gift_water_volume` int NOT NULL DEFAULT 0 COMMENT '赠送水量(升)',
+  `discount_amount` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT '优惠金额',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态（0 停用 1 启用）',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装充值套餐';
