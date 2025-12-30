@@ -73,6 +73,10 @@ public class MemberWaterApplyDO extends TenantBaseDO {
      */
     private Integer applyStatus;
     /**
+     * 处理状态
+     */
+    private Integer processStatus;
+    /**
      * 首次充值套餐编号
      */
     private Long rechargePackageId;

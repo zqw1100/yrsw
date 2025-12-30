@@ -1,5 +1,9 @@
 package cn.iocoder.yudao.module.member.service.water;
 
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyPageReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyRespVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyStatusUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCompleteReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCreateReqVO;
 
@@ -22,4 +26,19 @@ public interface MemberWaterApplyService {
      * @param completeReqVO 补充资料
      */
     void completeApply(AppWaterApplyCompleteReqVO completeReqVO);
+
+    /**
+     * 获得居民报装申请分页
+     *
+     * @param pageReqVO 分页查询
+     * @return 分页结果
+     */
+    PageResult<MemberWaterApplyRespVO> getApplyPage(MemberWaterApplyPageReqVO pageReqVO);
+
+    /**
+     * 更新居民报装处理状态
+     *
+     * @param updateReqVO 更新信息
+     */
+    void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO);
 }

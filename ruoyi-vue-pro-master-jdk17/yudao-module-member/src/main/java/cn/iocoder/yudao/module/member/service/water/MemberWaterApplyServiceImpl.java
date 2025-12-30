@@ -1,6 +1,11 @@
 package cn.iocoder.yudao.module.member.service.water;
 
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyPageReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyRespVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyStatusUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCompleteReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCreateReqVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterApplyConvert;
@@ -17,6 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.annotation.Resource;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
@@ -58,6 +69,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         apply.setUserId(userId);
         apply.setWaterHouseId(waterHouse.getId());
         apply.setApplyStatus(0);
+        apply.setProcessStatus(0);
         applyMapper.insert(apply);
         return apply.getId();
     }
@@ -108,5 +120,43 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .installStatus(1)
                 .build();
         waterHouseMapper.updateById(updateHouse);
+    }
+
+    @Override
+    public PageResult<MemberWaterApplyRespVO> getApplyPage(MemberWaterApplyPageReqVO pageReqVO) {
+        PageResult<MemberWaterApplyDO> pageResult = applyMapper.selectPage(pageReqVO);
+        if (pageResult.getTotal() == 0) {
+            return new PageResult<>(Collections.emptyList(), 0L);
+        }
+        List<Long> applyIds = pageResult.getList().stream()
+                .map(MemberWaterApplyDO::getId)
+                .collect(Collectors.toList());
+        Map<Long, MemberWaterHouseOwnerDO> ownerMap = ownerMapper.selectListByApplyIds(applyIds).stream()
+                .collect(Collectors.toMap(MemberWaterHouseOwnerDO::getApplyId, Function.identity(), (first, second) -> first));
+        List<MemberWaterApplyRespVO> list = pageResult.getList().stream()
+                .map(apply -> {
+                    MemberWaterApplyRespVO respVO = BeanUtils.toBean(apply, MemberWaterApplyRespVO.class);
+                    MemberWaterHouseOwnerDO owner = ownerMap.get(apply.getId());
+                    if (owner != null) {
+                        respVO.setOwnerName(owner.getOwnerName());
+                        respVO.setOwnerIdCard(owner.getOwnerIdCard());
+                        respVO.setContractImageUrls(owner.getContractImageUrls());
+                    }
+                    return respVO;
+                }).collect(Collectors.toList());
+        return new PageResult<>(list, pageResult.getTotal());
+    }
+
+    @Override
+    public void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO) {
+        MemberWaterApplyDO apply = applyMapper.selectById(updateReqVO.getId());
+        if (apply == null) {
+            throw exception(WATER_APPLY_NOT_EXISTS);
+        }
+        MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
+                .id(updateReqVO.getId())
+                .processStatus(updateReqVO.getProcessStatus())
+                .build();
+        applyMapper.updateById(updateObj);
     }
 }
