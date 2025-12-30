@@ -60,7 +60,7 @@
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
         <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
-        <el-button type="primary" @click="openForm('create')" v-hasPermi="['member:water-house:create']">
+        <el-button type="primary" @click="openForm('create')" >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
       </el-form-item>
@@ -96,7 +96,6 @@
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
-            v-hasPermi="['member:water-house:update']"
           >
             编辑
           </el-button>
@@ -104,7 +103,6 @@
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
-            v-hasPermi="['member:water-house:delete']"
           >
             删除
           </el-button>
