@@ -1,8 +1,11 @@
 package cn.iocoder.yudao.module.member.controller.app.water;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyRespVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCompleteReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCreateReqVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyPageReqVO;
 import cn.iocoder.yudao.module.member.service.water.MemberWaterApplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
+import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 
 @Tag(name = "用户 APP - 居民报装申请")
 @RestController
@@ -34,5 +38,12 @@ public class AppWaterApplyController {
     public CommonResult<Boolean> completeApply(@Valid @RequestBody AppWaterApplyCompleteReqVO completeReqVO) {
         applyService.completeApply(completeReqVO);
         return success(true);
+    }
+
+    @GetMapping("/page")
+    @Operation(summary = "获得用户居民报装申请分页")
+    public CommonResult<PageResult<MemberWaterApplyRespVO>> getApplyPage(
+            @Valid AppWaterApplyPageReqVO pageReqVO) {
+        return success(applyService.getApplyPage(getLoginUserId(), pageReqVO));
     }
 }

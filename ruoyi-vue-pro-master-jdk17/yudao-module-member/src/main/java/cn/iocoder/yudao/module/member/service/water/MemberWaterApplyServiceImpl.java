@@ -8,6 +8,7 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApply
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyStatusUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCompleteReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCreateReqVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyPageReqVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterApplyConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseDO;
@@ -120,6 +121,29 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     @Override
     public PageResult<MemberWaterApplyRespVO> getApplyPage(MemberWaterApplyPageReqVO pageReqVO) {
         PageResult<MemberWaterApplyDO> pageResult = applyMapper.selectPage(pageReqVO);
+        return buildApplyPage(pageResult);
+    }
+
+    @Override
+    public PageResult<MemberWaterApplyRespVO> getApplyPage(Long userId, AppWaterApplyPageReqVO pageReqVO) {
+        PageResult<MemberWaterApplyDO> pageResult = applyMapper.selectPageByUser(userId, pageReqVO);
+        return buildApplyPage(pageResult);
+    }
+
+    @Override
+    public void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO) {
+        MemberWaterApplyDO apply = applyMapper.selectById(updateReqVO.getId());
+        if (apply == null) {
+            throw exception(WATER_APPLY_NOT_EXISTS);
+        }
+        MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
+                .id(updateReqVO.getId())
+                .processStatus(updateReqVO.getProcessStatus())
+                .build();
+        applyMapper.updateById(updateObj);
+    }
+
+    private PageResult<MemberWaterApplyRespVO> buildApplyPage(PageResult<MemberWaterApplyDO> pageResult) {
         if (pageResult.getTotal() == 0) {
             return new PageResult<>(Collections.emptyList(), 0L);
         }
@@ -140,18 +164,5 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                     return respVO;
                 }).collect(Collectors.toList());
         return new PageResult<>(list, pageResult.getTotal());
-    }
-
-    @Override
-    public void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO) {
-        MemberWaterApplyDO apply = applyMapper.selectById(updateReqVO.getId());
-        if (apply == null) {
-            throw exception(WATER_APPLY_NOT_EXISTS);
-        }
-        MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
-                .id(updateReqVO.getId())
-                .processStatus(updateReqVO.getProcessStatus())
-                .build();
-        applyMapper.updateById(updateObj);
     }
 }
