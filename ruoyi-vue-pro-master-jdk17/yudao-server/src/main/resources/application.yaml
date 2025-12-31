@@ -259,7 +259,7 @@ yudao:
 
 yudao:
   info:
-    version: 3
+    version: 4
     base-package: cn.iocoder.yudao
   web:
     admin-ui:
