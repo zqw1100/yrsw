@@ -35,8 +35,7 @@
     <view class="service-card">
       <view class="service-tabs ss-flex ss-col-center ss-row-between">
         <view class="service-tab is-active">服务充值</view>
-        <view class="service-tab" @tap="onPayRecharge">缴费指南</view>
-        <view class="service-tab" @tap="onPayRecharge">自助交费</view>
+        <view class="service-tab" @tap="onPlaceholder">客户报修</view>
       </view>
       <view class="service-body">
         <view class="service-info">
@@ -87,7 +86,6 @@
   const displayName = computed(() => userInfo.value.nickname || '未登录');
 
   const quickMenus = [
-    { title: '报装', icon: 'compose', action: () => sheep.$router.go('/pages/user/water-apply') },
     { title: '用水历史', icon: 'calendar', action: onPlaceholder },
     { title: '消息通知', icon: 'notification', action: onPlaceholder },
     { title: '在线缴费', icon: 'wallet', action: onPayRecharge },
