@@ -44,10 +44,7 @@
             </view>
           </button>
         </view>
-        <button
-          class="ss-reset-button save-btn ui-BG-Main-Gradient ss-m-t-60 ui-Shadow-Main"
-          @tap="onConfirm"
-        >
+        <button class="ss-reset-button save-btn ss-m-t-60" @tap="onConfirm">
           确认充值
         </button>
       </view>
@@ -65,8 +62,6 @@
 
   const userWallet = computed(() => sheep.$store('user').userWallet);
   const statusBarHeight = sheep.$platform.device.statusBarHeight * 2;
-  const headerBg = sheep.$url.css('/static/img/shop/user/withdraw_bg.png');
-
   const state = reactive({
     recharge_money: '', // 输入的充值金额
     packageList: [],
@@ -121,7 +116,7 @@
 
   .wallet-num-box {
     padding: 0 40rpx 80rpx;
-    background: var(--ui-BG-Main) v-bind(headerBg) center/750rpx 100% no-repeat;
+    background: linear-gradient(180deg, #4ea7ff 0%, #6fb7ff 100%);
     border-radius: 0 0 5% 5%;
 
     .num-title {
@@ -162,6 +157,8 @@
     height: 86rpx;
     border-radius: 44rpx;
     font-size: 30rpx;
+    background: linear-gradient(90deg, #3c7eff 0%, #6bb1ff 100%);
+    color: $white;
   }
 
   .recharge-card-box {
@@ -198,7 +195,7 @@
     .face-value-btn {
       width: 200rpx;
       height: 144rpx;
-      border: 1px solid var(--ui-BG-Main);
+      border: 1px solid #3c7eff;
       border-radius: 10rpx;
       position: relative;
       z-index: 1;
@@ -212,7 +209,7 @@
       .face-value-title {
         font-size: 36rpx;
         font-weight: 500;
-        color: var(--ui-BG-Main);
+        color: #3c7eff;
         font-family: OPPOSANS;
 
         &::after {
@@ -227,7 +224,7 @@
         z-index: 2;
         height: 40rpx;
         line-height: 40rpx;
-        background: var(--ui-BG-Main);
+        background: #3c7eff;
         opacity: 0.8;
         border-radius: 10rpx 0 20rpx 0;
         top: 0;
@@ -243,7 +240,7 @@
         content: ' ';
         width: 100%;
         height: 100%;
-        background: var(--ui-BG-Main);
+        background: #3c7eff;
         opacity: 0.1;
         z-index: 0;
         left: 0;
@@ -256,7 +253,7 @@
 
       &::before {
         content: '';
-        background: var(--ui-BG-Main);
+        background: #3c7eff;
         opacity: 1;
       }
 
@@ -269,7 +266,7 @@
 
       .face-value-tag {
         background: $white;
-        color: var(--ui-BG-Main);
+        color: #3c7eff;
         font-family: OPPOSANS;
       }
     }
