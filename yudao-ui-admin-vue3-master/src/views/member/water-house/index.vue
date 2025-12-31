@@ -86,11 +86,13 @@
         </template>
       </el-table-column>
       <el-table-column label="描述" align="center" prop="description" min-width="160px" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180px">
-        <template #default="scope">
-          {{ formatCreateTime(scope.row.createTime) }}
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="createTime"
+        :formatter="dateFormatter"
+        width="180"
+      />
       <el-table-column label="操作" align="center" width="150px">
         <template #default="scope">
           <el-button
@@ -125,7 +127,7 @@
 </template>
 
 <script setup lang="ts" name="MemberWaterHouse">
-import { formatDate } from '@/utils/formatTime'
+import {dateFormatter, formatDate} from '@/utils/formatTime'
 import * as WaterHouseApi from '@/api/member/water-house'
 import WaterHouseForm from './WaterHouseForm.vue'
 import WaterHouseImportForm from './WaterHouseImportForm.vue'
@@ -155,6 +157,7 @@ const installStatusOptions = [
 ]
 
 const formatCreateTime = (value?: number | string) => {
+  console.log(value)
   if (!value) {
     return ''
   }

@@ -140,9 +140,13 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="170px">
-        <template #default="{ row }">{{ dateFormatter(row.createTime) }}</template>
-      </el-table-column>
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="createTime"
+        :formatter="dateFormatter"
+        width="180"
+      />
     </el-table>
     <Pagination
       :total="total"
