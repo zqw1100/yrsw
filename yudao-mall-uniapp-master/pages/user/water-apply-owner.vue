@@ -88,8 +88,10 @@
 <script setup>
   import { onLoad } from '@dcloudio/uni-app';
   import { reactive, ref } from 'vue';
-  import WaterApplyApi from '@/sheep/api/water/apply';
+  import { WxaSubscribeTemplate } from '@/sheep/helper/const';
+  import sheep from '@/sheep';
   import PayWalletApi from '@/sheep/api/pay/wallet';
+  import WaterApplyApi from '@/sheep/api/water/apply';
   import { fen2yuan } from '@/sheep/hooks/useGoods';
 
   const formRef = ref(null);
@@ -153,11 +155,28 @@
       id: applyId,
     });
     if (code !== 0) return;
+    const selectedPackage = state.packageList.find(
+      (item) => Number(item.id) === Number(state.model.rechargePackageId),
+    );
+    if (!selectedPackage) {
+      uni.showToast({ title: '充值套餐不存在', icon: 'none' });
+      return;
+    }
+    const { code: rechargeCode, data: rechargeData } = await PayWalletApi.createWalletRecharge({
+      packageId: selectedPackage.id,
+      payPrice: selectedPackage.payPrice,
+    });
+    if (rechargeCode !== 0) return;
     uni.removeStorageSync('waterApplyDraft');
-    uni.showToast({ title: '提交成功', icon: 'success' });
-    setTimeout(() => {
-      uni.redirectTo({ url: '/pages/user/water' });
-    }, 800);
+    // #ifdef MP
+    sheep.$platform
+      .useProvider('wechat')
+      .subscribeMessage(WxaSubscribeTemplate.PAY_WALLET_RECHARGER_SUCCESS);
+    // #endif
+    sheep.$router.go('/pages/pay/index', {
+      id: rechargeData.payOrderId,
+      orderType: 'recharge',
+    });
   };
 
   onLoad((options) => {

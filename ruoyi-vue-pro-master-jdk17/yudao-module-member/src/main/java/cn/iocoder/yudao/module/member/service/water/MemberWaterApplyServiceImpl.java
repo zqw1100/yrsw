@@ -12,11 +12,11 @@ import cn.iocoder.yudao.module.member.convert.water.MemberWaterApplyConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseOwnerDO;
-import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterRechargePackageDO;
+import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargePackageDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseOwnerMapper;
-import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterRechargePackageMapper;
+import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargePackageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +46,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     @Resource
     private MemberWaterHouseOwnerMapper ownerMapper;
     @Resource
-    private MemberWaterRechargePackageMapper rechargePackageMapper;
+    private PayWalletRechargePackageService walletRechargePackageService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -85,13 +85,8 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (!userId.equals(apply.getUserId())) {
             throw exception(WATER_APPLY_NOT_ALLOW);
         }
-        MemberWaterRechargePackageDO packageDO = rechargePackageMapper.selectById(completeReqVO.getRechargePackageId());
-        if (packageDO == null) {
-            throw exception(WATER_RECHARGE_PACKAGE_NOT_EXISTS);
-        }
-        if (!Integer.valueOf(1).equals(packageDO.getStatus())) {
-            throw exception(WATER_RECHARGE_PACKAGE_NOT_EXISTS);
-        }
+        PayWalletRechargePackageDO packageDO = walletRechargePackageService
+                .validWalletRechargePackage(completeReqVO.getRechargePackageId());
         MemberWaterHouseOwnerDO owner = ownerMapper.selectByApplyId(completeReqVO.getId());
         MemberWaterHouseOwnerDO updateOwner = MemberWaterHouseOwnerDO.builder()
                 .id(owner == null ? null : owner.getId())
