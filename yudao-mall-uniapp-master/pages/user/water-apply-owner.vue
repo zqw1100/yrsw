@@ -53,10 +53,7 @@
               <view class="package-left">
                 <view class="package-name">{{ item.name }}</view>
                 <view class="package-desc">
-                  ¥{{ item.price }} · 基础 {{ item.waterVolume }} 升
-                  <text v-if="item.giftWaterVolume || item.discountAmount">
-                    · {{ formatPackageGift(item) }}
-                  </text>
+                  ¥{{ fen2yuan(item.payPrice) }} <text v-if="item.bonusPrice">· {{ formatPackageGift(item) }}</text>
                 </view>
               </view>
               <view class="package-right">
@@ -92,6 +89,8 @@
   import { onLoad } from '@dcloudio/uni-app';
   import { reactive, ref } from 'vue';
   import WaterApplyApi from '@/sheep/api/water/apply';
+  import PayWalletApi from '@/sheep/api/pay/wallet';
+  import { fen2yuan } from '@/sheep/hooks/useGoods';
 
   const formRef = ref(null);
   const state = reactive({
@@ -123,17 +122,14 @@
   };
 
   const formatPackageGift = (item) => {
-    if (item.discountAmount && Number(item.discountAmount) > 0) {
-      return `优惠 ¥${Number(item.discountAmount).toFixed(2)}`;
+    if (item.bonusPrice && Number(item.bonusPrice) > 0) {
+      return `赠送 ¥${fen2yuan(item.bonusPrice)}`;
     }
-    if (item.giftWaterVolume && Number(item.giftWaterVolume) > 0) {
-      return `赠送 ${item.giftWaterVolume} 升`;
-    }
-    return '优惠已包含';
+    return '无赠送';
   };
 
   const fetchPackageList = async () => {
-    const { code, data } = await WaterApplyApi.getRechargePackageList();
+    const { code, data } = await PayWalletApi.getWalletRechargePackageList();
     if (code === 0) {
       state.packageList = data || [];
     }
