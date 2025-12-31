@@ -40,8 +40,10 @@
       <view class="service-body">
         <view class="service-info">
           <view class="service-label">账户余额</view>
-          <view class="service-value">¥707</view>
-          <view class="service-time">更新时间：2025-10-16 15:37</view>
+          <view class="service-value">¥{{ fen2yuan(userWallet.balance) || '0.00' }}</view>
+          <view class="service-time">
+            更新时间：{{ balanceUpdateTime || '--' }}
+          </view>
         </view>
         <view class="service-action" @tap="onPayRecharge">立即充值</view>
       </view>
@@ -81,9 +83,16 @@
   import { computed } from 'vue';
   import { onShow } from '@dcloudio/uni-app';
   import sheep from '@/sheep';
+  import { fen2yuan } from '@/sheep/hooks/useGoods';
+  import { formatDate } from '@/sheep/helper/utils';
 
   const userInfo = computed(() => sheep.$store('user').userInfo);
+  const userWallet = computed(() => sheep.$store('user').userWallet);
+  const lastUpdateTime = computed(() => sheep.$store('user').lastUpdateTime);
   const displayName = computed(() => userInfo.value.nickname || '未登录');
+  const balanceUpdateTime = computed(() =>
+    lastUpdateTime.value ? formatDate(lastUpdateTime.value) : ''
+  );
 
   const quickMenus = [
     { title: '用水历史', icon: 'calendar', action: onPlaceholder },
