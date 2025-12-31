@@ -36,7 +36,7 @@
   import WaterApplyApi from '@/sheep/api/water/apply';
   import DictApi from '@/sheep/api/system/dict';
 
-  const COMPLETE_STATUS = 3;
+  const COMPLETE_STATUS = [3,4];
 
   const state = reactive({
     pagination: {
@@ -65,7 +65,7 @@
     return `status-${value ?? 'default'}`;
   };
 
-  const isCompleted = (value) => Number(value) === COMPLETE_STATUS;
+  const isCompleted = (value) => COMPLETE_STATUS.includes(Number(value))
 
   const formatAddress = (item) => {
     return [item.areaName, item.communityName, item.buildingName, item.unitName, item.roomNo]
