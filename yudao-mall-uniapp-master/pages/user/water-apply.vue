@@ -346,7 +346,10 @@
       uni.showToast({ title: '请先阅读并同意开通协议', icon: 'none' });
       return;
     }
-    uni.showToast({ title: '已进入下一步', icon: 'none' });
+    uni.setStorageSync('waterApplyDraft', { ...state.model });
+    uni.navigateTo({
+      url: `/pages/user/water-apply-owner`,
+    });
   };
 
   const onConfirmAgreement = () => {
@@ -358,6 +361,10 @@
   };
 
   onLoad(() => {
+    const draft = uni.getStorageSync('waterApplyDraft');
+    if (draft) {
+      Object.assign(state.model, draft);
+    }
     if (!uni.getStorageSync('areaData')) {
       AreaApi.getAreaTree().then((res) => {
         if (res.code === 0) {
