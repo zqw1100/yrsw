@@ -8,7 +8,7 @@
   >
     <view class="header">
       <view class="user-card ss-flex ss-col-center">
-        <image class="avatar" :src="avatarUrl" mode="aspectFill" />
+        <image class="avatar" :src="avatarUrl" mode="aspectFill" @tap="onEditProfile" />
         <view class="user-meta ss-flex-col ss-row-center">
           <view class="nickname">{{ displayName }}</view>
           <view v-if="displayAccount" class="account">{{ displayAccount }}</view>
@@ -64,6 +64,7 @@ import { computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import sheep from '@/sheep';
 import AuthUtil from '@/sheep/api/member/auth';
+import { showAuthModal } from '@/sheep/hooks/useModal';
 
 const userInfo = computed(() => sheep.$store('user').userInfo);
 const isLogin = computed(() => sheep.$store('user').isLogin);
@@ -88,6 +89,14 @@ onShow(() => {
 
 function onGoSetting() {
   sheep.$router.go('/pages/public/setting');
+}
+
+function onEditProfile() {
+  if (!isLogin.value) {
+    showAuthModal();
+    return;
+  }
+  sheep.$router.go('/pages/user/info');
 }
 
 function onPlaceholder() {
