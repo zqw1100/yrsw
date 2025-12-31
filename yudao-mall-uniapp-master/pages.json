@@ -82,6 +82,18 @@
 				"title": "自定义页面",
 				"group": "商城"
 			}
+		},
+		{
+			"path": "pages/water/home",
+			"style": {
+				"navigationBarTitleText": "水务首页"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "水务首页",
+				"group": "水务"
+			}
 		}
 	],
 	"subPackages": [{
