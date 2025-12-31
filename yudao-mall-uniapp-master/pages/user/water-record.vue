@@ -15,11 +15,8 @@
         <view v-if="item.createTime" class="info-text">
           申请时间：{{ formatTime(item.createTime) }}
         </view>
-        <view
-          v-if="isCompleted(item.processStatus) && item.deviceNo"
-          class="info-text device-no"
-        >
-          设备号：{{ item.deviceNo }}
+        <view v-if="isCompleted(item.processStatus)" class="info-text device-no">
+          设备号：{{ item.deviceNo || '-' }}
         </view>
       </view>
     </view>
