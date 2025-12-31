@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApply
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterApplyStatusUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCompleteReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyCreateReqVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterApplyPageReqVO;
 
 /**
  * 居民报装申请 Service
@@ -34,6 +35,15 @@ public interface MemberWaterApplyService {
      * @return 分页结果
      */
     PageResult<MemberWaterApplyRespVO> getApplyPage(MemberWaterApplyPageReqVO pageReqVO);
+
+    /**
+     * 获得用户居民报装申请分页
+     *
+     * @param userId 用户编号
+     * @param pageReqVO 分页查询
+     * @return 分页结果
+     */
+    PageResult<MemberWaterApplyRespVO> getApplyPage(Long userId, AppWaterApplyPageReqVO pageReqVO);
 
     /**
      * 更新居民报装处理状态
