@@ -52,6 +52,9 @@ public class MemberWaterApplyRespVO {
     @Schema(description = "处理状态", example = "0")
     private Integer processStatus;
 
+    @Schema(description = "设备号（物联网水表唯一编号）", example = "WM10001")
+    private String deviceNo;
+
     @Schema(description = "首次充值套餐编号", example = "1")
     private Long rechargePackageId;
 

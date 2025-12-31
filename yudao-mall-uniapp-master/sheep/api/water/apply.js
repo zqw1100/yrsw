@@ -17,6 +17,14 @@ const WaterApplyApi = {
       data,
     });
   },
+  // 获得居民报装记录分页
+  getApplyPage: (params) => {
+    return request({
+      url: '/member/water-apply/page',
+      method: 'GET',
+      params,
+    });
+  },
   // 获得充值套餐列表
   getRechargePackageList: () => {
     return request({

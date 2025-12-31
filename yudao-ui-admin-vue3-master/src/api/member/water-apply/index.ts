@@ -19,6 +19,6 @@ export const getWaterApplyPage = (params: WaterApplyPageParams) => {
   return request.get({ url: '/member/water-apply/page', params })
 }
 
-export const updateWaterApplyStatus = (data: { id: number; processStatus: number }) => {
+export const updateWaterApplyStatus = (data: { id: number; processStatus: number; deviceNo?: string }) => {
   return request.put({ url: '/member/water-apply/update-status', data })
 }

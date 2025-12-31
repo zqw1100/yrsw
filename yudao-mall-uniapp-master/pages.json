@@ -367,6 +367,18 @@
 					}
 				},
 				{
+					"path": "water-record",
+					"style": {
+						"navigationBarTitleText": "报装记录"
+					},
+					"meta": {
+						"auth": true,
+						"sync": true,
+						"title": "报装记录",
+						"group": "用户中心"
+					}
+				},
+				{
 					"path": "water-apply",
 					"style": {
 						"navigationBarTitleText": "居民报装"

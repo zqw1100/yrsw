@@ -15,4 +15,7 @@ public class MemberWaterApplyStatusUpdateReqVO {
     @Schema(description = "处理状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotNull(message = "处理状态不能为空")
     private Integer processStatus;
+
+    @Schema(description = "设备号（物联网水表唯一编号）", example = "WM10001")
+    private String deviceNo;
 }
