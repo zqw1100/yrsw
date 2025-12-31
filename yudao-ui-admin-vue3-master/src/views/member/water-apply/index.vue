@@ -123,6 +123,7 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="设备号" align="center" prop="deviceNo" width="140px" />
       <el-table-column label="处理状态" align="center" width="150px">
         <template #default="{ row }">
           <el-select
@@ -159,6 +160,7 @@
 
 <script setup lang="ts" name="MemberWaterApply">
 import { dateFormatter } from '@/utils/formatTime'
+import { ElMessageBox } from 'element-plus'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { createImageViewer } from '@/components/ImageViewer'
 import * as WaterApplyApi from '@/api/member/water-apply'
@@ -210,7 +212,17 @@ const resetQuery = () => {
 
 const handleUpdateStatus = async (id: number, processStatus: number) => {
   try {
-    await WaterApplyApi.updateWaterApplyStatus({ id, processStatus })
+    let deviceNo: string | undefined
+    if (processStatus === 3) {
+      const { value } = await ElMessageBox.prompt('请输入设备号', '施工完成', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /\S+/,
+        inputErrorMessage: '设备号不能为空'
+      })
+      deviceNo = value
+    }
+    await WaterApplyApi.updateWaterApplyStatus({ id, processStatus, deviceNo })
     message.success('状态更新成功')
   } catch {
     await getList()

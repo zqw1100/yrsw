@@ -4143,6 +4143,7 @@ CREATE TABLE `member_water_apply` (
   `referrer` varchar(64) NOT NULL DEFAULT '' COMMENT '推荐人',
   `apply_status` tinyint NOT NULL DEFAULT 0 COMMENT '申请状态（0 待补充资料 1 已提交）',
   `process_status` tinyint NOT NULL DEFAULT 0 COMMENT '处理状态',
+  `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号（物联网水表唯一编号）',
   `recharge_package_id` bigint DEFAULT NULL COMMENT '首次充值套餐编号',
   `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
   `creator` varchar(64) DEFAULT '' COMMENT '创建者',

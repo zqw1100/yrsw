@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.member.service.water;
 
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
@@ -136,9 +137,14 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (apply == null) {
             throw exception(WATER_APPLY_NOT_EXISTS);
         }
+        if (updateReqVO.getProcessStatus() != null && updateReqVO.getProcessStatus() == 3
+                && StrUtil.isBlank(updateReqVO.getDeviceNo())) {
+            throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
+        }
         MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
                 .id(updateReqVO.getId())
                 .processStatus(updateReqVO.getProcessStatus())
+                .deviceNo(updateReqVO.getDeviceNo())
                 .build();
         applyMapper.updateById(updateObj);
     }

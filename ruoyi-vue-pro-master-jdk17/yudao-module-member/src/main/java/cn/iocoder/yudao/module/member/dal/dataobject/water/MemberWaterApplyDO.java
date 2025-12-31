@@ -77,6 +77,10 @@ public class MemberWaterApplyDO extends TenantBaseDO {
      */
     private Integer processStatus;
     /**
+     * 设备号（物联网水表唯一编号）
+     */
+    private String deviceNo;
+    /**
      * 首次充值套餐编号
      */
     private Long rechargePackageId;
