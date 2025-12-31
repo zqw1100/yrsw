@@ -78,7 +78,7 @@
 
   const quickMenus = [
     { title: '居民报装', icon: 'compose', action: () => sheep.$router.go('/pages/user/water-apply') },
-    { title: '报装记录', icon: 'list', action: onPlaceholder },
+    { title: '报装记录', icon: 'list', action: () => sheep.$router.go('/pages/user/water-record') },
     { title: '用水历史', icon: 'clock', action: onPlaceholder },
   ];
 
