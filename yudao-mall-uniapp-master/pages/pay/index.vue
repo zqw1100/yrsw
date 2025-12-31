@@ -184,6 +184,7 @@
       return;
     }
     state.payMethods = getPayMethods(data);
+    console.log(state.payMethods )
     state.payMethods.find((item) => {
       if (item.value && !item.disabled) {
         state.payment = item.value;
