@@ -91,7 +91,7 @@
         align="center"
         prop="createTime"
         :formatter="dateFormatter"
-        width="180px"
+        width="180"
       />
       <el-table-column label="操作" align="center" width="150px">
         <template #default="scope">
@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts" name="MemberWaterHouse">
-import { dateFormatter } from '@/utils/formatTime'
+import {dateFormatter, formatDate} from '@/utils/formatTime'
 import * as WaterHouseApi from '@/api/member/water-house'
 import WaterHouseForm from './WaterHouseForm.vue'
 import WaterHouseImportForm from './WaterHouseImportForm.vue'
@@ -155,6 +155,16 @@ const installStatusOptions = [
   { label: '未报装', value: 0 },
   { label: '已报装', value: 1 }
 ]
+
+const formatCreateTime = (value?: number | string) => {
+  console.log(value)
+  if (!value) {
+    return ''
+  }
+  const timestamp = typeof value === 'string' ? Number(value) : value
+  const time = timestamp && timestamp < 1000000000000 ? timestamp * 1000 : timestamp
+  return formatDate(new Date(time))
+}
 
 const getList = async () => {
   loading.value = true
