@@ -357,12 +357,12 @@
 				{
 					"path": "water",
 					"style": {
-						"navigationBarTitleText": "我的水务"
+						"navigationBarTitleText": "水务首页"
 					},
 					"meta": {
 						"auth": true,
 						"sync": true,
-						"title": "我的水务",
+						"title": "水务首页",
 						"group": "用户中心"
 					}
 				},
