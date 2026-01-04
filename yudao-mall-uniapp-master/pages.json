@@ -94,6 +94,18 @@
 				"title": "水务首页",
 				"group": "水务"
 			}
+		},
+		{
+			"path": "pages/water/notice-list",
+			"style": {
+				"navigationBarTitleText": "消息通知"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "消息通知",
+				"group": "水务"
+			}
 		}
 	],
 	"subPackages": [{

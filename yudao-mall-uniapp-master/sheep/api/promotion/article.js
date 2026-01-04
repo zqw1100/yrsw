@@ -8,5 +8,13 @@ export default {
             method: 'GET',
             params: { id, title }
         });
+    },
+    // 获得文章分页列表
+    getArticlePage: (params) => {
+        return request({
+            url: '/promotion/article/page',
+            method: 'GET',
+            params
+        });
     }
 }
