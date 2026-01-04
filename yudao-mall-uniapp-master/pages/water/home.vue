@@ -13,7 +13,7 @@
           <view class="sub-hello">水务服务尽在掌握</view>
         </view>
         <view class="header-actions ss-flex">
-          <view class="action-circle" @tap="onPlaceholder">
+          <view class="action-circle" @tap="onGoNotice">
             <uni-icons type="notification" size="20" color="#ffffff" />
           </view>
           <view class="action-circle" @tap="onPlaceholder">
@@ -65,9 +65,9 @@
           <uni-icons type="sound" size="18" color="#ff6b6b" />
           <text>信息公告</text>
         </view>
-        <view class="notice-more" @tap="onPlaceholder">更多</view>
+        <view class="notice-more" @tap="onGoNotice">更多</view>
       </view>
-      <view class="notice-item">
+      <view class="notice-item" @tap="onGoNotice">
         <view class="notice-dot"></view>
         <view class="notice-content">
           <view class="notice-text">烟台港仙山自来水入户调研开始啦</view>
@@ -96,7 +96,7 @@
 
   const quickMenus = [
     { title: '用水历史', icon: 'calendar', action: onPlaceholder },
-    { title: '消息通知', icon: 'notification', action: onPlaceholder },
+    { title: '消息通知', icon: 'notification', action: onGoNotice },
     { title: '在线缴费', icon: 'wallet', action: onPayRecharge },
   ];
 
@@ -113,6 +113,10 @@
 
   function onPayRecharge() {
     sheep.$router.go('/pages/pay/recharge');
+  }
+
+  function onGoNotice() {
+    sheep.$router.go('/pages/water/notice-list');
   }
 </script>
 

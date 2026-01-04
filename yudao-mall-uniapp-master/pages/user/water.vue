@@ -27,7 +27,7 @@
     </view>
 
     <view class="card list-card">
-      <view class="list-item" @tap="onPlaceholder">
+      <view class="list-item" @tap="onGoNotice">
         <view class="item-left">
           <uni-icons type="notification" size="20" color="#3c7eff" />
           <text class="item-title">消息订阅</text>
@@ -89,6 +89,10 @@ onShow(() => {
 
 function onGoSetting() {
   sheep.$router.go('/pages/public/setting');
+}
+
+function onGoNotice() {
+  sheep.$router.go('/pages/water/notice-list');
 }
 
 function onEditProfile() {
