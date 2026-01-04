@@ -32,10 +32,10 @@
       </view>
     </view>
 
-    <view class="service-card">
+      <view class="service-card">
       <view class="service-tabs ss-flex ss-col-center ss-row-between">
         <view class="service-tab is-active">服务充值</view>
-        <view class="service-tab" @tap="onPlaceholder">客户报修</view>
+        <view class="service-tab" @tap="onGoFaultReport">客户报修</view>
       </view>
       <view class="service-body">
         <view class="service-info">
@@ -123,6 +123,10 @@
 
   function onGoNotice() {
     sheep.$router.go('/pages/water/notice-list');
+  }
+
+  function onGoFaultReport() {
+    sheep.$router.go('/pages/water/fault-report');
   }
 
   function onOpenNotice() {

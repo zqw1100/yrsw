@@ -4199,3 +4199,43 @@ CREATE TABLE `member_water_recharge_package` (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装充值套餐';
+
+-- ----------------------------
+-- 故障报修
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_fault`;
+CREATE TABLE `member_water_fault` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `user_id` bigint NOT NULL COMMENT '用户编号',
+  `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
+  `apply_id` bigint NOT NULL COMMENT '报装申请编号',
+  `owner_name` varchar(64) NOT NULL DEFAULT '' COMMENT '户主姓名',
+  `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `area_name` varchar(255) NOT NULL DEFAULT '' COMMENT '地区名称',
+  `community_name` varchar(128) NOT NULL DEFAULT '' COMMENT '小区名称',
+  `building_name` varchar(128) NOT NULL DEFAULT '' COMMENT '楼栋名称',
+  `unit_name` varchar(128) NOT NULL DEFAULT '' COMMENT '单元名称',
+  `room_no` varchar(64) NOT NULL DEFAULT '' COMMENT '房间号',
+  `contact_mobile` varchar(32) NOT NULL DEFAULT '' COMMENT '联系电话',
+  `fault_code` varchar(64) NOT NULL DEFAULT '' COMMENT '故障原因',
+  `feedback` varchar(500) NOT NULL DEFAULT '' COMMENT '问题反馈',
+  `priority` tinyint NOT NULL DEFAULT 1 COMMENT '优先级（1低 2中 3高）',
+  `image_urls` varchar(1024) NOT NULL DEFAULT '' COMMENT '故障图片',
+  `process_status` tinyint NOT NULL DEFAULT 0 COMMENT '处理状态（0待处理 1处理中 2已完成）',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='故障报修';
+
+-- ----------------------------
+-- 故障报修字典
+-- ----------------------------
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (3009, '设备故障原因', 'device-fault-code', 0, '', '1', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3045, 1, '设备漏水', 'leak', 'device-fault-code', 0, 'warning', '', '', '1', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3046, 2, '水压异常', 'pressure', 'device-fault-code', 0, 'primary', '', '', '1', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3047, 3, '设备无响应', 'offline', 'device-fault-code', 0, 'info', '', '', '1', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0');
