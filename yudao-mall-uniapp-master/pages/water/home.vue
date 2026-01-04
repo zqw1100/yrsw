@@ -67,24 +67,28 @@
         </view>
         <view class="notice-more" @tap="onGoNotice">更多</view>
       </view>
-      <view class="notice-item" @tap="onGoNotice">
+      <view v-if="latestNotice" class="notice-item" @tap="onOpenNotice">
         <view class="notice-dot"></view>
         <view class="notice-content">
-          <view class="notice-text">烟台港仙山自来水入户调研开始啦</view>
-          <view class="notice-time">2025年09月10日</view>
+          <view class="notice-text">{{ latestNotice.title }}</view>
+          <view class="notice-time">{{ formatNoticeTime(latestNotice.createTime) }}</view>
         </view>
       </view>
+      <view v-else class="notice-empty">暂无公告</view>
       <view class="notice-footer">没有更多了</view>
     </view>
   </s-layout>
 </template>
 
 <script setup>
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import { onShow } from '@dcloudio/uni-app';
   import sheep from '@/sheep';
   import { fen2yuan } from '@/sheep/hooks/useGoods';
   import { formatDate } from '@/sheep/helper/utils';
+  import ArticleApi from '@/sheep/api/promotion/article';
+
+  const NOTICE_CATEGORY_ID = 4;
 
   const userInfo = computed(() => sheep.$store('user').userInfo);
   const userWallet = computed(() => sheep.$store('user').userWallet);
@@ -93,6 +97,7 @@
   const balanceUpdateTime = computed(() =>
     lastUpdateTime.value ? formatDate(lastUpdateTime.value) : ''
   );
+  const latestNotice = ref(null);
 
   const quickMenus = [
     { title: '用水历史', icon: 'calendar', action: onPlaceholder },
@@ -100,8 +105,9 @@
     { title: '在线缴费', icon: 'wallet', action: onPayRecharge },
   ];
 
-  onShow(() => {
+  onShow(async () => {
     sheep.$store('user').updateUserData();
+    await getLatestNotice();
   });
 
   function onPlaceholder() {
@@ -117,6 +123,33 @@
 
   function onGoNotice() {
     sheep.$router.go('/pages/water/notice-list');
+  }
+
+  function onOpenNotice() {
+    if (!latestNotice.value) {
+      return;
+    }
+    sheep.$router.go('/pages/public/richtext', {
+      id: latestNotice.value.id,
+      title: latestNotice.value.title,
+    });
+  }
+
+  function formatNoticeTime(time) {
+    return time ? sheep.$helper.timeFormat(time, 'yyyy-mm-dd') : '';
+  }
+
+  async function getLatestNotice() {
+    const { code, data } = await ArticleApi.getArticlePage({
+      pageNo: 1,
+      pageSize: 1,
+      categoryId: NOTICE_CATEGORY_ID,
+    });
+    if (code !== 0) {
+      latestNotice.value = null;
+      return;
+    }
+    latestNotice.value = data.list?.[0] || null;
   }
 </script>
 
@@ -318,6 +351,13 @@
     .notice-time {
       font-size: 22rpx;
       color: #9b9b9b;
+    }
+
+    .notice-empty {
+      font-size: 24rpx;
+      color: #9b9b9b;
+      text-align: center;
+      padding: 16rpx 0 24rpx;
     }
 
     .notice-footer {
