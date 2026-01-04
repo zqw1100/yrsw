@@ -106,6 +106,30 @@
 				"title": "消息通知",
 				"group": "水务"
 			}
+		},
+		{
+			"path": "pages/water/fault-report",
+			"style": {
+				"navigationBarTitleText": "故障报修"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "故障报修",
+				"group": "水务"
+			}
+		},
+		{
+			"path": "pages/water/fault-list",
+			"style": {
+				"navigationBarTitleText": "维修列表"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "维修列表",
+				"group": "水务"
+			}
 		}
 	],
 	"subPackages": [{
