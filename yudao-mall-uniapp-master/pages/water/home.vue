@@ -75,7 +75,7 @@
         </view>
       </view>
       <view v-else class="notice-empty">暂无公告</view>
-      <view class="notice-footer">没有更多了</view>
+
     </view>
   </s-layout>
 </template>
