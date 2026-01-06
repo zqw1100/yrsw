@@ -57,6 +57,13 @@ public class AppMemberUserController {
         return success(BeanUtils.toBean(list, AppMemberUserSimpleRespVO.class));
     }
 
+    @GetMapping("/group-list")
+    @Operation(summary = "获得分组用户列表")
+    public CommonResult<List<AppMemberUserSimpleRespVO>> getUserListByGroupId(@RequestParam("groupId") Long groupId) {
+        List<MemberUserDO> list = userService.getUserListByGroupId(groupId);
+        return success(BeanUtils.toBean(list, AppMemberUserSimpleRespVO.class));
+    }
+
     @PutMapping("/update")
     @Operation(summary = "修改基本信息")
     public CommonResult<Boolean> updateUser(@RequestBody @Valid AppMemberUserUpdateReqVO reqVO) {

@@ -40,6 +40,7 @@
 
     <view class="card" v-if="mode === 'start'">
       <view class="section-title">施工前信息</view>
+      <view class="required-tip">* 施工前图片必填</view>
       <s-uploader
         v-model:url="form.beforeImageUrls"
         fileMediatype="image"
@@ -70,15 +71,17 @@
 
     <view class="card" v-if="mode === 'finish'">
       <view class="section-title">施工完成信息</view>
+      <view class="required-tip">* 施工后图片必填</view>
       <view v-if="order.orderType === 0" class="info-row">
         <text class="label">设备号：</text>
-        <view class="value">
+        <view class="value device-card">
           <uni-easyinput
             v-model="form.deviceNo"
             :inputBorder="false"
             placeholder="请输入设备号"
             class="input"
           />
+          <view class="device-hint">完成报装工单时请绑定设备号</view>
         </view>
       </view>
       <s-uploader
@@ -155,6 +158,10 @@
   };
 
   const onStartSubmit = async () => {
+    if (!form.beforeImageUrls || form.beforeImageUrls.length === 0) {
+      uni.showToast({ title: '请上传施工前图片', icon: 'none' });
+      return;
+    }
     await WorkOrderApi.startWorkOrder({
       id: Number(orderId.value),
       beforeImageUrls: form.beforeImageUrls,
@@ -167,6 +174,10 @@
   };
 
   const onFinishSubmit = async () => {
+    if (!form.afterImageUrls || form.afterImageUrls.length === 0) {
+      uni.showToast({ title: '请上传施工后图片', icon: 'none' });
+      return;
+    }
     if (order.orderType === 0 && !form.deviceNo) {
       uni.showToast({ title: '请输入设备号', icon: 'none' });
       return;
@@ -251,6 +262,25 @@
       border-radius: 12rpx;
       padding: 8rpx 12rpx;
       width: 100%;
+    }
+
+    .required-tip {
+      font-size: 22rpx;
+      color: #ff4d4f;
+      margin-bottom: 12rpx;
+    }
+
+    .device-card {
+      background: #f0f6ff;
+      border-radius: 16rpx;
+      padding: 12rpx;
+      border: 1px dashed #3c7eff;
+    }
+
+    .device-hint {
+      font-size: 22rpx;
+      color: #3c7eff;
+      margin-top: 8rpx;
     }
 
     .footer {
