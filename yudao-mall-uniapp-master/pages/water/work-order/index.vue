@@ -116,6 +116,7 @@
 
   const statusOptions = reactive([]);
   const typeOptions = reactive([{ label: '全部类型', value: '' }]);
+  const hasLoadedOnce = ref(false);
 
   const statusLabel = (value) => {
     return statusOptions.find((item) => Number(item.value) === Number(value))?.label || '-';
@@ -211,9 +212,13 @@
   onLoad(async () => {
     await fetchDict();
     await resetList();
+    hasLoadedOnce.value = true;
   });
 
   onShow(async () => {
+    if (!hasLoadedOnce.value) {
+      return;
+    }
     if (statusOptions.length === 0) {
       await fetchDict();
     }
