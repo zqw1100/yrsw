@@ -23,6 +23,9 @@ public class AppMemberUserInfoRespVO {
     @Schema(description = "用户手机号", requiredMode = Schema.RequiredMode.REQUIRED, example = "15601691300")
     private String mobile;
 
+    @Schema(description = "用户分组编号", example = "1")
+    private Long groupId;
+
     @Schema(description = "用户性别", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Integer sex;
 

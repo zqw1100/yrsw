@@ -14,10 +14,12 @@ import cn.iocoder.yudao.module.member.convert.water.MemberWaterApplyConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseOwnerDO;
+import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterWorkOrderDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargePackageDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseOwnerMapper;
+import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterWorkOrderMapper;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargePackageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,10 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     private MemberWaterHouseOwnerMapper ownerMapper;
     @Resource
     private PayWalletRechargePackageService walletRechargePackageService;
+    @Resource
+    private MemberWaterWorkOrderService workOrderService;
+    @Resource
+    private MemberWaterWorkOrderMapper workOrderMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -117,6 +123,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .installStatus(1)
                 .build();
         waterHouseMapper.updateById(updateHouse);
+        workOrderService.createForApply(apply);
     }
 
     @Override
@@ -158,6 +165,8 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .collect(Collectors.toList());
         Map<Long, MemberWaterHouseOwnerDO> ownerMap = ownerMapper.selectListByApplyIds(applyIds).stream()
                 .collect(Collectors.toMap(MemberWaterHouseOwnerDO::getApplyId, Function.identity(), (first, second) -> first));
+        Map<Long, MemberWaterWorkOrderDO> workOrderMap = workOrderMapper.selectListByBizIds(0, applyIds).stream()
+                .collect(Collectors.toMap(MemberWaterWorkOrderDO::getBizId, Function.identity(), (first, second) -> first));
         List<MemberWaterApplyRespVO> list = pageResult.getList().stream()
                 .map(apply -> {
                     MemberWaterApplyRespVO respVO = BeanUtils.toBean(apply, MemberWaterApplyRespVO.class);
@@ -166,6 +175,13 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                         respVO.setOwnerName(owner.getOwnerName());
                         respVO.setOwnerIdCard(owner.getOwnerIdCard());
                         respVO.setContractImageUrls(owner.getContractImageUrls());
+                    }
+                    MemberWaterWorkOrderDO workOrder = workOrderMap.get(apply.getId());
+                    if (workOrder != null) {
+                        respVO.setBeforeImageUrls(workOrder.getBeforeImageUrls());
+                        respVO.setBeforeRemark(workOrder.getBeforeRemark());
+                        respVO.setAfterImageUrls(workOrder.getAfterImageUrls());
+                        respVO.setAfterRemark(workOrder.getAfterRemark());
                     }
                     return respVO;
                 }).collect(Collectors.toList());
