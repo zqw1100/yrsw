@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.member.controller.app.user;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.convert.user.MemberUserConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.level.MemberLevelDO;
@@ -15,6 +16,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
@@ -37,6 +40,13 @@ public class AppMemberUserController {
         MemberUserDO user = userService.getUser(getLoginUserId());
         MemberLevelDO level = levelService.getLevel(user.getLevelId());
         return success(MemberUserConvert.INSTANCE.convert(user, level));
+    }
+
+    @GetMapping("/group-list")
+    @Operation(summary = "获得分组用户列表")
+    public CommonResult<List<AppMemberUserSimpleRespVO>> getUserListByGroupId(@RequestParam("groupId") Long groupId) {
+        List<MemberUserDO> list = userService.getUserListByGroupId(groupId);
+        return success(BeanUtils.toBean(list, AppMemberUserSimpleRespVO.class));
     }
 
     @PutMapping("/update")
