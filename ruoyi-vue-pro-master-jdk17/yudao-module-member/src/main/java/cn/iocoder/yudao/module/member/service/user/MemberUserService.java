@@ -163,6 +163,14 @@ public interface MemberUserService {
     Long getUserCountByGroupId(Long groupId);
 
     /**
+     * 获得指定用户分组下的用户列表
+     *
+     * @param groupId 用户分组编号
+     * @return 用户列表
+     */
+    List<MemberUserDO> getUserListByGroupId(Long groupId);
+
+    /**
      * 获得指定用户等级下的用户数量
      *
      * @param levelId 用户等级编号
