@@ -39,7 +39,8 @@ public class AppMemberUserController {
     public CommonResult<AppMemberUserInfoRespVO> getUserInfo() {
         MemberUserDO user = userService.getUser(getLoginUserId());
         MemberLevelDO level = levelService.getLevel(user.getLevelId());
-        return success(MemberUserConvert.INSTANCE.convert(user, level));
+        AppMemberUserInfoRespVO convert = MemberUserConvert.INSTANCE.convert(user, level);
+        return success(convert);
     }
 
     @GetMapping("/group-list")

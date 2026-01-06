@@ -78,6 +78,7 @@ const displayName = computed(() => userInfo.value.nickname || '未登录');
 const displayAccount = computed(() => userInfo.value.mobile || '');
 
 const canManageWorkOrder = computed(() => {
+  console.log(userInfo.value)
   const groupId = userInfo.value?.groupId;
   return isLogin.value && (groupId === 1 || groupId === 2);
 });
