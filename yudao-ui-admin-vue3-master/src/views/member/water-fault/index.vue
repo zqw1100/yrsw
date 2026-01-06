@@ -22,7 +22,7 @@
           placeholder="请输入楼栋名称"
           clearable
           @keyup.enter="handleQuery"
-          class="!w-220px"
+          class="!w-200px"
         />
       </el-form-item>
       <el-form-item label="单元名称" prop="unitName">
@@ -40,16 +40,16 @@
           placeholder="请输入房间号"
           clearable
           @keyup.enter="handleQuery"
-          class="!w-180px"
+          class="!w-160px"
         />
       </el-form-item>
-      <el-form-item label="联系人" prop="contactName">
+      <el-form-item label="户主姓名" prop="ownerName">
         <el-input
-          v-model="queryParams.contactName"
-          placeholder="请输入联系人"
+          v-model="queryParams.ownerName"
+          placeholder="请输入户主姓名"
           clearable
           @keyup.enter="handleQuery"
-          class="!w-180px"
+          class="!w-160px"
         />
       </el-form-item>
       <el-form-item label="联系方式" prop="contactMobile">
@@ -61,14 +61,28 @@
           class="!w-200px"
         />
       </el-form-item>
-      <el-form-item label="申请状态" prop="applyStatus">
-        <el-select v-model="queryParams.applyStatus" placeholder="请选择" clearable class="!w-160px">
+      <el-form-item label="设备号" prop="deviceNo">
+        <el-input
+          v-model="queryParams.deviceNo"
+          placeholder="请输入设备号"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-200px"
+        />
+      </el-form-item>
+      <el-form-item label="故障类型" prop="faultCode">
+        <el-select v-model="queryParams.faultCode" placeholder="请选择" clearable class="!w-160px">
           <el-option
-            v-for="item in applyStatusOptions"
+            v-for="item in faultTypeOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="优先级" prop="priority">
+        <el-select v-model="queryParams.priority" placeholder="请选择" clearable class="!w-140px">
+          <el-option v-for="item in priorityOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="处理状态" prop="processStatus">
@@ -98,62 +112,33 @@
           <div>{{ row.communityName }} {{ row.buildingName }} {{ row.unitName }} {{ row.roomNo }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" align="center" prop="contactName" width="100px" />
-      <el-table-column label="联系方式" align="center" prop="contactMobile" width="130px" />
       <el-table-column label="户主姓名" align="center" prop="ownerName" width="100px" />
-      <el-table-column label="户主身份证" align="center" prop="ownerIdCard" width="170px" />
-      <el-table-column label="合同图片" min-width="200px">
+      <el-table-column label="联系方式" align="center" prop="contactMobile" width="130px" />
+      <el-table-column label="设备号" align="center" prop="deviceNo" width="140px" />
+      <el-table-column label="故障类型" align="center" width="140px">
+        <template #default="{ row }">
+          {{ getDictLabel(faultTypeOptions, row.faultCode) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="优先级" align="center" width="100px">
+        <template #default="{ row }">
+          {{ getDictLabel(priorityOptions, row.priority) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="故障图片" min-width="200px">
         <template #default="{ row }">
           <div class="flex flex-wrap gap-8px">
             <el-image
-              v-for="(url, index) in row.contractImageUrls || []"
+              v-for="(url, index) in row.imageUrls || []"
               :key="`${row.id}-${index}`"
               :src="url"
               class="h-40px w-40px cursor-pointer"
               fit="cover"
-              @click="imagePreview(row.contractImageUrls, index)"
+              @click="imagePreview(row.imageUrls, index)"
             />
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="施工前图片" min-width="200px">
-        <template #default="{ row }">
-          <div class="flex flex-wrap gap-8px">
-            <el-image
-              v-for="(url, index) in row.beforeImageUrls || []"
-              :key="`before-${row.id}-${index}`"
-              :src="url"
-              class="h-40px w-40px cursor-pointer"
-              fit="cover"
-              @click="imagePreview(row.beforeImageUrls, index)"
-            />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="施工前备注" min-width="160px" prop="beforeRemark" />
-      <el-table-column label="施工后图片" min-width="200px">
-        <template #default="{ row }">
-          <div class="flex flex-wrap gap-8px">
-            <el-image
-              v-for="(url, index) in row.afterImageUrls || []"
-              :key="`after-${row.id}-${index}`"
-              :src="url"
-              class="h-40px w-40px cursor-pointer"
-              fit="cover"
-              @click="imagePreview(row.afterImageUrls, index)"
-            />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="施工后备注" min-width="160px" prop="afterRemark" />
-      <el-table-column label="申请状态" align="center" width="110px">
-        <template #default="{ row }">
-          <el-tag :type="row.applyStatus === 1 ? 'success' : 'info'">
-            {{ row.applyStatus === 1 ? '已提交' : '待补充资料' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="设备号" align="center" prop="deviceNo" width="140px" />
       <el-table-column label="处理状态" align="center" width="150px">
         <template #default="{ row }">
           <el-select
@@ -169,6 +154,16 @@
               :value="item.value"
             />
           </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" min-width="180px">
+        <template #default="{ row }">
+          <el-input
+            v-model="row.remark"
+            size="small"
+            placeholder="填写备注"
+            @blur="() => handleUpdateRemark(row.id, row.remark)"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -188,12 +183,11 @@
   </ContentWrap>
 </template>
 
-<script setup lang="ts" name="MemberWaterApply">
+<script setup lang="ts" name="MemberWaterFault">
 import { dateFormatter } from '@/utils/formatTime'
-import { ElMessageBox } from 'element-plus'
-import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
+import { DICT_TYPE, getDictLabel, getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import { createImageViewer } from '@/components/ImageViewer'
-import * as WaterApplyApi from '@/api/member/water-apply'
+import * as WaterFaultApi from '@/api/member/water-fault'
 
 const message = useMessage()
 const loading = ref(true)
@@ -207,22 +201,26 @@ const queryParams = reactive({
   buildingName: undefined,
   unitName: undefined,
   roomNo: undefined,
-  contactName: undefined,
+  ownerName: undefined,
   contactMobile: undefined,
-  applyStatus: undefined,
+  deviceNo: undefined,
+  faultCode: undefined,
+  priority: undefined,
   processStatus: undefined
 })
 
-const applyStatusOptions = [
-  { label: '待补充资料', value: 0 },
-  { label: '已提交', value: 1 }
+const priorityOptions = [
+  { label: '低', value: 1 },
+  { label: '中', value: 2 },
+  { label: '高', value: 3 }
 ]
-const processStatusOptions = getIntDictOptions(DICT_TYPE.MEMBER_WATER_APPLY_STATUS)
+const processStatusOptions = getIntDictOptions(DICT_TYPE.MEMBER_WATER_FAULT_STATUS)
+const faultTypeOptions = getStrDictOptions(DICT_TYPE.DEVICE_FAULT_CODE)
 
 const getList = async () => {
   loading.value = true
   try {
-    const data = await WaterApplyApi.getWaterApplyPage(queryParams)
+    const data = await WaterFaultApi.getWaterFaultPage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -242,21 +240,18 @@ const resetQuery = () => {
 
 const handleUpdateStatus = async (id: number, processStatus: number) => {
   try {
-    let deviceNo: string | undefined
-    if (processStatus === 3) {
-      const { value } = await ElMessageBox.prompt('请输入设备号', '施工完成', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /\S+/,
-        inputErrorMessage: '设备号不能为空'
-      })
-      deviceNo = value
-    }
-    await WaterApplyApi.updateWaterApplyStatus({ id, processStatus, deviceNo })
+    await WaterFaultApi.updateWaterFaultStatus({ id, processStatus })
     message.success('状态更新成功')
   } catch {
     await getList()
   }
+}
+
+const handleUpdateRemark = async (id: number, remark: string) => {
+  if (!remark) {
+    return
+  }
+  await WaterFaultApi.updateWaterFaultStatus({ id, remark })
 }
 
 const imagePreview = (urls: string[], index: number) => {

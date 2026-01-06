@@ -12,6 +12,20 @@ const UserApi = {
       },
     });
   },
+  // 获得分组用户列表
+  getUserListByGroupId: (groupId) => {
+    return request({
+      url: '/member/user/group-list',
+      method: 'GET',
+      params: {
+        groupId,
+      },
+      custom: {
+        showLoading: false,
+        auth: true,
+      },
+    });
+  },
   // 修改基本信息
   updateUser: (data) => {
     return request({

@@ -295,6 +295,11 @@ public class MemberUserServiceImpl implements MemberUserService {
     }
 
     @Override
+    public List<MemberUserDO> getUserListByGroupId(Long groupId) {
+        return memberUserMapper.selectListByGroupId(groupId);
+    }
+
+    @Override
     public Long getUserCountByLevelId(Long levelId) {
         return memberUserMapper.selectCountByLevelId(levelId);
     }
