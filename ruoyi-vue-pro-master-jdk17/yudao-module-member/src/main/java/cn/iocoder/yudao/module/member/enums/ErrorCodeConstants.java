@@ -33,6 +33,7 @@ public interface ErrorCodeConstants {
     ErrorCode WATER_APPLY_NOT_ALLOW = new ErrorCode(1_004_005_005, "居民报装申请不属于当前用户");
     ErrorCode WATER_APPLY_DEVICE_NO_REQUIRED = new ErrorCode(1_004_005_006, "施工完成时必须填写设备号");
     ErrorCode WATER_FAULT_INIT_NOT_EXISTS = new ErrorCode(1_004_005_007, "暂无可报修的报装信息");
+    ErrorCode WATER_FAULT_NOT_EXISTS = new ErrorCode(1_004_005_008, "故障报修不存在");
 
     //========== 用户标签 1-004-006-000 ==========
     ErrorCode TAG_NOT_EXISTS = new ErrorCode(1_004_006_000, "用户标签不存在");

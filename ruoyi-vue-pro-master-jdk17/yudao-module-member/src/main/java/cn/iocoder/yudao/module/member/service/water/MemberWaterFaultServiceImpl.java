@@ -2,6 +2,9 @@ package cn.iocoder.yudao.module.member.service.water;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFaultPageReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFaultRespVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFaultStatusUpdateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFaultCreateReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFaultInitRespVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFaultPageReqVO;
@@ -19,6 +22,7 @@ import jakarta.annotation.Resource;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAULT_INIT_NOT_EXISTS;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAULT_NOT_EXISTS;
 
 @Service
 @Validated
@@ -79,6 +83,27 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
         PageResult<MemberWaterFaultDO> pageResult = faultMapper.selectPageByUserId(userId, pageReqVO);
         return new PageResult<>(BeanUtils.toBean(pageResult.getList(), AppWaterFaultRespVO.class),
                 pageResult.getTotal());
+    }
+
+    @Override
+    public PageResult<MemberWaterFaultRespVO> getFaultPage(MemberWaterFaultPageReqVO pageReqVO) {
+        PageResult<MemberWaterFaultDO> pageResult = faultMapper.selectPage(pageReqVO);
+        return new PageResult<>(BeanUtils.toBean(pageResult.getList(), MemberWaterFaultRespVO.class),
+                pageResult.getTotal());
+    }
+
+    @Override
+    public void updateFaultStatus(MemberWaterFaultStatusUpdateReqVO updateReqVO) {
+        MemberWaterFaultDO fault = faultMapper.selectById(updateReqVO.getId());
+        if (fault == null) {
+            throw exception(WATER_FAULT_NOT_EXISTS);
+        }
+        MemberWaterFaultDO updateObj = MemberWaterFaultDO.builder()
+                .id(updateReqVO.getId())
+                .processStatus(updateReqVO.getProcessStatus())
+                .remark(updateReqVO.getRemark())
+                .build();
+        faultMapper.updateById(updateObj);
     }
 
     private MemberWaterApplyDO getLatestApply(Long userId) {
