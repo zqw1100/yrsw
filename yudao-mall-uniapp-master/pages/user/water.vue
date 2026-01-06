@@ -77,11 +77,22 @@ const avatarUrl = computed(() =>
 const displayName = computed(() => userInfo.value.nickname || '未登录');
 const displayAccount = computed(() => userInfo.value.mobile || '');
 
-const quickMenus = [
-  { title: '居民报装', icon: 'compose', action: () => sheep.$router.go('/pages/user/water-apply') },
-  { title: '报装记录', icon: 'list', action: () => sheep.$router.go('/pages/user/water-record') },
-  { title: '用水历史', icon: 'clock', action: onPlaceholder },
-];
+const canManageWorkOrder = computed(() => {
+  const groupId = userInfo.value?.groupId;
+  return isLogin.value && (groupId === 1 || groupId === 2);
+});
+
+const quickMenus = computed(() => {
+  const menus = [
+    { title: '居民报装', icon: 'compose', action: () => sheep.$router.go('/pages/user/water-apply') },
+    { title: '报装记录', icon: 'list', action: () => sheep.$router.go('/pages/user/water-record') },
+    { title: '用水历史', icon: 'clock', action: onPlaceholder },
+  ];
+  if (canManageWorkOrder.value) {
+    menus.push({ title: '工单管理', icon: 'settings', action: () => sheep.$router.go('/pages/water/work-order/index') });
+  }
+  return menus;
+});
 
 onShow(() => {
   sheep.$store('user').updateUserData();

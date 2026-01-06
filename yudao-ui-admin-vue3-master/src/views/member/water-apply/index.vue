@@ -116,6 +116,36 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="施工前图片" min-width="200px">
+        <template #default="{ row }">
+          <div class="flex flex-wrap gap-8px">
+            <el-image
+              v-for="(url, index) in row.beforeImageUrls || []"
+              :key="`before-${row.id}-${index}`"
+              :src="url"
+              class="h-40px w-40px cursor-pointer"
+              fit="cover"
+              @click="imagePreview(row.beforeImageUrls, index)"
+            />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="施工前备注" min-width="160px" prop="beforeRemark" />
+      <el-table-column label="施工后图片" min-width="200px">
+        <template #default="{ row }">
+          <div class="flex flex-wrap gap-8px">
+            <el-image
+              v-for="(url, index) in row.afterImageUrls || []"
+              :key="`after-${row.id}-${index}`"
+              :src="url"
+              class="h-40px w-40px cursor-pointer"
+              fit="cover"
+              @click="imagePreview(row.afterImageUrls, index)"
+            />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="施工后备注" min-width="160px" prop="afterRemark" />
       <el-table-column label="申请状态" align="center" width="110px">
         <template #default="{ row }">
           <el-tag :type="row.applyStatus === 1 ? 'success' : 'info'">

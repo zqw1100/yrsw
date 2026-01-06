@@ -34,6 +34,8 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
     private MemberWaterApplyMapper applyMapper;
     @Resource
     private MemberWaterHouseOwnerMapper ownerMapper;
+    @Resource
+    private MemberWaterWorkOrderService workOrderService;
 
     @Override
     public AppWaterFaultInitRespVO getFaultInit(Long userId) {
@@ -75,6 +77,7 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
                 .remark("")
                 .build();
         faultMapper.insert(fault);
+        workOrderService.createForFault(fault);
         return fault.getId();
     }
 

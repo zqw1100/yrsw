@@ -1100,6 +1100,12 @@ INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `st
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3040, 1, '待处理', '0', 'member_water_fault_status', 0, 'warning', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3041, 2, '处理中', '1', 'member_water_fault_status', 0, 'primary', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3042, 3, '已完成', '2', 'member_water_fault_status', 0, 'success', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3050, 1, '待接受', '0', 'member_water_work_order_status', 0, 'warning', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3051, 2, '待施工', '1', 'member_water_work_order_status', 0, 'info', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3052, 3, '施工中', '2', 'member_water_work_order_status', 0, 'primary', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3053, 4, '已完成', '3', 'member_water_work_order_status', 0, 'success', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3054, 1, '报装', '0', 'member_water_work_order_type', 0, 'default', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3055, 2, '报修', '1', 'member_water_work_order_type', 0, 'default', '', '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
 COMMIT;
 
 -- ----------------------------
@@ -1238,6 +1244,8 @@ INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creat
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2007, 'AI MCP 客户端名字', 'ai_mcp_client_name', 0, '', '1', '2025-08-28 13:57:40', '1', '2025-08-28 13:57:40', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2008, '居民报装处理状态', 'member_water_apply_status', 0, '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2009, '故障报修处理状态', 'member_water_fault_status', 0, '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2010, '施工工单状态', 'member_water_work_order_status', 0, '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2011, '施工工单类型', 'member_water_work_order_type', 0, '', '1', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0', '1970-01-01 00:00:00');
 COMMIT;
 
 -- ----------------------------
@@ -4238,6 +4246,33 @@ CREATE TABLE `member_water_fault` (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='故障报修';
+
+-- ----------------------------
+-- 施工工单
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_work_order`;
+CREATE TABLE `member_water_work_order` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `order_type` tinyint NOT NULL COMMENT '工单类型（0 报装 1 报修）',
+  `biz_id` bigint NOT NULL COMMENT '业务编号',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '施工状态（0 待接受 1 待施工 2 施工中 3 已完成）',
+  `worker_id` bigint DEFAULT NULL COMMENT '施工人员编号',
+  `assign_time` datetime DEFAULT NULL COMMENT '指派时间',
+  `accept_time` datetime DEFAULT NULL COMMENT '接受时间',
+  `start_time` datetime DEFAULT NULL COMMENT '开始施工时间',
+  `finish_time` datetime DEFAULT NULL COMMENT '完成时间',
+  `before_image_urls` varchar(1000) DEFAULT NULL COMMENT '施工前图片',
+  `before_remark` varchar(255) DEFAULT NULL COMMENT '施工前备注',
+  `after_image_urls` varchar(1000) DEFAULT NULL COMMENT '施工后图片',
+  `after_remark` varchar(255) DEFAULT NULL COMMENT '施工后备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='施工工单';
 
 -- ----------------------------
 -- 故障报修字典

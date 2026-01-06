@@ -130,6 +130,42 @@
 				"title": "维修列表",
 				"group": "水务"
 			}
+		},
+		{
+			"path": "pages/water/work-order/index",
+			"style": {
+				"navigationBarTitleText": "工单管理"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "工单管理",
+				"group": "水务"
+			}
+		},
+		{
+			"path": "pages/water/work-order/assign",
+			"style": {
+				"navigationBarTitleText": "选择人员"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "选择人员",
+				"group": "水务"
+			}
+		},
+		{
+			"path": "pages/water/work-order/detail",
+			"style": {
+				"navigationBarTitleText": "工单详情"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "工单详情",
+				"group": "水务"
+			}
 		}
 	],
 	"subPackages": [{

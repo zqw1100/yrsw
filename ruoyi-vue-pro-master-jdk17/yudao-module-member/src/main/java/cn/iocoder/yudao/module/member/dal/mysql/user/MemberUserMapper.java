@@ -55,6 +55,12 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
         return selectCount(MemberUserDO::getGroupId, groupId);
     }
 
+    default List<MemberUserDO> selectListByGroupId(Long groupId) {
+        return selectList(new LambdaQueryWrapperX<MemberUserDO>()
+                .eq(MemberUserDO::getGroupId, groupId)
+                .orderByAsc(MemberUserDO::getId));
+    }
+
     default Long selectCountByLevelId(Long levelId) {
         return selectCount(MemberUserDO::getLevelId, levelId);
     }
