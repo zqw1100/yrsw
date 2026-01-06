@@ -16,6 +16,7 @@ const defaultUserInfo = {
   gender: 0, // 性别
   mobile: '', // 手机号
   point: 0, // 积分
+  groupId: null, // 用户分组编号
 };
 
 // 默认钱包信息

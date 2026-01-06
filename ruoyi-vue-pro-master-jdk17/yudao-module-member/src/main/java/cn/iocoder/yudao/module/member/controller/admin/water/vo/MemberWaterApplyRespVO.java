@@ -70,6 +70,18 @@ public class MemberWaterApplyRespVO {
     @Schema(description = "合同图片地址列表")
     private List<String> contractImageUrls;
 
+    @Schema(description = "施工前图片")
+    private List<String> beforeImageUrls;
+
+    @Schema(description = "施工前备注")
+    private String beforeRemark;
+
+    @Schema(description = "施工后图片")
+    private List<String> afterImageUrls;
+
+    @Schema(description = "施工后备注")
+    private String afterRemark;
+
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 }
