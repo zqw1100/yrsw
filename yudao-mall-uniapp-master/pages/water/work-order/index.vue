@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-  import { computed, reactive } from 'vue';
+  import { computed, reactive, ref } from 'vue';
   import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app';
   import { concat } from 'lodash-es';
   import sheep from '@/sheep';
