@@ -18,6 +18,7 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterWorkOrderMapper;
 import cn.iocoder.yudao.module.member.service.user.MemberUserService;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_APPLY_DEVICE_NO_REQUIRED;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_WORK_ORDER_NOT_EXISTS;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_WORK_ORDER_NOT_ALLOWED;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_WORK_ORDER_STATUS_NOT_ALLOWED;
@@ -167,6 +169,9 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
         if (order.getStatus() != null && order.getStatus() != 2) {
             throw exception(WATER_WORK_ORDER_STATUS_NOT_ALLOWED);
         }
+        if (order.getOrderType() != null && order.getOrderType() == 0 && StrUtil.isBlank(reqVO.getDeviceNo())) {
+            throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
+        }
         MemberWaterWorkOrderDO updateObj = MemberWaterWorkOrderDO.builder()
                 .id(order.getId())
                 .status(3)
@@ -175,6 +180,13 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                 .afterRemark(reqVO.getAfterRemark())
                 .build();
         workOrderMapper.updateById(updateObj);
+        if (order.getOrderType() != null && order.getOrderType() == 0) {
+            MemberWaterApplyDO applyUpdate = MemberWaterApplyDO.builder()
+                    .id(order.getBizId())
+                    .deviceNo(reqVO.getDeviceNo())
+                    .build();
+            applyMapper.updateById(applyUpdate);
+        }
         updateBizStatus(order, 3);
     }
 
@@ -311,6 +323,7 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                 respVO.setContactMobile(apply.getContactMobile());
                 respVO.setAddress(buildAddress(apply.getAreaName(), apply.getCommunityName(),
                         apply.getBuildingName(), apply.getUnitName(), apply.getRoomNo()));
+                respVO.setDeviceNo(apply.getDeviceNo());
             }
         } else if (order.getOrderType() != null && order.getOrderType() == 1) {
             MemberWaterFaultDO fault = faultMap.get(order.getBizId());

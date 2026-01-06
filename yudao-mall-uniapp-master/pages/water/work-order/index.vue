@@ -90,7 +90,7 @@
 
 <script setup>
   import { computed, reactive } from 'vue';
-  import { onLoad, onReachBottom } from '@dcloudio/uni-app';
+  import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app';
   import { concat } from 'lodash-es';
   import sheep from '@/sheep';
   import DictApi from '@/sheep/api/system/dict';
@@ -164,22 +164,22 @@
     state.loadStatus = state.pagination.list.length < state.pagination.total ? 'more' : 'noMore';
   };
 
-  const resetList = () => {
+  const resetList = async () => {
     state.pagination.list = [];
     state.pagination.pageNo = 1;
-    fetchList();
+    await fetchList();
   };
 
-  const onStatusChange = (value) => {
+  const onStatusChange = async (value) => {
     state.query.status = value;
-    resetList();
+    await resetList();
   };
 
-  const onTypeChange = (event) => {
+  const onTypeChange = async (event) => {
     const index = Number(event.detail.value);
     const selected = typeOptions[index];
     state.query.orderType = selected?.value === '' ? undefined : Number(selected.value);
-    resetList();
+    await resetList();
   };
 
   const onAssign = (item) => {
@@ -188,12 +188,12 @@
 
   const onRevoke = async (item) => {
     await WorkOrderApi.revokeWorkOrder({ id: item.id });
-    resetList();
+    await resetList();
   };
 
   const onAccept = async (item) => {
     await WorkOrderApi.acceptWorkOrder({ id: item.id });
-    resetList();
+    await resetList();
   };
 
   const onStart = (item) => {
@@ -210,7 +210,14 @@
 
   onLoad(async () => {
     await fetchDict();
-    resetList();
+    await resetList();
+  });
+
+  onShow(async () => {
+    if (statusOptions.length === 0) {
+      await fetchDict();
+    }
+    await resetList();
   });
 
   onReachBottom(() => {

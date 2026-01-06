@@ -31,6 +31,9 @@ public class AppWaterWorkOrderRespVO {
     @Schema(description = "地址")
     private String address;
 
+    @Schema(description = "设备号", example = "WM10001")
+    private String deviceNo;
+
     @Schema(description = "问题描述", example = "水表无法启动")
     private String feedback;
 

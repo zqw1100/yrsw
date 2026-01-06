@@ -70,6 +70,17 @@
 
     <view class="card" v-if="mode === 'finish'">
       <view class="section-title">施工完成信息</view>
+      <view v-if="order.orderType === 0" class="info-row">
+        <text class="label">设备号：</text>
+        <view class="value">
+          <uni-easyinput
+            v-model="form.deviceNo"
+            :inputBorder="false"
+            placeholder="请输入设备号"
+            class="input"
+          />
+        </view>
+      </view>
       <s-uploader
         v-model:url="form.afterImageUrls"
         fileMediatype="image"
@@ -110,6 +121,7 @@
     beforeRemark: '',
     afterImageUrls: [],
     afterRemark: '',
+    deviceNo: '',
   });
 
   const statusOptions = ref([]);
@@ -148,18 +160,27 @@
       beforeImageUrls: form.beforeImageUrls,
       beforeRemark: form.beforeRemark,
     });
-    await fetchOrder();
     uni.showToast({ title: '提交成功', icon: 'success' });
+    setTimeout(() => {
+      uni.navigateBack();
+    }, 600);
   };
 
   const onFinishSubmit = async () => {
+    if (order.orderType === 0 && !form.deviceNo) {
+      uni.showToast({ title: '请输入设备号', icon: 'none' });
+      return;
+    }
     await WorkOrderApi.finishWorkOrder({
       id: Number(orderId.value),
       afterImageUrls: form.afterImageUrls,
       afterRemark: form.afterRemark,
+      deviceNo: form.deviceNo,
     });
-    await fetchOrder();
     uni.showToast({ title: '提交成功', icon: 'success' });
+    setTimeout(() => {
+      uni.navigateBack();
+    }, 600);
   };
 
   onLoad(async (query) => {
@@ -167,6 +188,7 @@
     mode.value = query.mode || 'view';
     await fetchDict();
     await fetchOrder();
+    form.deviceNo = order.deviceNo || '';
   });
 </script>
 
@@ -222,6 +244,13 @@
       background: #f7f9fc;
       border-radius: 12rpx;
       padding: 12rpx;
+    }
+
+    .input {
+      background: #f7f9fc;
+      border-radius: 12rpx;
+      padding: 8rpx 12rpx;
+      width: 100%;
     }
 
     .footer {

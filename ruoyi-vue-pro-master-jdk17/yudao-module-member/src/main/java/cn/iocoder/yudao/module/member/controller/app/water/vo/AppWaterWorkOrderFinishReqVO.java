@@ -19,4 +19,7 @@ public class AppWaterWorkOrderFinishReqVO {
 
     @Schema(description = "施工后备注", example = "已完成施工")
     private String afterRemark;
+
+    @Schema(description = "设备号（报装工单使用）", example = "WM10001")
+    private String deviceNo;
 }
