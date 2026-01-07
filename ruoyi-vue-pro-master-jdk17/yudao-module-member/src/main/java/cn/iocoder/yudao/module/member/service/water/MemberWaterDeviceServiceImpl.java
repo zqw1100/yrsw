@@ -10,6 +10,8 @@ import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterExtendDictDTO;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -106,7 +108,16 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         if (StrUtil.isBlank(time)) {
             return null;
         }
-        return LocalDateTimeUtils.parse(time);
+        try {
+            return LocalDateTimeUtils.parse(time);
+        } catch (Exception ex) {
+            try {
+                return LocalDateTimeUtil.parse(time, DatePattern.NORM_DATETIME_PATTERN);
+            } catch (Exception fallbackEx) {
+                log.warn("[parseTime][time({}) parse failed]", time, fallbackEx);
+                return null;
+            }
+        }
     }
 
     private BigDecimal parseVoltage(String voltage) {
