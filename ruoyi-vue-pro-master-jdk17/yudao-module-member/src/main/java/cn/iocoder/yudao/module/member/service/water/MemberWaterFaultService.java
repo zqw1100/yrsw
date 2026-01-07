@@ -11,7 +11,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
 public interface MemberWaterFaultService {
 
-    AppWaterFaultInitRespVO getFaultInit(Long userId);
+    AppWaterFaultInitRespVO getFaultInit(Long userId, String deviceNo);
 
     Long createFault(Long userId, AppWaterFaultCreateReqVO createReqVO);
 

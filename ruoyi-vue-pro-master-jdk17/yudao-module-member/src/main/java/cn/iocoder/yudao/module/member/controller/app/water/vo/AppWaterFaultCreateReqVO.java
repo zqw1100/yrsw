@@ -11,6 +11,10 @@ import java.util.List;
 @Data
 public class AppWaterFaultCreateReqVO {
 
+    @Schema(description = "设备号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3706028009944")
+    @NotBlank(message = "设备号不能为空")
+    private String deviceNo;
+
     @Schema(description = "联系电话", requiredMode = Schema.RequiredMode.REQUIRED, example = "13800000000")
     @NotBlank(message = "联系电话不能为空")
     private String contactMobile;

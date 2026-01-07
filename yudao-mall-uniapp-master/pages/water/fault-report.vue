@@ -23,7 +23,7 @@
         </view>
         <view class="info-row">
           <text class="label">地址：</text>
-          <text class="value">{{ formatAddress(state.profile) || '-' }}</text>
+          <text class="value">{{ ownerAddress || '-' }}</text>
         </view>
       </view>
 
@@ -172,6 +172,7 @@
   const activeDeviceAddress = computed(() =>
     waterDeviceStore.formatAddress(activeDevice.value)
   );
+  const ownerAddress = computed(() => activeDeviceAddress.value || formatAddress(state.profile));
 
   const formatAddress = (profile) => {
     return [profile.areaName, profile.communityName, profile.buildingName, profile.unitName, profile.roomNo]
