@@ -99,8 +99,6 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (!userId.equals(apply.getUserId())) {
             throw exception(WATER_APPLY_NOT_ALLOW);
         }
-        PayWalletRechargePackageDO packageDO = walletRechargePackageService
-                .validWalletRechargePackage(completeReqVO.getRechargePackageId());
         MemberWaterHouseOwnerDO owner = ownerMapper.selectByApplyId(completeReqVO.getId());
         MemberWaterHouseOwnerDO updateOwner = MemberWaterHouseOwnerDO.builder()
                 .id(owner == null ? null : owner.getId())

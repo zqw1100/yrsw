@@ -28,7 +28,6 @@ public class AppWaterApplyCompleteReqVO {
     private List<String> contractImageUrls;
 
     @Schema(description = "首次充值套餐编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "请选择首次充值套餐")
     private Long rechargePackageId;
 
     @Schema(description = "备注", example = "备注信息")
