@@ -9,4 +9,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AppWaterFaultPageReqVO extends PageParam {
+
+    @Schema(description = "设备号", example = "3706028009944")
+    private String deviceNo;
 }

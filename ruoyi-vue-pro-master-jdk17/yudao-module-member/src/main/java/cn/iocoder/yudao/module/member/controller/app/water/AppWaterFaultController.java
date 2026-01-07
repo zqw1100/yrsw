@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,8 @@ public class AppWaterFaultController {
 
     @GetMapping("/init")
     @Operation(summary = "获得故障报修信息初始化")
-    public CommonResult<AppWaterFaultInitRespVO> getFaultInit() {
-        return success(faultService.getFaultInit(getLoginUserId()));
+    public CommonResult<AppWaterFaultInitRespVO> getFaultInit(@RequestParam("deviceNo") @NotBlank String deviceNo) {
+        return success(faultService.getFaultInit(getLoginUserId(), deviceNo));
     }
 
     @PostMapping("/create")

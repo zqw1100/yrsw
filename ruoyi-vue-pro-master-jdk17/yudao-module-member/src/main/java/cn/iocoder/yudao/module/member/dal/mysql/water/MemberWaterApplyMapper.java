@@ -32,6 +32,14 @@ public interface MemberWaterApplyMapper extends BaseMapperX<MemberWaterApplyDO> 
                 .last("LIMIT 1"));
     }
 
+    default MemberWaterApplyDO selectLatestByUserAndDeviceNo(Long userId, String deviceNo) {
+        return selectOne(new LambdaQueryWrapperX<MemberWaterApplyDO>()
+                .eq(MemberWaterApplyDO::getUserId, userId)
+                .eq(MemberWaterApplyDO::getDeviceNo, deviceNo)
+                .orderByDesc(MemberWaterApplyDO::getId)
+                .last("LIMIT 1"));
+    }
+
     default PageResult<MemberWaterApplyDO> selectPage(MemberWaterApplyPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterApplyDO>()
                 .eqIfPresent(MemberWaterApplyDO::getAreaId, reqVO.getAreaId())

@@ -38,8 +38,8 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
     private MemberWaterWorkOrderService workOrderService;
 
     @Override
-    public AppWaterFaultInitRespVO getFaultInit(Long userId) {
-        MemberWaterApplyDO apply = getLatestApply(userId);
+    public AppWaterFaultInitRespVO getFaultInit(Long userId, String deviceNo) {
+        MemberWaterApplyDO apply = getLatestApply(userId, deviceNo);
         MemberWaterHouseOwnerDO owner = ownerMapper.selectByApplyId(apply.getId());
         AppWaterFaultInitRespVO respVO = new AppWaterFaultInitRespVO();
         respVO.setOwnerName(owner == null ? "" : owner.getOwnerName());
@@ -55,14 +55,14 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
 
     @Override
     public Long createFault(Long userId, AppWaterFaultCreateReqVO createReqVO) {
-        MemberWaterApplyDO apply = getLatestApply(userId);
+        MemberWaterApplyDO apply = getLatestApply(userId, createReqVO.getDeviceNo());
         MemberWaterHouseOwnerDO owner = ownerMapper.selectByApplyId(apply.getId());
         MemberWaterFaultDO fault = MemberWaterFaultDO.builder()
                 .userId(userId)
                 .waterHouseId(apply.getWaterHouseId())
                 .applyId(apply.getId())
                 .ownerName(owner == null ? "" : owner.getOwnerName())
-                .deviceNo(apply.getDeviceNo())
+                .deviceNo(createReqVO.getDeviceNo())
                 .areaName(apply.getAreaName())
                 .communityName(apply.getCommunityName())
                 .buildingName(apply.getBuildingName())
@@ -109,8 +109,8 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
         faultMapper.updateById(updateObj);
     }
 
-    private MemberWaterApplyDO getLatestApply(Long userId) {
-        MemberWaterApplyDO apply = applyMapper.selectLatestByUserWithDeviceNo(userId);
+    private MemberWaterApplyDO getLatestApply(Long userId, String deviceNo) {
+        MemberWaterApplyDO apply = applyMapper.selectLatestByUserAndDeviceNo(userId, deviceNo);
         if (apply == null) {
             throw exception(WATER_FAULT_INIT_NOT_EXISTS);
         }

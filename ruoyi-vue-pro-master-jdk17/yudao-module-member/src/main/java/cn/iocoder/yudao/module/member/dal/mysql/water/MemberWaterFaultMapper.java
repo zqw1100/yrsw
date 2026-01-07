@@ -14,6 +14,7 @@ public interface MemberWaterFaultMapper extends BaseMapperX<MemberWaterFaultDO> 
     default PageResult<MemberWaterFaultDO> selectPageByUserId(Long userId, AppWaterFaultPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterFaultDO>()
                 .eq(MemberWaterFaultDO::getUserId, userId)
+                .eqIfPresent(MemberWaterFaultDO::getDeviceNo, reqVO.getDeviceNo())
                 .orderByDesc(MemberWaterFaultDO::getId));
     }
 
