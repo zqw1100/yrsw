@@ -160,7 +160,7 @@
             v-model="row.processStatus"
             size="small"
             class="!w-130px"
-            @change="(value) => handleUpdateStatus(row.id, value)"
+            @change="(value) => handleUpdateStatus(row, value)"
           >
             <el-option
               v-for="item in processStatusOptions"
@@ -240,7 +240,7 @@ const resetQuery = () => {
   handleQuery()
 }
 
-const handleUpdateStatus = async (id: number, processStatus: number) => {
+const handleUpdateStatus = async (row: any, processStatus: number) => {
   try {
     let deviceNo: string | undefined
     if (processStatus === 3) {
@@ -251,8 +251,20 @@ const handleUpdateStatus = async (id: number, processStatus: number) => {
         inputErrorMessage: '设备号不能为空'
       })
       deviceNo = value
+      if (deviceNo && deviceNo !== row.deviceNo) {
+        const data = await WaterApplyApi.getWaterApplyPage({
+          pageNo: 1,
+          pageSize: 1,
+          deviceNo
+        })
+        if (data?.list?.some((item) => item.id !== row.id)) {
+          message.error('设备号已被使用，无法重复绑定')
+          await getList()
+          return
+        }
+      }
     }
-    await WaterApplyApi.updateWaterApplyStatus({ id, processStatus, deviceNo })
+    await WaterApplyApi.updateWaterApplyStatus({ id: row.id, processStatus, deviceNo })
     message.success('状态更新成功')
   } catch {
     await getList()
