@@ -55,4 +55,10 @@ public interface MemberWaterApplyMapper extends BaseMapperX<MemberWaterApplyDO> 
                 .betweenIfPresent(MemberWaterApplyDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(MemberWaterApplyDO::getId));
     }
+
+    default boolean existsByDeviceNo(String deviceNo, Long excludeApplyId) {
+        return selectCount(new LambdaQueryWrapperX<MemberWaterApplyDO>()
+                .eq(MemberWaterApplyDO::getDeviceNo, deviceNo)
+                .neIfPresent(MemberWaterApplyDO::getId, excludeApplyId)) > 0;
+    }
 }

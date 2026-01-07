@@ -165,6 +165,14 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         applyMapper.updateById(updateObj);
     }
 
+    @Override
+    public boolean isDeviceNoUsed(String deviceNo, Long excludeApplyId) {
+        if (StrUtil.isBlank(deviceNo)) {
+            return false;
+        }
+        return applyMapper.existsByDeviceNo(deviceNo, excludeApplyId);
+    }
+
     private PageResult<MemberWaterApplyRespVO> buildApplyPage(PageResult<MemberWaterApplyDO> pageResult) {
         if (pageResult.getTotal() == 0) {
             return new PageResult<>(Collections.emptyList(), 0L);

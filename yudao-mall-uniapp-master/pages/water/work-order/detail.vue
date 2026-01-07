@@ -184,12 +184,11 @@
       return;
     }
     if (order.orderType === 0 && form.deviceNo && form.deviceNo !== order.deviceNo) {
-      const { code, data } = await WaterApplyApi.getApplyPage({
-        pageNo: 1,
-        pageSize: 1,
+      const { code, data } = await WaterApplyApi.checkDeviceNo({
         deviceNo: form.deviceNo,
+        excludeApplyId: order.bizId || null,
       });
-      if (code === 0 && data?.list?.length) {
+      if (code === 0 && data) {
         uni.showToast({ title: '设备号已被使用，无法重复绑定', icon: 'none' });
         return;
       }

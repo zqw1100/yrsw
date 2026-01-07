@@ -51,4 +51,13 @@ public interface MemberWaterApplyService {
      * @param updateReqVO 更新信息
      */
     void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO);
+
+    /**
+     * 校验设备号是否已绑定
+     *
+     * @param deviceNo 设备号
+     * @param excludeApplyId 排除的申请编号
+     * @return 是否已绑定
+     */
+    boolean isDeviceNoUsed(String deviceNo, Long excludeApplyId);
 }
