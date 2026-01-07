@@ -108,9 +108,6 @@ public class PayWalletServiceImpl implements PayWalletService {
                     userId, userType, oldDeviceNo, newDeviceNo);
             return;
         }
-        walletMapper.updateDeviceNoById(wallet.getId(), newDeviceNo);
-        walletRechargeMapper.updateDeviceNoByWalletId(wallet.getId(), newDeviceNo);
-        walletTransactionMapper.updateDeviceNoByWalletId(wallet.getId(), newDeviceNo);
     }
 
     @Override
