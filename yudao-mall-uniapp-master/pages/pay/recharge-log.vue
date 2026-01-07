@@ -53,13 +53,14 @@
 </template>
 
 <script setup>
-  import { reactive } from 'vue';
+  import { reactive, watch } from 'vue';
   import { onLoad, onReachBottom } from '@dcloudio/uni-app';
   import { concat } from 'lodash-es';
   import PayWalletApi from '@/sheep/api/pay/wallet';
   import sheep from '@/sheep';
   import { fen2yuan } from '../../sheep/hooks/useGoods';
 
+  const waterDeviceStore = sheep.$store('waterDevice');
   const state = reactive({
     pagination: {
       list: [],
@@ -70,13 +71,29 @@
     loadStatus: '',
   });
 
-  async function getLogList(page = 1, list_rows = 5) {
+  function resetPagination() {
+    state.pagination.list = [];
+    state.pagination.total = 0;
+    state.pagination.pageNo = 1;
+    state.loadStatus = '';
+  }
+
+  async function getLogList(page = state.pagination.pageNo, list_rows = state.pagination.pageSize) {
+    if (!waterDeviceStore.activeDeviceNo) {
+      resetPagination();
+      state.loadStatus = 'noMore';
+      return;
+    }
     const { code, data } = await PayWalletApi.getWalletRechargePage({
       pageNo: page,
       pageSize: list_rows,
+      deviceNo: waterDeviceStore.activeDeviceNo,
     });
     if (code !== 0) {
       return;
+    }
+    if (page === 1) {
+      state.pagination.list = [];
     }
     state.pagination.list = concat(state.pagination.list, data.list);
     state.pagination.total = data.total;
@@ -89,16 +106,29 @@
       return;
     }
     state.pagination.pageNo++;
-    getLogList();
+    getLogList(state.pagination.pageNo, state.pagination.pageSize);
   }
 
-  onLoad(() => {
-    getLogList();
+  onLoad(async () => {
+    await waterDeviceStore.fetchDevices();
+    resetPagination();
+    getLogList(1, state.pagination.pageSize);
   });
 
   onReachBottom(() => {
     loadMore();
   });
+
+  watch(
+    () => waterDeviceStore.activeDeviceNo,
+    (deviceNo, oldDeviceNo) => {
+      if (deviceNo === oldDeviceNo) {
+        return;
+      }
+      resetPagination();
+      getLogList(1, state.pagination.pageSize);
+    }
+  );
 </script>
 
 <style lang="scss" scoped>
