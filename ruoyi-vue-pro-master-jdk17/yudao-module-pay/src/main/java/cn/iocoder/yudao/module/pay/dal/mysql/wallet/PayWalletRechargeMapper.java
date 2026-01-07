@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargeDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargePackageDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -26,6 +27,12 @@ public interface PayWalletRechargeMapper extends BaseMapperX<PayWalletRechargeDO
                 .eq(PayWalletRechargeDO::getWalletId, walletId)
                 .eq(PayWalletRechargeDO::getPayStatus, payStatus)
                 .orderByDesc(PayWalletRechargeDO::getId));
+    }
+
+    default int updateDeviceNoByWalletId(Long walletId, String deviceNo) {
+        return update(null, new LambdaUpdateWrapper<PayWalletRechargeDO>()
+                .eq(PayWalletRechargeDO::getWalletId, walletId)
+                .set(PayWalletRechargeDO::getDeviceNo, deviceNo));
     }
 
 }

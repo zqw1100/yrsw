@@ -10,6 +10,7 @@ import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -60,8 +61,13 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
                 PayWalletTransactionDO::getBizType, bizType);
     }
 
-}
+    default int updateDeviceNoByWalletId(Long walletId, String deviceNo) {
+        return update(null, new LambdaUpdateWrapper<PayWalletTransactionDO>()
+                .set(PayWalletTransactionDO::getDeviceNo, deviceNo)
+                .eq(PayWalletTransactionDO::getWalletId, walletId));
+    }
 
+}
 
 
 

@@ -4,6 +4,7 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
@@ -79,6 +80,9 @@ public class PayWalletRechargeServiceImpl implements PayWalletRechargeService {
     @Transactional(rollbackFor = Exception.class)
     public PayWalletRechargeDO createWalletRecharge(Long userId, Integer userType, String userIp,
                                                     AppPayWalletRechargeCreateReqVO reqVO) {
+        if (StrUtil.isBlank(reqVO.getDeviceNo())) {
+            throw exception(WALLET_RECHARGE_DEVICE_NO_REQUIRED);
+        }
         // 1.1 计算充值金额
         int payPrice;
         int bonusPrice = 0;

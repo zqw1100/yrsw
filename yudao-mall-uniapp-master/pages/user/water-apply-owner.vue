@@ -137,6 +137,8 @@
     }
   };
 
+  const TEMP_DEVICE_NO_PREFIX = 'TMP-APPLY-';
+
   const onSubmit = async () => {
     const valid = await formRef.value?.validate().catch(() => false);
     if (!valid) return;
@@ -162,9 +164,11 @@
       uni.showToast({ title: '充值套餐不存在', icon: 'none' });
       return;
     }
+    const tempDeviceNo = `${TEMP_DEVICE_NO_PREFIX}${applyId}`;
     const { code: rechargeCode, data: rechargeData } = await PayWalletApi.createWalletRecharge({
       packageId: selectedPackage.id,
       payPrice: selectedPackage.payPrice,
+      deviceNo: tempDeviceNo,
     });
     if (rechargeCode !== 0) return;
     uni.removeStorageSync('waterApplyDraft');

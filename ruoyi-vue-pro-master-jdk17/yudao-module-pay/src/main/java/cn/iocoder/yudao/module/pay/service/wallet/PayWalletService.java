@@ -28,6 +28,16 @@ public interface PayWalletService {
     }
 
     /**
+     * 更新钱包设备号（例如临时设备号切换为真实设备号）
+     *
+     * @param userId 用户编号
+     * @param userType 用户类型
+     * @param oldDeviceNo 旧设备号
+     * @param newDeviceNo 新设备号
+     */
+    void updateWalletDeviceNo(Long userId, Integer userType, String oldDeviceNo, String newDeviceNo);
+
+    /**
      * 获取钱包信息
      *
      * @param walletId 钱包 id

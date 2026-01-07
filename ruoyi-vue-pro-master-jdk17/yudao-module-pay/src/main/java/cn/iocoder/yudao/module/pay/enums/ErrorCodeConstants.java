@@ -63,6 +63,7 @@ public interface ErrorCodeConstants {
     ErrorCode WALLET_RECHARGE_PACKAGE_NOT_FOUND = new ErrorCode(1_007_008_011, "钱包充值套餐不存在");
     ErrorCode WALLET_RECHARGE_PACKAGE_IS_DISABLE = new ErrorCode(1_007_008_012, "钱包充值套餐已禁用");
     ErrorCode WALLET_RECHARGE_PACKAGE_NAME_EXISTS = new ErrorCode(1_007_008_013, "钱包充值套餐名称已存在");
+    ErrorCode WALLET_RECHARGE_DEVICE_NO_REQUIRED = new ErrorCode(1_007_008_014, "设备号不能为空");
 
     // ========== 转账模块 1-007-009-000 ==========
     ErrorCode PAY_TRANSFER_NOT_FOUND = new ErrorCode(1_007_009_001, "转账单不存在");

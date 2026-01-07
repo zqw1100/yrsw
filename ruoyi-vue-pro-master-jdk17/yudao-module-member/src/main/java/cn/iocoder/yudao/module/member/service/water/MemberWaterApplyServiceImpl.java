@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.member.service.water;
 
 import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
@@ -21,6 +22,7 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseOwnerMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterWorkOrderMapper;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargePackageService;
+import cn.iocoder.yudao.module.pay.service.wallet.PayWalletService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +45,8 @@ import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
 @Validated
 public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
 
+    private static final String TEMP_DEVICE_NO_PREFIX = "TMP-APPLY-";
+
     @Resource
     private MemberWaterApplyMapper applyMapper;
     @Resource
@@ -51,6 +55,8 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     private MemberWaterHouseOwnerMapper ownerMapper;
     @Resource
     private PayWalletRechargePackageService walletRechargePackageService;
+    @Resource
+    private PayWalletService payWalletService;
     @Resource
     private MemberWaterWorkOrderService workOrderService;
     @Resource
@@ -147,6 +153,11 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (updateReqVO.getProcessStatus() != null && updateReqVO.getProcessStatus() == 3
                 && StrUtil.isBlank(updateReqVO.getDeviceNo())) {
             throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
+        }
+        if (StrUtil.isBlank(apply.getDeviceNo()) && StrUtil.isNotBlank(updateReqVO.getDeviceNo())) {
+            String tempDeviceNo = TEMP_DEVICE_NO_PREFIX + apply.getId();
+            payWalletService.updateWalletDeviceNo(apply.getUserId(), UserTypeEnum.MEMBER.getValue(),
+                    tempDeviceNo, updateReqVO.getDeviceNo());
         }
         MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
                 .id(updateReqVO.getId())
