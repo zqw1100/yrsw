@@ -88,7 +88,6 @@
 <script setup>
   import { onLoad } from '@dcloudio/uni-app';
   import { reactive, ref } from 'vue';
-  import { WxaSubscribeTemplate } from '@/sheep/helper/const';
   import sheep from '@/sheep';
   import PayWalletApi from '@/sheep/api/pay/wallet';
   import WaterApplyApi from '@/sheep/api/water/apply';
@@ -162,21 +161,8 @@
       uni.showToast({ title: '充值套餐不存在', icon: 'none' });
       return;
     }
-    const { code: rechargeCode, data: rechargeData } = await PayWalletApi.createWalletRecharge({
-      packageId: selectedPackage.id,
-      payPrice: selectedPackage.payPrice,
-    });
-    if (rechargeCode !== 0) return;
     uni.removeStorageSync('waterApplyDraft');
-    // #ifdef MP
-    sheep.$platform
-      .useProvider('wechat')
-      .subscribeMessage(WxaSubscribeTemplate.PAY_WALLET_RECHARGER_SUCCESS);
-    // #endif
-    sheep.$router.go('/pages/pay/index', {
-      id: rechargeData.payOrderId,
-      orderType: 'recharge',
-    });
+    sheep.$router.back();
   };
 
   onLoad((options) => {
