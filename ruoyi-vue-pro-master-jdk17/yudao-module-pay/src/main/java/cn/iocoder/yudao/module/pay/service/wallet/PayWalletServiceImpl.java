@@ -18,6 +18,7 @@ import cn.iocoder.yudao.module.pay.service.wallet.bo.WalletTransactionCreateReqB
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,16 +62,19 @@ public class PayWalletServiceImpl implements PayWalletService {
     @Override
     @SneakyThrows
     public PayWalletDO getOrCreateWallet(Long userId, Integer userType, String deviceNo) {
-        deviceNo = StrUtil.blankToNull(deviceNo);
+        if(StringUtils.isBlank(deviceNo)){
+            deviceNo = null;
+        }
         PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
         if (wallet == null) {
             // 使用双重检查锁，保证钱包创建并发问题
             // https://gitee.com/zhijiantianya/ruoyi-vue-pro/pulls/1475/files
+            String finalDeviceNo = deviceNo;
             wallet = lockRedisDAO.lock(userId, UPDATE_TIMEOUT_MILLIS, () -> {
-                PayWalletDO newWallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
+                PayWalletDO newWallet = walletMapper.selectByUserIdAndType(userId, userType, finalDeviceNo);
                 if (newWallet == null) {
                     newWallet = new PayWalletDO().setUserId(userId).setUserType(userType)
-                            .setDeviceNo(deviceNo)
+                            .setDeviceNo(finalDeviceNo)
                             .setBalance(0).setTotalExpense(0).setTotalRecharge(0);
                     newWallet.setCreateTime(LocalDateTime.now());
                     walletMapper.insert(newWallet);
