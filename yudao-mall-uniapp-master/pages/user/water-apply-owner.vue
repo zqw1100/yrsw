@@ -109,7 +109,7 @@
     });
     if (code !== 0) return;
     uni.removeStorageSync('waterApplyDraft');
-    sheep.$router.back();
+    sheep.$router.go('/pages/user/water');
   };
 
   onLoad((options) => {
