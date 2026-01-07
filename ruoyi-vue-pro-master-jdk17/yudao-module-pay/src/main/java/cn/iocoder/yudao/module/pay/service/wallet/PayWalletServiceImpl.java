@@ -10,6 +10,8 @@ import cn.iocoder.yudao.module.pay.dal.dataobject.refund.PayRefundDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
+import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletRechargeMapper;
+import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletTransactionMapper;
 import cn.iocoder.yudao.module.pay.dal.redis.wallet.PayWalletLockRedisDAO;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum;
 import cn.iocoder.yudao.module.pay.service.order.PayOrderService;
@@ -47,6 +49,10 @@ public class PayWalletServiceImpl implements PayWalletService {
     private PayWalletMapper walletMapper;
     @Resource
     private PayWalletLockRedisDAO lockRedisDAO;
+    @Resource
+    private PayWalletRechargeMapper walletRechargeMapper;
+    @Resource
+    private PayWalletTransactionMapper walletTransactionMapper;
 
     @Resource
     @Lazy // 延迟加载，避免循环依赖
@@ -79,6 +85,28 @@ public class PayWalletServiceImpl implements PayWalletService {
             });
         }
         return wallet;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateWalletDeviceNo(Long userId, Integer userType, String oldDeviceNo, String newDeviceNo) {
+        if (StrUtil.isBlank(oldDeviceNo) || StrUtil.isBlank(newDeviceNo)
+                || StrUtil.equals(oldDeviceNo, newDeviceNo)) {
+            return;
+        }
+        PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType, oldDeviceNo);
+        if (wallet == null) {
+            return;
+        }
+        PayWalletDO existingWallet = walletMapper.selectByUserIdAndType(userId, userType, newDeviceNo);
+        if (existingWallet != null) {
+            log.warn("[updateWalletDeviceNo][用户钱包已存在，无法迁移设备号 userId({}) userType({}) oldDeviceNo({}) newDeviceNo({})]",
+                    userId, userType, oldDeviceNo, newDeviceNo);
+            return;
+        }
+        walletMapper.updateDeviceNoById(wallet.getId(), newDeviceNo);
+        walletRechargeMapper.updateDeviceNoByWalletId(wallet.getId(), newDeviceNo);
+        walletTransactionMapper.updateDeviceNoByWalletId(wallet.getId(), newDeviceNo);
     }
 
     @Override

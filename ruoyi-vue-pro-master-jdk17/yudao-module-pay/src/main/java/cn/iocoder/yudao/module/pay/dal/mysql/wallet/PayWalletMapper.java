@@ -77,6 +77,12 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
         return update(null, lambdaUpdateWrapper);
     }
 
+    default int updateDeviceNoById(Long id, String deviceNo) {
+        return update(null, new LambdaUpdateWrapper<PayWalletDO>()
+                .set(PayWalletDO::getDeviceNo, deviceNo)
+                .eq(PayWalletDO::getId, id));
+    }
+
     /**
      * 增加余额的时候，更新钱包
      *
@@ -137,5 +143,4 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
     }
 
 }
-
 
