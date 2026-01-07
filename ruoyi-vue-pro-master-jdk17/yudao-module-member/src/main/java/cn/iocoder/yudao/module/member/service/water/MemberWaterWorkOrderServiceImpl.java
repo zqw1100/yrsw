@@ -54,6 +54,8 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
     private MemberWaterFaultMapper faultMapper;
     @Resource
     private MemberUserService memberUserService;
+    @Resource
+    private MemberWaterDeviceService deviceService;
 
     @Override
     public PageResult<AppWaterWorkOrderRespVO> getWorkOrderPage(Long userId, AppWaterWorkOrderPageReqVO pageReqVO) {
@@ -188,6 +190,7 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                     .deviceNo(reqVO.getDeviceNo())
                     .build();
             applyMapper.updateById(applyUpdate);
+            deviceService.registerOrUpdateDevice(reqVO.getDeviceNo());
         }
         updateBizStatus(order, 3);
     }
