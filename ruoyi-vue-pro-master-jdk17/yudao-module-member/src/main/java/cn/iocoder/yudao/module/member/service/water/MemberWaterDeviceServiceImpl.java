@@ -46,7 +46,12 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             return;
         }
         MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(deviceNo);
-        MemberWaterMeterExtendDictDTO info = meterClient.readDeviceInfo(deviceNo);
+        MemberWaterMeterExtendDictDTO info = null;
+        try {
+            info = meterClient.readDeviceInfo(deviceNo);
+        } catch (Exception ex) {
+            log.warn("[registerOrUpdateDevice][deviceNo({}) read info failed]", deviceNo, ex);
+        }
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(deviceNo, info, now);
         if (device == null) {
@@ -72,7 +77,10 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
                 .lastSyncTime(now);
         if (info == null) {
             log.warn("[buildDevice][deviceNo({}) info is null]", deviceNo);
-            return builder.build();
+            return builder
+                    .deviceAddress("")
+                    .deviceUserName("")
+                    .build();
         }
         return builder
                 .deviceAddress(StrUtil.nullToEmpty(info.getDeviceAddress()))

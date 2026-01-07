@@ -35,7 +35,7 @@ public class MemberWaterMeterClient {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + token);
         String responseBody = HttpUtils.get(url, headers);
-        MemberWaterMeterReadInfoRespDTO respDTO = JsonUtils.parseObject(responseBody, MemberWaterMeterReadInfoRespDTO.class);
+        MemberWaterMeterReadInfoRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterReadInfoRespDTO.class);
         if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0 || respDTO.getData() == null) {
             log.warn("[readDeviceInfo][deviceCode({}) response({})]", deviceCode, responseBody);
             return null;
@@ -61,7 +61,7 @@ public class MemberWaterMeterClient {
         headers.put("Content-Type", "application/x-www-form-urlencoded");
         headers.put("Authorization", properties.getTokenAuthorization());
         String responseBody = HttpUtils.post(url, headers, "");
-        MemberWaterMeterTokenRespDTO respDTO = JsonUtils.parseObject(responseBody, MemberWaterMeterTokenRespDTO.class);
+        MemberWaterMeterTokenRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterTokenRespDTO.class);
         if (respDTO == null || StrUtil.isBlank(respDTO.getAccessToken())) {
             log.warn("[refreshAccessToken][response({})]", responseBody);
             return null;
@@ -70,6 +70,15 @@ public class MemberWaterMeterClient {
         int expiresIn = respDTO.getExpiresIn() == null ? 0 : respDTO.getExpiresIn();
         tokenExpireTime = LocalDateTime.now().plusSeconds(Math.max(expiresIn - 60, 0));
         return accessToken;
+    }
+
+    private <T> T parseSafely(String responseBody, Class<T> clazz) {
+        try {
+            return JsonUtils.parseObject(responseBody, clazz);
+        } catch (Exception ex) {
+            log.warn("[parseSafely][clazz({}) response({}) parse failed]", clazz.getSimpleName(), responseBody, ex);
+            return null;
+        }
     }
 
     @Data
