@@ -38,6 +38,11 @@ public class PayWalletDO extends BaseDO {
     private Integer userType;
 
     /**
+     * 设备号
+     */
+    private String deviceNo;
+
+    /**
      * 余额，单位分
      */
     private Integer balance;

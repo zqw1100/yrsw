@@ -52,9 +52,10 @@ public class AppPayWalletTransactionController {
     @Operation(summary = "获得钱包流水统计")
     @Parameter(name = "times", description = "时间段", required = true)
     public CommonResult<AppPayWalletTransactionSummaryRespVO> getWalletTransactionSummary(
-            @RequestParam("createTime") @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND) LocalDateTime[] createTime) {
+            @RequestParam("createTime") @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND) LocalDateTime[] createTime,
+            @RequestParam(value = "deviceNo", required = false) String deviceNo) {
         AppPayWalletTransactionSummaryRespVO summary = payWalletTransactionService.getWalletTransactionSummary(
-                getLoginUserId(), UserTypeEnum.MEMBER.getValue(), createTime);
+                getLoginUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo, createTime);
         return success(summary);
     }
 

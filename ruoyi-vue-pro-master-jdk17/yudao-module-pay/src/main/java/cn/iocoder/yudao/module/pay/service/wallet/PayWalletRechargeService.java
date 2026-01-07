@@ -33,7 +33,7 @@ public interface PayWalletRechargeService {
      * @param payStatus 是否支付
      * @return 钱包充值记录分页
      */
-    PageResult<PayWalletRechargeDO> getWalletRechargePackagePage(Long userId, Integer userType,
+    PageResult<PayWalletRechargeDO> getWalletRechargePackagePage(Long userId, Integer userType, String deviceNo,
                                                                  PageParam pageReqVO, Boolean payStatus);
 
     /**

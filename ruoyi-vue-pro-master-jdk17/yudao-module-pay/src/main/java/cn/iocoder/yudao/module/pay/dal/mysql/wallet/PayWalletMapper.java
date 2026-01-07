@@ -12,15 +12,18 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
 
-    default PayWalletDO selectByUserIdAndType(Long userId, Integer userType) {
-        return selectOne(PayWalletDO::getUserId, userId,
-                PayWalletDO::getUserType, userType);
+    default PayWalletDO selectByUserIdAndType(Long userId, Integer userType, String deviceNo) {
+        return selectOne(new LambdaQueryWrapperX<PayWalletDO>()
+                .eq(PayWalletDO::getUserId, userId)
+                .eq(PayWalletDO::getUserType, userType)
+                .eqIfPresent(PayWalletDO::getDeviceNo, deviceNo));
     }
 
     default PageResult<PayWalletDO> selectPage(PayWalletPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<PayWalletDO>()
                 .eqIfPresent(PayWalletDO::getUserId, reqVO.getUserId())
                 .eqIfPresent(PayWalletDO::getUserType, reqVO.getUserType())
+                .eqIfPresent(PayWalletDO::getDeviceNo, reqVO.getDeviceNo())
                 .betweenIfPresent(PayWalletDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(PayWalletDO::getId));
     }
@@ -128,7 +131,6 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
     }
 
 }
-
 
 
 

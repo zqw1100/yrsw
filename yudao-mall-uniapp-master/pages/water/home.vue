@@ -22,6 +22,15 @@
         </view>
       </view>
 
+      <view class="device-card ss-flex ss-col-center ss-row-between">
+        <view class="device-info">
+          <view class="device-title">当前设备</view>
+          <view class="device-value">{{ activeDeviceLabel }}</view>
+          <view v-if="activeDeviceAddress" class="device-address">{{ activeDeviceAddress }}</view>
+        </view>
+        <button class="ss-reset-button device-switch" @tap="onSwitchDevice">切换设备</button>
+      </view>
+
       <view class="quick-card">
         <view v-for="item in quickMenus" :key="item.title" class="quick-item" @tap="item.action">
           <view class="quick-icon">
@@ -40,7 +49,7 @@
       <view class="service-body">
         <view class="service-info">
           <view class="service-label">账户余额</view>
-          <view class="service-value">¥{{ fen2yuan(userWallet.balance) || '0.00' }}</view>
+          <view class="service-value">¥{{ fen2yuan(deviceWallet.balance) || '0.00' }}</view>
           <view class="service-time">
             更新时间：{{ balanceUpdateTime || '--' }}
           </view>
@@ -91,13 +100,25 @@
   const NOTICE_CATEGORY_ID = 4;
 
   const userInfo = computed(() => sheep.$store('user').userInfo);
-  const userWallet = computed(() => sheep.$store('user').userWallet);
-  const lastUpdateTime = computed(() => sheep.$store('user').lastUpdateTime);
+  const waterDeviceStore = sheep.$store('waterDevice');
+  const deviceWallet = computed(() => waterDeviceStore.deviceWallet);
+  const lastUpdateTime = computed(() => waterDeviceStore.lastWalletUpdate);
   const displayName = computed(() => userInfo.value.nickname || '未登录');
   const balanceUpdateTime = computed(() =>
     lastUpdateTime.value ? formatDate(lastUpdateTime.value) : ''
   );
   const latestNotice = ref(null);
+
+  const activeDevice = computed(() => waterDeviceStore.activeDevice);
+  const activeDeviceLabel = computed(() => {
+    if (!waterDeviceStore.activeDeviceNo) {
+      return '暂无设备';
+    }
+    return waterDeviceStore.activeDeviceNo;
+  });
+  const activeDeviceAddress = computed(() =>
+    waterDeviceStore.formatAddress(activeDevice.value)
+  );
 
   const quickMenus = [
     { title: '用水历史', icon: 'calendar', action: onPlaceholder },
@@ -107,6 +128,8 @@
 
   onShow(async () => {
     sheep.$store('user').updateUserData();
+    await waterDeviceStore.fetchDevices();
+    await waterDeviceStore.fetchWallet();
     await getLatestNotice();
   });
 
@@ -118,6 +141,10 @@
   }
 
   function onPayRecharge() {
+    if (!waterDeviceStore.activeDeviceNo) {
+      uni.showToast({ title: '暂无可用设备', icon: 'none' });
+      return;
+    }
     sheep.$router.go('/pages/pay/recharge');
   }
 
@@ -126,7 +153,31 @@
   }
 
   function onGoFaultReport() {
+    if (!waterDeviceStore.activeDeviceNo) {
+      uni.showToast({ title: '暂无可用设备', icon: 'none' });
+      return;
+    }
     sheep.$router.go('/pages/water/fault-report');
+  }
+
+  function onSwitchDevice() {
+    if (!waterDeviceStore.deviceList.length) {
+      uni.showToast({ title: '暂无可切换设备', icon: 'none' });
+      return;
+    }
+    const labels = waterDeviceStore.deviceList.map((item) => {
+      const address = waterDeviceStore.formatAddress(item);
+      return address ? `${item.deviceNo} (${address})` : item.deviceNo;
+    });
+    uni.showActionSheet({
+      itemList: labels,
+      success: async (res) => {
+        const selected = waterDeviceStore.deviceList[res.tapIndex];
+        if (!selected) return;
+        waterDeviceStore.setActiveDeviceNo(selected.deviceNo);
+        await waterDeviceStore.fetchWallet();
+      },
+    });
   }
 
   function onOpenNotice() {
@@ -182,6 +233,45 @@
 
     .header-actions {
       gap: 16rpx;
+    }
+
+    .device-card {
+      margin-top: 20rpx;
+      padding: 20rpx 24rpx;
+      border-radius: 16rpx;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .device-info {
+      flex: 1;
+      margin-right: 12rpx;
+    }
+
+    .device-title {
+      font-size: 22rpx;
+      opacity: 0.85;
+      margin-bottom: 6rpx;
+    }
+
+    .device-value {
+      font-size: 28rpx;
+      font-weight: 600;
+    }
+
+    .device-address {
+      font-size: 22rpx;
+      opacity: 0.85;
+      margin-top: 6rpx;
+    }
+
+    .device-switch {
+      padding: 10rpx 20rpx;
+      border-radius: 999rpx;
+      border: 1rpx solid rgba(255, 255, 255, 0.9);
+      color: #ffffff;
+      font-size: 22rpx;
+      line-height: 1;
     }
 
     .action-circle {

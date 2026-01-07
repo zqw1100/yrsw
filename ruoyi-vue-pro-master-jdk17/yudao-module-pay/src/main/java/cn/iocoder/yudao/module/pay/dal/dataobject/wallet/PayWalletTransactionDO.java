@@ -36,6 +36,11 @@ public class PayWalletTransactionDO extends BaseDO {
     private Long walletId;
 
     /**
+     * 设备号
+     */
+    private String deviceNo;
+
+    /**
      * 关联业务分类
      *
      * 枚举 {@link PayWalletBizTypeEnum#getType()}

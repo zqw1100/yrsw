@@ -1,6 +1,17 @@
 <template>
   <s-layout title="故障报修" class="fault-report" :bgStyle="{ color: '#f4f6fb' }" navbar="inner">
     <uni-forms ref="formRef" :modelValue="state.model" :rules="rules" label-width="0">
+      <view class="card device-card">
+        <view class="info-row">
+          <text class="label">当前设备：</text>
+          <text class="value">{{ activeDeviceLabel }}</text>
+        </view>
+        <view v-if="activeDeviceAddress" class="info-row">
+          <text class="label">设备地址：</text>
+          <text class="value">{{ activeDeviceAddress }}</text>
+        </view>
+      </view>
+
       <view class="card owner-card">
         <view class="info-row">
           <text class="label">户主：</text>
@@ -108,6 +119,7 @@
   import WaterFaultApi from '@/sheep/api/water/fault';
 
   const formRef = ref(null);
+  const waterDeviceStore = sheep.$store('waterDevice');
   const state = reactive({
     profile: {
       ownerName: '',
@@ -150,6 +162,16 @@
   const selectedFaultLabel = computed(() => {
     return state.faultOptions.find((item) => item.value === state.model.faultCode)?.label || '';
   });
+  const activeDevice = computed(() => waterDeviceStore.activeDevice);
+  const activeDeviceLabel = computed(() => {
+    if (!waterDeviceStore.activeDeviceNo) {
+      return '暂无设备';
+    }
+    return waterDeviceStore.activeDeviceNo;
+  });
+  const activeDeviceAddress = computed(() =>
+    waterDeviceStore.formatAddress(activeDevice.value)
+  );
 
   const formatAddress = (profile) => {
     return [profile.areaName, profile.communityName, profile.buildingName, profile.unitName, profile.roomNo]
@@ -177,6 +199,7 @@
     const valid = await formRef.value?.validate().catch(() => false);
     if (!valid) return;
     const { code } = await WaterFaultApi.createFault({
+      deviceNo: waterDeviceStore.activeDeviceNo,
       contactMobile: state.model.contactMobile,
       faultCode: state.model.faultCode,
       feedback: state.model.feedback,
@@ -195,7 +218,14 @@
   };
 
   const fetchProfile = async () => {
-    const { code, data } = await WaterFaultApi.getFaultInit();
+    if (!waterDeviceStore.activeDeviceNo) {
+      uni.showToast({ title: '暂无可报修设备', icon: 'none' });
+      setTimeout(() => uni.navigateBack(), 800);
+      return;
+    }
+    const { code, data } = await WaterFaultApi.getFaultInit({
+      deviceNo: waterDeviceStore.activeDeviceNo,
+    });
     if (code !== 0) {
       uni.showToast({ title: '暂无可报修的报装信息', icon: 'none' });
       setTimeout(() => uni.navigateBack(), 800);
@@ -206,6 +236,7 @@
   };
 
   onLoad(async () => {
+    await waterDeviceStore.fetchDevices();
     await Promise.all([fetchFaultOptions(), fetchProfile()]);
   });
 </script>
@@ -220,6 +251,10 @@
       border-radius: 20rpx;
       background: #ffffff;
       box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.06);
+    }
+
+    .device-card {
+      background: #f4f8ff;
     }
 
     .info-row {

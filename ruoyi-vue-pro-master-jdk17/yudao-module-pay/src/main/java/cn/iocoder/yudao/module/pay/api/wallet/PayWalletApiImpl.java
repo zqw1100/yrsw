@@ -24,7 +24,8 @@ public class PayWalletApiImpl implements PayWalletApi {
     @Override
     public void addWalletBalance(PayWalletAddBalanceReqDTO reqDTO) {
         // 创建或获取钱包
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(reqDTO.getUserId(), reqDTO.getUserType());
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(reqDTO.getUserId(), reqDTO.getUserType(),
+                reqDTO.getDeviceNo());
         Assert.notNull(wallet, "钱包({}/{})不存在", reqDTO.getUserId(), reqDTO.getUserType());
 
         // 增加余额
@@ -33,8 +34,8 @@ public class PayWalletApiImpl implements PayWalletApi {
     }
 
     @Override
-    public PayWalletRespDTO getOrCreateWallet(Long userId, Integer userType) {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType);
+    public PayWalletRespDTO getOrCreateWallet(Long userId, Integer userType, String deviceNo) {
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, deviceNo);
         return BeanUtils.toBean(wallet, PayWalletRespDTO.class);
     }
 

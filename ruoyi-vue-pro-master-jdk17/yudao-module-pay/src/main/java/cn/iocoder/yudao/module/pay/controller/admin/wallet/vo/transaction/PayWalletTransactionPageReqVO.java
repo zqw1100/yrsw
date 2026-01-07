@@ -20,4 +20,7 @@ public class PayWalletTransactionPageReqVO extends PageParam  {
     @InEnum(UserTypeEnum.class)
     private Integer userType;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
 }

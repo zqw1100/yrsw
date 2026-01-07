@@ -90,8 +90,9 @@ public class PayWalletRechargeServiceImpl implements PayWalletRechargeService {
             payPrice = reqVO.getPayPrice();
         }
         // 1.2 插入充值记录
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType);
-        PayWalletRechargeDO recharge = INSTANCE.convert(wallet.getId(), payPrice, bonusPrice, reqVO.getPackageId());
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, reqVO.getDeviceNo());
+        PayWalletRechargeDO recharge = INSTANCE.convert(wallet.getId(), wallet.getDeviceNo(),
+                payPrice, bonusPrice, reqVO.getPackageId());
         walletRechargeMapper.insert(recharge);
 
         // 2.1 创建支付单
@@ -109,9 +110,9 @@ public class PayWalletRechargeServiceImpl implements PayWalletRechargeService {
     }
 
     @Override
-    public PageResult<PayWalletRechargeDO> getWalletRechargePackagePage(Long userId, Integer userType,
+    public PageResult<PayWalletRechargeDO> getWalletRechargePackagePage(Long userId, Integer userType, String deviceNo,
                                                                         PageParam pageReqVO, Boolean payStatus) {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType);
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, deviceNo);
         return walletRechargeMapper.selectPage(pageReqVO, wallet.getId(), payStatus);
     }
 

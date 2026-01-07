@@ -23,6 +23,11 @@ public class WalletTransactionCreateReqBO {
     private Long walletId;
 
     /**
+     * 设备号
+     */
+    private String deviceNo;
+
+    /**
      * 交易金额，单位分
      *
      * 正值表示余额增加，负值表示余额减少

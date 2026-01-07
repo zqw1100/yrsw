@@ -1,5 +1,10 @@
 <template>
   <s-layout title="维修列表" class="fault-list" :bgStyle="{ color: '#f4f6fb' }" navbar="inner">
+    <view class="device-summary">
+      <view class="device-title">当前设备</view>
+      <view class="device-value">{{ activeDeviceLabel }}</view>
+      <view v-if="activeDeviceAddress" class="device-address">{{ activeDeviceAddress }}</view>
+    </view>
     <s-empty v-if="state.pagination.total === 0" text="暂无报修信息" icon="/static/data-empty.png" />
     <view v-else class="list-wrap">
       <view v-for="item in state.pagination.list" :key="item.id" class="fault-card">
@@ -33,6 +38,7 @@
   import DictApi from '@/sheep/api/system/dict';
   import WaterFaultApi from '@/sheep/api/water/fault';
 
+  const waterDeviceStore = sheep.$store('waterDevice');
   const state = reactive({
     pagination: {
       list: [],
@@ -55,6 +61,17 @@
   const faultLabel = (value) => {
     return faultMap.value[value]?.label || value || '-';
   };
+
+  const activeDevice = computed(() => waterDeviceStore.activeDevice);
+  const activeDeviceLabel = computed(() => {
+    if (!waterDeviceStore.activeDeviceNo) {
+      return '暂无设备';
+    }
+    return waterDeviceStore.activeDeviceNo;
+  });
+  const activeDeviceAddress = computed(() =>
+    waterDeviceStore.formatAddress(activeDevice.value)
+  );
 
   const statusLabel = (value) => {
     const statusMap = {
@@ -95,6 +112,7 @@
     const { code, data } = await WaterFaultApi.getFaultPage({
       pageNo: state.pagination.pageNo,
       pageSize: state.pagination.pageSize,
+      deviceNo: waterDeviceStore.activeDeviceNo || undefined,
     });
     if (code !== 0) {
       state.loadStatus = '';
@@ -106,6 +124,7 @@
   }
 
   onLoad(async () => {
+    await waterDeviceStore.fetchDevices();
     await getFaultOptions();
     await getFaultList();
   });
@@ -119,6 +138,32 @@
 
 <style lang="scss" scoped>
   .fault-list {
+    .device-summary {
+      margin: 20rpx 24rpx 0;
+      padding: 20rpx 24rpx;
+      border-radius: 16rpx;
+      background: #ffffff;
+      box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.06);
+    }
+
+    .device-title {
+      font-size: 22rpx;
+      color: #8c8c8c;
+      margin-bottom: 6rpx;
+    }
+
+    .device-value {
+      font-size: 28rpx;
+      font-weight: 600;
+      color: #333333;
+    }
+
+    .device-address {
+      font-size: 22rpx;
+      color: #666666;
+      margin-top: 6rpx;
+    }
+
     .list-wrap {
       padding: 20rpx 24rpx 40rpx;
     }

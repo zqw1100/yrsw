@@ -22,8 +22,20 @@ public interface PayWalletApi {
      *
      * @param userId 用户编号
      * @param userType 用户类型
+     * @param deviceNo 设备号
      * @return 钱包信息
      */
-    PayWalletRespDTO getOrCreateWallet(Long userId, Integer userType);
+    PayWalletRespDTO getOrCreateWallet(Long userId, Integer userType, String deviceNo);
+
+    /**
+     * 获取钱包信息（兼容旧接口）
+     *
+     * @param userId 用户编号
+     * @param userType 用户类型
+     * @return 钱包信息
+     */
+    default PayWalletRespDTO getOrCreateWallet(Long userId, Integer userType) {
+        return getOrCreateWallet(userId, userType, null);
+    }
 
 }
