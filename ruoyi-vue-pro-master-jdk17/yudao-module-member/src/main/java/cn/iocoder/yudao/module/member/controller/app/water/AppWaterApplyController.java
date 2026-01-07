@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
@@ -45,5 +46,12 @@ public class AppWaterApplyController {
     public CommonResult<PageResult<MemberWaterApplyRespVO>> getApplyPage(
             @Valid AppWaterApplyPageReqVO pageReqVO) {
         return success(applyService.getApplyPage(getLoginUserId(), pageReqVO));
+    }
+
+    @GetMapping("/check-device")
+    @Operation(summary = "校验设备号是否已绑定")
+    public CommonResult<Boolean> checkDeviceNo(@RequestParam("deviceNo") @NotBlank String deviceNo,
+                                               @RequestParam(value = "excludeApplyId", required = false) Long excludeApplyId) {
+        return success(applyService.isDeviceNoUsed(deviceNo, excludeApplyId));
     }
 }

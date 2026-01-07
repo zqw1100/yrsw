@@ -114,6 +114,7 @@
   import { reactive, ref } from 'vue';
   import { onLoad } from '@dcloudio/uni-app';
   import DictApi from '@/sheep/api/system/dict';
+  import WaterApplyApi from '@/sheep/api/water/apply';
   import WorkOrderApi from '@/sheep/api/water/work-order';
 
   const orderId = ref(null);
@@ -181,6 +182,16 @@
     if (order.orderType === 0 && !form.deviceNo) {
       uni.showToast({ title: '请输入设备号', icon: 'none' });
       return;
+    }
+    if (order.orderType === 0 && form.deviceNo && form.deviceNo !== order.deviceNo) {
+      const { code, data } = await WaterApplyApi.checkDeviceNo({
+        deviceNo: form.deviceNo,
+        excludeApplyId: order.bizId || null,
+      });
+      if (code === 0 && data) {
+        uni.showToast({ title: '设备号已被使用，无法重复绑定', icon: 'none' });
+        return;
+      }
     }
     await WorkOrderApi.finishWorkOrder({
       id: Number(orderId.value),
