@@ -61,6 +61,8 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     private MemberWaterWorkOrderService workOrderService;
     @Resource
     private MemberWaterWorkOrderMapper workOrderMapper;
+    @Resource
+    private MemberWaterDeviceService deviceService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -163,6 +165,9 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .deviceNo(updateReqVO.getDeviceNo())
                 .build();
         applyMapper.updateById(updateObj);
+        if (StrUtil.isNotBlank(updateReqVO.getDeviceNo())) {
+            deviceService.registerOrUpdateDevice(updateReqVO.getDeviceNo());
+        }
     }
 
     @Override

@@ -37,6 +37,7 @@ public interface ErrorCodeConstants {
     ErrorCode WATER_WORK_ORDER_NOT_EXISTS = new ErrorCode(1_004_005_009, "施工工单不存在");
     ErrorCode WATER_WORK_ORDER_NOT_ALLOWED = new ErrorCode(1_004_005_010, "没有权限操作施工工单");
     ErrorCode WATER_WORK_ORDER_STATUS_NOT_ALLOWED = new ErrorCode(1_004_005_011, "施工工单状态不支持此操作");
+    ErrorCode WATER_DEVICE_NOT_EXISTS = new ErrorCode(1_004_005_012, "设备不存在");
 
     //========== 用户标签 1-004-006-000 ==========
     ErrorCode TAG_NOT_EXISTS = new ErrorCode(1_004_006_000, "用户标签不存在");
