@@ -137,5 +137,3 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
     }
 
 }
-
-

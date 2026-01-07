@@ -63,5 +63,3 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
 }
 
 
-
-

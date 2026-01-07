@@ -40,31 +40,6 @@
       </view>
 
       <view class="card">
-        <view class="section-title">套餐选择</view>
-        <uni-forms-item name="rechargePackageId">
-          <view class="package-list">
-            <view
-              v-for="item in state.packageList"
-              :key="item.id"
-              class="package-card"
-              :class="{ active: state.model.rechargePackageId === item.id }"
-              @tap="state.model.rechargePackageId = item.id"
-            >
-              <view class="package-left">
-                <view class="package-name">{{ item.name }}</view>
-                <view class="package-desc">
-                  ¥{{ fen2yuan(item.payPrice) }} <text v-if="item.bonusPrice">· {{ formatPackageGift(item) }}</text>
-                </view>
-              </view>
-              <view class="package-right">
-                <view class="radio-dot" :class="{ checked: state.model.rechargePackageId === item.id }"></view>
-              </view>
-            </view>
-          </view>
-        </uni-forms-item>
-      </view>
-
-      <view class="card">
         <view class="section-title">备注信息</view>
         <uni-forms-item name="remark" class="form-item">
           <uni-easyinput
@@ -88,22 +63,17 @@
 <script setup>
   import { onLoad } from '@dcloudio/uni-app';
   import { reactive, ref } from 'vue';
-  import { WxaSubscribeTemplate } from '@/sheep/helper/const';
   import sheep from '@/sheep';
-  import PayWalletApi from '@/sheep/api/pay/wallet';
   import WaterApplyApi from '@/sheep/api/water/apply';
-  import { fen2yuan } from '@/sheep/hooks/useGoods';
 
   const formRef = ref(null);
   const state = reactive({
-    packageList: [],
     applyDraft: null,
     model: {
       id: undefined,
       ownerName: '',
       ownerIdCard: '',
       contractImageUrls: [],
-      rechargePackageId: undefined,
       remark: '',
     },
   });
@@ -118,23 +88,6 @@
     contractImageUrls: {
       rules: [{ required: true, errorMessage: '请上传合同扫描件' }],
     },
-    rechargePackageId: {
-      rules: [{ required: true, errorMessage: '请选择首次充值套餐' }],
-    },
-  };
-
-  const formatPackageGift = (item) => {
-    if (item.bonusPrice && Number(item.bonusPrice) > 0) {
-      return `赠送 ¥${fen2yuan(item.bonusPrice)}`;
-    }
-    return '无赠送';
-  };
-
-  const fetchPackageList = async () => {
-    const { code, data } = await PayWalletApi.getWalletRechargePackageList();
-    if (code === 0) {
-      state.packageList = data || [];
-    }
   };
 
   const onSubmit = async () => {
@@ -155,28 +108,8 @@
       id: applyId,
     });
     if (code !== 0) return;
-    const selectedPackage = state.packageList.find(
-      (item) => Number(item.id) === Number(state.model.rechargePackageId),
-    );
-    if (!selectedPackage) {
-      uni.showToast({ title: '充值套餐不存在', icon: 'none' });
-      return;
-    }
-    const { code: rechargeCode, data: rechargeData } = await PayWalletApi.createWalletRecharge({
-      packageId: selectedPackage.id,
-      payPrice: selectedPackage.payPrice,
-    });
-    if (rechargeCode !== 0) return;
     uni.removeStorageSync('waterApplyDraft');
-    // #ifdef MP
-    sheep.$platform
-      .useProvider('wechat')
-      .subscribeMessage(WxaSubscribeTemplate.PAY_WALLET_RECHARGER_SUCCESS);
-    // #endif
-    sheep.$router.go('/pages/pay/index', {
-      id: rechargeData.payOrderId,
-      orderType: 'recharge',
-    });
+    sheep.$router.back();
   };
 
   onLoad((options) => {
@@ -192,7 +125,6 @@
       uni.showToast({ title: '缺少申请信息', icon: 'none' });
       setTimeout(() => uni.navigateBack(), 800);
     }
-    fetchPackageList();
   });
 </script>
 
@@ -244,51 +176,6 @@
 
     .field-value.input {
       flex: 1;
-    }
-
-    .package-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16rpx;
-    }
-
-    .package-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20rpx;
-      border-radius: 16rpx;
-      border: 1rpx solid #e8e8e8;
-      background: #f9fbff;
-    }
-
-    .package-card.active {
-      border-color: #4b8bff;
-      background: #eef4ff;
-    }
-
-    .package-name {
-      font-size: 28rpx;
-      font-weight: 600;
-      color: #333333;
-    }
-
-    .package-desc {
-      margin-top: 6rpx;
-      font-size: 24rpx;
-      color: #666666;
-    }
-
-    .radio-dot {
-      width: 28rpx;
-      height: 28rpx;
-      border-radius: 50%;
-      border: 2rpx solid #c4c4c4;
-    }
-
-    .radio-dot.checked {
-      border-color: #4b8bff;
-      background: #4b8bff;
     }
 
     .footer {
