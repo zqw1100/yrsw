@@ -21,7 +21,11 @@ public interface PayWalletService {
      * @param userId   用户编号
      * @param userType 用户类型
      */
-    PayWalletDO getOrCreateWallet(Long userId, Integer userType);
+    PayWalletDO getOrCreateWallet(Long userId, Integer userType, String deviceNo);
+
+    default PayWalletDO getOrCreateWallet(Long userId, Integer userType) {
+        return getOrCreateWallet(userId, userType, null);
+    }
 
     /**
      * 获取钱包信息

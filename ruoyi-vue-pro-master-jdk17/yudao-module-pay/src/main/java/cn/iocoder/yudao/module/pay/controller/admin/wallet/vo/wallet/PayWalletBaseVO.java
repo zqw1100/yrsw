@@ -20,6 +20,9 @@ public class PayWalletBaseVO {
     @NotNull(message = "用户类型不能为空")
     private Integer userType;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
     @Schema(description = "余额，单位分", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "余额，单位分不能为空")
     private Integer balance;

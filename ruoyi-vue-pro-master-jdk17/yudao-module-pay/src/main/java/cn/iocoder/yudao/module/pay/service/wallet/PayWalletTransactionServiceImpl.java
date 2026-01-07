@@ -47,7 +47,7 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
     @Override
     public PageResult<PayWalletTransactionDO> getWalletTransactionPage(Long userId, Integer userType,
                                                                        AppPayWalletTransactionPageReqVO pageVO) {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType);
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, pageVO.getDeviceNo());
         return payWalletTransactionMapper.selectPage(wallet.getId(), pageVO.getType(), pageVO, pageVO.getCreateTime());
     }
 
@@ -56,7 +56,8 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
         // 基于 userId + userType 查询钱包
         if (pageVO.getWalletId() == null
             && ObjectUtil.isAllNotEmpty(pageVO.getUserId(), pageVO.getUserType())) {
-            PayWalletDO wallet = payWalletService.getOrCreateWallet(pageVO.getUserId(), pageVO.getUserType());
+            PayWalletDO wallet = payWalletService.getOrCreateWallet(pageVO.getUserId(), pageVO.getUserType(),
+                    pageVO.getDeviceNo());
             if (wallet != null) {
                 pageVO.setWalletId(wallet.getId());
             }
@@ -85,8 +86,9 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
     }
 
     @Override
-    public AppPayWalletTransactionSummaryRespVO getWalletTransactionSummary(Long userId, Integer userType, LocalDateTime[] createTime) {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType);
+    public AppPayWalletTransactionSummaryRespVO getWalletTransactionSummary(Long userId, Integer userType,
+                                                                            String deviceNo, LocalDateTime[] createTime) {
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, deviceNo);
         return new AppPayWalletTransactionSummaryRespVO()
                 .setTotalExpense(payWalletTransactionMapper.selectPriceSum(wallet.getId(), TYPE_EXPENSE, createTime))
                 .setTotalIncome(payWalletTransactionMapper.selectPriceSum(wallet.getId(), TYPE_INCOME, createTime));

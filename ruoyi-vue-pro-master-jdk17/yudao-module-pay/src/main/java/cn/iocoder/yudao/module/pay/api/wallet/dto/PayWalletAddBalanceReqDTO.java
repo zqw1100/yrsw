@@ -28,6 +28,11 @@ public class PayWalletAddBalanceReqDTO {
     private Integer userType;
 
     /**
+     * 设备号
+     */
+    private String deviceNo;
+
+    /**
      * 关联业务分类
      */
     @NotNull(message = "关联业务分类不能为空")

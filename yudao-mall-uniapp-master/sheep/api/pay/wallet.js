@@ -2,10 +2,11 @@ import request from '@/sheep/request';
 
 const PayWalletApi = {
   // 获取钱包
-  getPayWallet() {
+  getPayWallet(params) {
     return request({
       url: '/pay/wallet/get',
       method: 'GET',
+      params,
       custom: {
         showLoading: false,
         auth: true,

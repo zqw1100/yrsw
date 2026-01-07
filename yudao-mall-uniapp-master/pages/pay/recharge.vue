@@ -12,13 +12,18 @@
     >
       <view class="">
         <view class="num-title">当前余额（元）</view>
-        <view class="wallet-num">{{ fen2yuan(userWallet.balance) }}</view>
+        <view class="wallet-num">{{ fen2yuan(deviceWallet.balance) }}</view>
       </view>
       <button class="ss-reset-button log-btn" @tap="sheep.$router.go('/pages/pay/recharge-log')">
         充值记录
       </button>
     </view>
     <view class="recharge-box">
+      <view class="device-box">
+        <view class="device-title">当前设备</view>
+        <view class="device-value">{{ activeDeviceLabel }}</view>
+        <view v-if="activeDeviceAddress" class="device-address">{{ activeDeviceAddress }}</view>
+      </view>
       <view class="recharge-card-box">
         <view class="input-label ss-m-b-50">充值金额</view>
         <view class="input-box ss-flex border-bottom ss-p-b-20">
@@ -55,17 +60,29 @@
 <script setup>
   import { computed, reactive } from 'vue';
   import sheep from '@/sheep';
-  import { onLoad } from '@dcloudio/uni-app';
+  import { onLoad, onShow } from '@dcloudio/uni-app';
   import { fen2yuan } from '@/sheep/hooks/useGoods';
   import PayWalletApi from '@/sheep/api/pay/wallet';
   import { WxaSubscribeTemplate } from '@/sheep/helper/const';
 
-  const userWallet = computed(() => sheep.$store('user').userWallet);
+  const waterDeviceStore = sheep.$store('waterDevice');
+  const deviceWallet = computed(() => waterDeviceStore.deviceWallet);
   const statusBarHeight = sheep.$platform.device.statusBarHeight * 2;
   const state = reactive({
     recharge_money: '', // 输入的充值金额
     packageList: [],
   });
+
+  const activeDevice = computed(() => waterDeviceStore.activeDevice);
+  const activeDeviceLabel = computed(() => {
+    if (!waterDeviceStore.activeDeviceNo) {
+      return '暂无设备';
+    }
+    return waterDeviceStore.activeDeviceNo;
+  });
+  const activeDeviceAddress = computed(() =>
+    waterDeviceStore.formatAddress(activeDevice.value)
+  );
 
   // 点击卡片，选择充值金额
   function onCard(e) {
@@ -83,10 +100,15 @@
 
   // 发起支付
   async function onConfirm() {
+    if (!waterDeviceStore.activeDeviceNo) {
+      uni.showToast({ title: '暂无可充值设备', icon: 'none' });
+      return;
+    }
     const { code, data } = await PayWalletApi.createWalletRecharge({
       packageId: state.packageList.find((item) => fen2yuan(item.payPrice) === state.recharge_money)
         ?.id,
       payPrice: state.recharge_money * 100,
+      deviceNo: waterDeviceStore.activeDeviceNo,
     });
     if (code !== 0) {
       return;
@@ -103,7 +125,13 @@
   }
 
   onLoad(() => {
+    waterDeviceStore.fetchDevices();
+    waterDeviceStore.fetchWallet();
     getRechargeTabs();
+  });
+
+  onShow(() => {
+    waterDeviceStore.fetchWallet();
   });
 </script>
 
@@ -150,6 +178,32 @@
     position: relative;
     padding: 0 30rpx;
     margin-top: -60rpx;
+  }
+
+  .device-box {
+    background: #ffffff;
+    border-radius: 20rpx;
+    padding: 20rpx 24rpx;
+    margin-bottom: 20rpx;
+    box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.06);
+  }
+
+  .device-title {
+    font-size: 24rpx;
+    color: #8c8c8c;
+    margin-bottom: 6rpx;
+  }
+
+  .device-value {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  .device-address {
+    font-size: 24rpx;
+    color: #666666;
+    margin-top: 6rpx;
   }
 
   .save-btn {

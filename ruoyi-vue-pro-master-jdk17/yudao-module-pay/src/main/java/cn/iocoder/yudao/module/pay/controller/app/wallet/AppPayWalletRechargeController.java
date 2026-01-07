@@ -57,9 +57,11 @@ public class AppPayWalletRechargeController {
 
     @GetMapping("/page")
     @Operation(summary = "获得钱包充值记录分页")
-    public CommonResult<PageResult<AppPayWalletRechargeRespVO>> getWalletRechargePage(@Valid PageParam pageReqVO) {
+    public CommonResult<PageResult<AppPayWalletRechargeRespVO>> getWalletRechargePage(
+            @Valid PageParam pageReqVO,
+            @RequestParam(value = "deviceNo", required = false) String deviceNo) {
         PageResult<PayWalletRechargeDO> pageResult = walletRechargeService.getWalletRechargePackagePage(
-                getLoginUserId(), UserTypeEnum.MEMBER.getValue(), pageReqVO, true);
+                getLoginUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo, pageReqVO, true);
         if (CollUtil.isEmpty(pageResult.getList())) {
             return success(PageResult.empty(pageResult.getTotal()));
         }

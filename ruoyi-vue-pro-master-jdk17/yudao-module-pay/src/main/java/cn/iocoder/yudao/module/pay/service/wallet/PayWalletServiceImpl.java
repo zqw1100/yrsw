@@ -59,15 +59,16 @@ public class PayWalletServiceImpl implements PayWalletService {
 
     @Override
     @SneakyThrows
-    public PayWalletDO getOrCreateWallet(Long userId, Integer userType) {
-        PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType);
+    public PayWalletDO getOrCreateWallet(Long userId, Integer userType, String deviceNo) {
+        PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
         if (wallet == null) {
             // 使用双重检查锁，保证钱包创建并发问题
             // https://gitee.com/zhijiantianya/ruoyi-vue-pro/pulls/1475/files
             wallet = lockRedisDAO.lock(userId, UPDATE_TIMEOUT_MILLIS, () -> {
-                PayWalletDO newWallet = walletMapper.selectByUserIdAndType(userId, userType);
+                PayWalletDO newWallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
                 if (newWallet == null) {
                     newWallet = new PayWalletDO().setUserId(userId).setUserType(userType)
+                            .setDeviceNo(deviceNo)
                             .setBalance(0).setTotalExpense(0).setTotalRecharge(0);
                     newWallet.setCreateTime(LocalDateTime.now());
                     walletMapper.insert(newWallet);
@@ -176,6 +177,7 @@ public class PayWalletServiceImpl implements PayWalletService {
             // 3. 生成钱包流水
             Integer afterBalance = payWallet.getBalance() - price;
             WalletTransactionCreateReqBO bo = new WalletTransactionCreateReqBO().setWalletId(payWallet.getId())
+                    .setDeviceNo(payWallet.getDeviceNo())
                     .setPrice(-price).setBalance(afterBalance).setBizId(String.valueOf(bizId))
                     .setBizType(bizType.getType()).setTitle(bizType.getDescription());
             return walletTransactionService.createWalletTransaction(bo);
@@ -217,7 +219,8 @@ public class PayWalletServiceImpl implements PayWalletService {
 
             // 4. 生成钱包流水
             WalletTransactionCreateReqBO transactionCreateReqBO = new WalletTransactionCreateReqBO()
-                    .setWalletId(payWallet.getId()).setPrice(price).setBalance(payWallet.getBalance() + price)
+                    .setWalletId(payWallet.getId()).setDeviceNo(payWallet.getDeviceNo())
+                    .setPrice(price).setBalance(payWallet.getBalance() + price)
                     .setBizId(bizId).setBizType(bizType.getType()).setTitle(bizType.getDescription());
             return walletTransactionService.createWalletTransaction(transactionCreateReqBO);
         });

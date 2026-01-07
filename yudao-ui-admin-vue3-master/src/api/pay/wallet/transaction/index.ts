@@ -3,6 +3,7 @@ import request from '@/config/axios'
 export interface WalletTransactionVO {
   id: number
   walletId: number
+  deviceNo?: string
   title: string
   price: number
   balance: number

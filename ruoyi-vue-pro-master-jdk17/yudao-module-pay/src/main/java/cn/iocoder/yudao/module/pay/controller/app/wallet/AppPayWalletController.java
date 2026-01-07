@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
@@ -34,8 +35,9 @@ public class AppPayWalletController {
 
     @GetMapping("/get")
     @Operation(summary = "获取钱包")
-    public CommonResult<AppPayWalletRespVO> getPayWallet() {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(getLoginUserId(), UserTypeEnum.MEMBER.getValue());
+    public CommonResult<AppPayWalletRespVO> getPayWallet(@RequestParam(value = "deviceNo", required = false) String deviceNo) {
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(getLoginUserId(), UserTypeEnum.MEMBER.getValue(),
+                deviceNo);
         return success(PayWalletConvert.INSTANCE.convert(wallet));
     }
 

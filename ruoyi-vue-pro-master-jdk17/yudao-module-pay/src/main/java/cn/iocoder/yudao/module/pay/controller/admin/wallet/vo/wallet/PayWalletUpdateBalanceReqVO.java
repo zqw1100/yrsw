@@ -12,6 +12,9 @@ public class PayWalletUpdateBalanceReqVO {
     @NotNull(message = "用户编号不能为空")
     private Long userId;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
     @Schema(description = "变动余额，正数为增加，负数为减少", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
     @NotNull(message = "变动余额不能为空")
     private Integer balance;
