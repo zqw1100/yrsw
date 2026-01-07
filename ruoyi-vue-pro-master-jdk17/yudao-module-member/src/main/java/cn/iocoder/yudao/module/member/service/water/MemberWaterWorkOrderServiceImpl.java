@@ -19,6 +19,7 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterWorkOrderMapper;
 import cn.iocoder.yudao.module.member.service.user.MemberUserService;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -115,13 +116,14 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
         if (order.getStatus() != null && order.getStatus() != 0) {
             throw exception(WATER_WORK_ORDER_STATUS_NOT_ALLOWED);
         }
-        MemberWaterWorkOrderDO updateObj = MemberWaterWorkOrderDO.builder()
-                .id(order.getId())
-                .workerId(null)
-                .assignTime(null)
-                .status(0)
-                .build();
-        workOrderMapper.updateById(updateObj);
+        workOrderMapper.update(
+                null,
+                new LambdaUpdateWrapper<MemberWaterWorkOrderDO>()
+                        .eq(MemberWaterWorkOrderDO::getId, order.getId())
+                        .set(MemberWaterWorkOrderDO::getWorkerId, null)
+                        .set(MemberWaterWorkOrderDO::getAssignTime, null)
+                        .set(MemberWaterWorkOrderDO::getStatus, 0)
+        );
         updateBizStatus(order, 0);
     }
 
