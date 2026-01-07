@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.pay.service.wallet;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.date.DateUtils;
 import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.wallet.PayWalletPageReqVO;
@@ -60,6 +61,7 @@ public class PayWalletServiceImpl implements PayWalletService {
     @Override
     @SneakyThrows
     public PayWalletDO getOrCreateWallet(Long userId, Integer userType, String deviceNo) {
+        deviceNo = StrUtil.blankToNull(deviceNo);
         PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
         if (wallet == null) {
             // 使用双重检查锁，保证钱包创建并发问题
