@@ -28,4 +28,7 @@ public class AppPayWalletTransactionPageReqVO extends PageParam {
     @DateTimeFormat(pattern = DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
 }

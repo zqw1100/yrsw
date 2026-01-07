@@ -33,6 +33,11 @@ public class PayWalletRechargeDO extends BaseDO {
     private Long walletId;
 
     /**
+     * 设备号
+     */
+    private String deviceNo;
+
+    /**
      * 用户实际到账余额
      *
      * 例如充 100 送 20，则该值是 120

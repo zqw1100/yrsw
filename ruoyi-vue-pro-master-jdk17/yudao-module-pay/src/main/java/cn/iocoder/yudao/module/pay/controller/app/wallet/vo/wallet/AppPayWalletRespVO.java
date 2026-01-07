@@ -16,4 +16,7 @@ public class AppPayWalletRespVO {
     @Schema(description = "累计充值，单位分", requiredMode = Schema.RequiredMode.REQUIRED, example = "2000")
     private Integer totalRecharge;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
 }

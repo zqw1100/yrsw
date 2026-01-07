@@ -13,4 +13,7 @@ public class PayWalletUserReqVO {
     @NotNull(message = "用户编号不能为空")
     private Long userId;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
 }

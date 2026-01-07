@@ -3,6 +3,7 @@ import request from '@/config/axios'
 /** 用户钱包查询参数 */
 export interface PayWalletUserReqVO {
   userId: number
+  deviceNo?: string
 }
 
 /** 钱包 VO */
@@ -10,6 +11,7 @@ export interface WalletVO {
   id: number
   userId: number
   userType: number
+  deviceNo?: string
   balance: number
   totalExpense: number
   totalRecharge: number

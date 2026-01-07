@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.pay.dal.mysql.wallet;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.wallet.PayWalletPageReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
@@ -12,15 +13,23 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
 
-    default PayWalletDO selectByUserIdAndType(Long userId, Integer userType) {
-        return selectOne(PayWalletDO::getUserId, userId,
-                PayWalletDO::getUserType, userType);
+    default PayWalletDO selectByUserIdAndType(Long userId, Integer userType, String deviceNo) {
+        LambdaQueryWrapperX<PayWalletDO> query = new LambdaQueryWrapperX<PayWalletDO>()
+                .eq(PayWalletDO::getUserId, userId)
+                .eq(PayWalletDO::getUserType, userType);
+        if (StrUtil.isBlank(deviceNo)) {
+            query.isNull(PayWalletDO::getDeviceNo);
+        } else {
+            query.eq(PayWalletDO::getDeviceNo, deviceNo);
+        }
+        return selectOne(query);
     }
 
     default PageResult<PayWalletDO> selectPage(PayWalletPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<PayWalletDO>()
                 .eqIfPresent(PayWalletDO::getUserId, reqVO.getUserId())
                 .eqIfPresent(PayWalletDO::getUserType, reqVO.getUserType())
+                .eqIfPresent(PayWalletDO::getDeviceNo, reqVO.getDeviceNo())
                 .betweenIfPresent(PayWalletDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(PayWalletDO::getId));
     }
@@ -128,7 +137,5 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
     }
 
 }
-
-
 
 

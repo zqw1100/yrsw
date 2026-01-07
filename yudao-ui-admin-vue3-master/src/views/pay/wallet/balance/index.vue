@@ -32,6 +32,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="设备号" prop="deviceNo">
+        <el-input
+          v-model="queryParams.deviceNo"
+          placeholder="请输入设备号"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
@@ -60,6 +69,7 @@
           <dict-tag :type="DICT_TYPE.USER_TYPE" :value="scope.row.userType" />
         </template>
       </el-table-column>
+      <el-table-column label="设备号" align="center" prop="deviceNo" />
       <el-table-column label="余额" align="center" prop="balance">
         <template #default="{ row }"> {{ fenToYuan(row.balance) }} 元</template>
       </el-table-column>
@@ -115,6 +125,7 @@ const queryParams = reactive({
   pageSize: 10,
   userId: null,
   userType: null,
+  deviceNo: null,
   createTime: []
 })
 const queryFormRef = ref() // 搜索的表单

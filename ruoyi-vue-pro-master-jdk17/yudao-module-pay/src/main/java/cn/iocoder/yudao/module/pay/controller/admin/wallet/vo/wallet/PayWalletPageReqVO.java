@@ -26,6 +26,9 @@ public class PayWalletPageReqVO extends PageParam {
     @InEnum(value = UserTypeEnum.class)
     private Integer userType;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;

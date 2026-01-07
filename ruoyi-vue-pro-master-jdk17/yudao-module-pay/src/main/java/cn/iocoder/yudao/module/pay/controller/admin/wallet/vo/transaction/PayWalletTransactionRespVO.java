@@ -15,6 +15,9 @@ public class PayWalletTransactionRespVO {
     @Schema(description = "钱包编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "5")
     private Long walletId;
 
+    @Schema(description = "设备号", example = "DEV-001")
+    private String deviceNo;
+
     @Schema(description = "业务分类", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Integer bizType;
 

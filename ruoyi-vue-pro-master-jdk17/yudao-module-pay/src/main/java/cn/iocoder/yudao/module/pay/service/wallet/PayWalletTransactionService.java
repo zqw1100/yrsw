@@ -69,6 +69,6 @@ public interface PayWalletTransactionService {
      * @return 钱包流水统计
      */
     AppPayWalletTransactionSummaryRespVO getWalletTransactionSummary(Long userId, Integer userType,
-                                                                     LocalDateTime[] createTime);
+                                                                     String deviceNo, LocalDateTime[] createTime);
 
 }

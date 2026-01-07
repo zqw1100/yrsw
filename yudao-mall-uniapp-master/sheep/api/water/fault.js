@@ -2,10 +2,11 @@ import request from '@/sheep/request';
 
 const WaterFaultApi = {
   // 初始化故障报修信息
-  getFaultInit: () => {
+  getFaultInit: (params) => {
     return request({
       url: '/member/water-fault/init',
       method: 'GET',
+      params,
     });
   },
   // 创建故障报修

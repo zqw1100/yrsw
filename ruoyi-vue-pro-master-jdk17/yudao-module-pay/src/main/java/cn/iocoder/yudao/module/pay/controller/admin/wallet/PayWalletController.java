@@ -38,7 +38,8 @@ public class PayWalletController {
     @PreAuthorize("@ss.hasPermission('pay:wallet:query')")
     @Operation(summary = "获得用户钱包明细")
     public CommonResult<PayWalletRespVO> getWallet(PayWalletUserReqVO reqVO) {
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(reqVO.getUserId(), MEMBER.getValue());
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(reqVO.getUserId(), MEMBER.getValue(),
+                reqVO.getDeviceNo());
         return success(PayWalletConvert.INSTANCE.convert02(wallet));
     }
 
@@ -55,7 +56,8 @@ public class PayWalletController {
     @PreAuthorize("@ss.hasPermission('pay:wallet:update-balance')")
     public CommonResult<Boolean> updateWalletBalance(@Valid @RequestBody PayWalletUpdateBalanceReqVO updateReqVO) {
         // 获得用户钱包
-        PayWalletDO wallet = payWalletService.getOrCreateWallet(updateReqVO.getUserId(), MEMBER.getValue());
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(updateReqVO.getUserId(), MEMBER.getValue(),
+                updateReqVO.getDeviceNo());
         if (wallet == null) {
             log.error("[updateWalletBalance]，updateReqVO({}) 用户钱包不存在.", updateReqVO);
             throw exception(WALLET_NOT_FOUND);
