@@ -13,12 +13,10 @@
           <view class="sub-hello">水务服务尽在掌握</view>
         </view>
         <view class="header-actions ss-flex">
-          <view class="action-circle" @tap="onGoNotice">
-            <uni-icons type="notification" size="20" color="#ffffff" />
-          </view>
-          <view class="action-circle" @tap="onPlaceholder">
-            <uni-icons type="search" size="20" color="#ffffff" />
-          </view>
+<!--          <view class="action-circle" @tap="onGoNotice">-->
+<!--            <uni-icons type="notification" size="20" color="#ffffff" />-->
+<!--          </view>-->
+
         </view>
       </view>
 
