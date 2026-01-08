@@ -64,6 +64,71 @@ public class MemberWaterMeterClient {
         return true;
     }
 
+    public boolean operateValve(String deviceCode, Integer valveStatus) {
+        if (StrUtil.isBlank(deviceCode) || valveStatus == null) {
+            return false;
+        }
+        String token = getAccessToken();
+        if (StrUtil.isBlank(token)) {
+            return false;
+        }
+        String url = properties.getBaseUrl() + properties.getValvePath() + "/" + properties.getOpenId()
+                + "/" + deviceCode + "?valveStatus=" + valveStatus;
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        String responseBody = HttpUtils.post(url, headers, "");
+        MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
+        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+            log.warn("[operateValve][deviceCode({}) valveStatus({}) response({})]", deviceCode, valveStatus, responseBody);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean changeDevice(MemberWaterMeterChangeDeviceReqDTO reqDTO) {
+        if (reqDTO == null) {
+            return false;
+        }
+        String token = getAccessToken();
+        if (StrUtil.isBlank(token)) {
+            return false;
+        }
+        String url = properties.getBaseUrl() + properties.getChangeDevicePath() + "/" + properties.getOpenId() + "/change";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        headers.put("Content-Type", "application/json");
+        String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
+        MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
+        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+            log.warn("[changeDevice][originalDeviceCode({}) newDeviceCode({}) response({})]",
+                    reqDTO.getOriginalDeviceCode(), reqDTO.getNewDeviceCode(), responseBody);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setUploadMode(MemberWaterMeterUploadModeReqDTO reqDTO) {
+        if (reqDTO == null) {
+            return false;
+        }
+        String token = getAccessToken();
+        if (StrUtil.isBlank(token)) {
+            return false;
+        }
+        String url = properties.getBaseUrl() + properties.getUploadModePath() + "/" + properties.getOpenId() + "/uploadMode";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        headers.put("Content-Type", "application/json");
+        String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
+        MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
+        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+            log.warn("[setUploadMode][deviceCode({}) uploadType({}) value({}) response({})]",
+                    reqDTO.getDeviceCode(), reqDTO.getUploadType(), reqDTO.getValue(), responseBody);
+            return false;
+        }
+        return true;
+    }
+
     private String getAccessToken() {
         if (StrUtil.isNotBlank(accessToken) && tokenExpireTime != null
                 && tokenExpireTime.isAfter(LocalDateTime.now().plusSeconds(30))) {
@@ -169,5 +234,21 @@ public class MemberWaterMeterClient {
         private String description;
         private String deviceVersionName;
         private String imei;
+    }
+
+    @Data
+    public static class MemberWaterMeterChangeDeviceReqDTO {
+
+        private String originalDeviceCode;
+        private String newDeviceCode;
+        private Long originalTotalData;
+    }
+
+    @Data
+    public static class MemberWaterMeterUploadModeReqDTO {
+
+        private String deviceCode;
+        private Integer uploadType;
+        private Integer value;
     }
 }
