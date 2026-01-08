@@ -252,12 +252,8 @@ const handleUpdateStatus = async (row: any, processStatus: number) => {
       })
       deviceNo = value
       if (deviceNo && deviceNo !== row.deviceNo) {
-        const data = await WaterApplyApi.getWaterApplyPage({
-          pageNo: 1,
-          pageSize: 1,
-          deviceNo
-        })
-        if (data?.list?.some((item) => item.id !== row.id)) {
+        const used = await WaterApplyApi.checkDeviceNo(deviceNo, row.id)
+        if (used) {
           message.error('设备号已被使用，无法重复绑定')
           await getList()
           return

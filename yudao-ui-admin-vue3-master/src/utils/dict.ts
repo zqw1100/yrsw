@@ -167,7 +167,7 @@ export enum DICT_TYPE {
   // ========== Member 会员模块 ==========
   MEMBER_POINT_BIZ_TYPE = 'member_point_biz_type', // 积分的业务类型
   MEMBER_EXPERIENCE_BIZ_TYPE = 'member_experience_biz_type', // 会员经验业务类型
-  MEMBER_WATER_APPLY_STATUS = 'member_water_work_order_status', // 施工工单状态
+  MEMBER_WATER_APPLY_STATUS = 'member_water_apply_status', // 居民报装处理状态
   MEMBER_WATER_FAULT_STATUS = 'member_water_fault_status', // 故障报修处理状态
   DEVICE_FAULT_CODE = 'device-fault-code', // 故障类型
 
