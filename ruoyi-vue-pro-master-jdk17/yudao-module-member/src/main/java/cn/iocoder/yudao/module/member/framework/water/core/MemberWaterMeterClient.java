@@ -42,8 +42,8 @@ public class MemberWaterMeterClient {
             log.warn("[readDeviceInfo][deviceCode({}) response({})]", deviceCode, responseBody);
             return null;
         }
-        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
-        if (respDTO.getCode() != 0 || respDTO.getData() == null) {
+        ensureSuccess(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getData() == null) {
             log.warn("[readDeviceInfo][deviceCode({}) response({})]", deviceCode, responseBody);
             return null;
         }
@@ -68,11 +68,7 @@ public class MemberWaterMeterClient {
             log.warn("[addDevice][deviceCode({}) response({})]", reqDTO.getDeviceCode(), responseBody);
             return false;
         }
-        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
-        if (respDTO.getCode() != 0) {
-            log.warn("[addDevice][deviceCode({}) response({})]", reqDTO.getDeviceCode(), responseBody);
-            return false;
-        }
+        ensureSuccess(respDTO.getCode(), respDTO.getMsg());
         return true;
     }
 
@@ -94,11 +90,7 @@ public class MemberWaterMeterClient {
             log.warn("[operateValve][deviceCode({}) valveStatus({}) response({})]", deviceCode, valveStatus, responseBody);
             return false;
         }
-        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
-        if (respDTO.getCode() != 0) {
-            log.warn("[operateValve][deviceCode({}) valveStatus({}) response({})]", deviceCode, valveStatus, responseBody);
-            return false;
-        }
+        ensureSuccess(respDTO.getCode(), respDTO.getMsg());
         return true;
     }
 
@@ -121,12 +113,7 @@ public class MemberWaterMeterClient {
                     reqDTO.getOriginalDeviceCode(), reqDTO.getNewDeviceCode(), responseBody);
             return false;
         }
-        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
-        if (respDTO.getCode() != 0) {
-            log.warn("[changeDevice][originalDeviceCode({}) newDeviceCode({}) response({})]",
-                    reqDTO.getOriginalDeviceCode(), reqDTO.getNewDeviceCode(), responseBody);
-            return false;
-        }
+        ensureSuccess(respDTO.getCode(), respDTO.getMsg());
         return true;
     }
 
@@ -149,12 +136,7 @@ public class MemberWaterMeterClient {
                     reqDTO.getDeviceCode(), reqDTO.getUploadType(), reqDTO.getValue(), responseBody);
             return false;
         }
-        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
-        if (respDTO.getCode() != 0) {
-            log.warn("[setUploadMode][deviceCode({}) uploadType({}) value({}) response({})]",
-                    reqDTO.getDeviceCode(), reqDTO.getUploadType(), reqDTO.getValue(), responseBody);
-            return false;
-        }
+        ensureSuccess(respDTO.getCode(), respDTO.getMsg());
         return true;
     }
 
@@ -196,8 +178,8 @@ public class MemberWaterMeterClient {
         }
     }
 
-    private void throwIfResponseError(Integer code, String message) {
-        if (code != null && code == 1) {
+    private void ensureSuccess(Integer code, String message) {
+        if (code != null && code != 0) {
             throw invalidParamException(StrUtil.blankToDefault(message, "接口调用失败"));
         }
     }
