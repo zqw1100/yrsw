@@ -154,7 +154,8 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 && StrUtil.isBlank(updateReqVO.getDeviceNo())) {
             throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
         }
-        if (StrUtil.isBlank(apply.getDeviceNo()) && StrUtil.isNotBlank(updateReqVO.getDeviceNo())) {
+        boolean needRegisterDevice = StrUtil.isBlank(apply.getDeviceNo()) && StrUtil.isNotBlank(updateReqVO.getDeviceNo());
+        if (needRegisterDevice) {
             String tempDeviceNo = TEMP_DEVICE_NO_PREFIX + apply.getId();
             payWalletService.updateWalletDeviceNo(apply.getUserId(), UserTypeEnum.MEMBER.getValue(),
                     tempDeviceNo, updateReqVO.getDeviceNo());
@@ -165,8 +166,9 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .deviceNo(updateReqVO.getDeviceNo())
                 .build();
         applyMapper.updateById(updateObj);
-        if (StrUtil.isNotBlank(updateReqVO.getDeviceNo())) {
-            deviceService.registerOrUpdateDevice(updateReqVO.getDeviceNo());
+        if (needRegisterDevice) {
+            apply.setDeviceNo(updateReqVO.getDeviceNo());
+            deviceService.registerDeviceForApply(apply, updateReqVO.getDeviceNo());
         }
     }
 

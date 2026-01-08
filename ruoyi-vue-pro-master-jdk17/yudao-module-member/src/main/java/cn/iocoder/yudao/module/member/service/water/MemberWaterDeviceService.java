@@ -25,6 +25,14 @@ public interface MemberWaterDeviceService {
     void registerOrUpdateDevice(String deviceNo);
 
     /**
+     * 绑定报装信息并注册设备
+     *
+     * @param apply 报装信息
+     * @param deviceNo 设备号
+     */
+    void registerDeviceForApply(cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO apply, String deviceNo);
+
+    /**
      * 刷新设备信息
      *
      * @param id 设备编号

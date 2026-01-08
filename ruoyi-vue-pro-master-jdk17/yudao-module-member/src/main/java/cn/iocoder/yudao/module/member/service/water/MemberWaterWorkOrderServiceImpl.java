@@ -185,12 +185,18 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                 .build();
         workOrderMapper.updateById(updateObj);
         if (order.getOrderType() != null && order.getOrderType() == 0) {
+            MemberWaterApplyDO apply = applyMapper.selectById(order.getBizId());
             MemberWaterApplyDO applyUpdate = MemberWaterApplyDO.builder()
                     .id(order.getBizId())
                     .deviceNo(reqVO.getDeviceNo())
                     .build();
             applyMapper.updateById(applyUpdate);
-            deviceService.registerOrUpdateDevice(reqVO.getDeviceNo());
+            if (apply != null && StrUtil.isBlank(apply.getDeviceNo())) {
+                apply.setDeviceNo(reqVO.getDeviceNo());
+                deviceService.registerDeviceForApply(apply, reqVO.getDeviceNo());
+            } else {
+                deviceService.registerOrUpdateDevice(reqVO.getDeviceNo());
+            }
         }
         updateBizStatus(order, 3);
     }
