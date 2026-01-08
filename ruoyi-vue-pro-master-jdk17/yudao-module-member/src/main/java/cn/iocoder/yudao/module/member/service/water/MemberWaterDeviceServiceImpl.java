@@ -8,17 +8,23 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDevic
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDeviceRespVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceDO;
+import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
+import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterExtendDictDTO;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterAddDeviceReqDTO;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterChangeDeviceReqDTO;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterUploadModeReqDTO;
 import cn.iocoder.yudao.module.member.framework.water.config.MemberWaterMeterProperties;
+import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
+import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletRechargeMapper;
+import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletTransactionMapper;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.annotation.Resource;
@@ -44,6 +50,16 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
     private MemberWaterMeterClient meterClient;
     @Resource
     private MemberWaterMeterProperties meterProperties;
+    @Resource
+    private MemberWaterApplyMapper applyMapper;
+    @Resource
+    private MemberWaterFaultMapper faultMapper;
+    @Resource
+    private PayWalletMapper payWalletMapper;
+    @Resource
+    private PayWalletRechargeMapper payWalletRechargeMapper;
+    @Resource
+    private PayWalletTransactionMapper payWalletTransactionMapper;
 
     @Override
     public PageResult<MemberWaterDeviceRespVO> getDevicePage(MemberWaterDevicePageReqVO pageReqVO) {
@@ -104,6 +120,7 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean changeDevice(String originalDeviceCode, String newDeviceCode, Long originalTotalData) {
         MemberWaterMeterChangeDeviceReqDTO reqDTO = new MemberWaterMeterChangeDeviceReqDTO();
         reqDTO.setOriginalDeviceCode(originalDeviceCode);
@@ -111,7 +128,7 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         reqDTO.setOriginalTotalData(originalTotalData);
         boolean success = meterClient.changeDevice(reqDTO);
         if (success) {
-            registerOrUpdateDevice(newDeviceCode);
+            updateDeviceNoData(originalDeviceCode, newDeviceCode);
         }
         return success;
     }
@@ -123,6 +140,19 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         reqDTO.setUploadType(uploadType);
         reqDTO.setValue(value);
         return meterClient.setUploadMode(reqDTO);
+    }
+
+    private void updateDeviceNoData(String originalDeviceCode, String newDeviceCode) {
+        LocalDateTime now = LocalDateTime.now();
+        int deviceUpdated = deviceMapper.updateDeviceNo(originalDeviceCode, newDeviceCode, now);
+        if (deviceUpdated == 0) {
+            log.warn("[updateDeviceNoData][originalDeviceCode({}) not found in device table]", originalDeviceCode);
+        }
+        applyMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        faultMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        payWalletMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        payWalletRechargeMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        payWalletTransactionMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
     }
 
     private String buildDeviceAddress(MemberWaterApplyDO apply) {
