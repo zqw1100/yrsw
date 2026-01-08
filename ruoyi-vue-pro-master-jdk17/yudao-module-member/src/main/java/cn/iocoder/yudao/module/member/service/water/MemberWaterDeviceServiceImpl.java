@@ -7,10 +7,13 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDevicePageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDeviceRespVO;
+import cn.iocoder.yudao.module.member.controller.open.water.vo.MemberWaterDeviceDataPushReqVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceDO;
+import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceHistoryDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
+import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceHistoryMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterExtendDictDTO;
@@ -33,6 +36,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_APPLY_NOT_ALLOW;
@@ -48,6 +53,8 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
 
     @Resource
     private MemberWaterDeviceMapper deviceMapper;
+    @Resource
+    private MemberWaterDeviceHistoryMapper deviceHistoryMapper;
     @Resource
     private MemberWaterMeterClient meterClient;
     @Resource
@@ -106,6 +113,23 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         reqDTO.setDeviceVersionName(meterProperties.getDeviceVersionName());
         meterClient.addDevice(reqDTO);
         registerOrUpdateDevice(deviceNo);
+    }
+
+    @Override
+    public void syncDeviceData(MemberWaterDeviceDataPushReqVO reqVO) {
+        if (reqVO == null || StrUtil.isBlank(reqVO.getDeviceCode())) {
+            return;
+        }
+        deviceHistoryMapper.insert(buildDeviceHistory(reqVO));
+        MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(reqVO.getDeviceCode());
+        LocalDateTime now = LocalDateTime.now();
+        MemberWaterDeviceDO updateObj = buildDevice(reqVO, now);
+        if (device == null) {
+            deviceMapper.insert(updateObj);
+        } else {
+            updateObj.setId(device.getId());
+            deviceMapper.updateById(updateObj);
+        }
     }
 
     @Override
@@ -216,6 +240,55 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
                 .build();
     }
 
+    private MemberWaterDeviceDO buildDevice(MemberWaterDeviceDataPushReqVO reqVO, LocalDateTime now) {
+        return MemberWaterDeviceDO.builder()
+                .deviceNo(reqVO.getDeviceCode())
+                .deviceAddress(StrUtil.nullToEmpty(reqVO.getDeviceAddress()))
+                .deviceUserName(StrUtil.nullToEmpty(reqVO.getDeviceUserName()))
+                .deviceClock(parseTime(reqVO.getDeviceClock()))
+                .deviceUpdateTime(parseEpochMillis(reqVO.getUpdateTime()))
+                .deviceRssi(reqVO.getDeviceRSSI())
+                .deviceBuyTimes(reqVO.getDeviceBuyTimes())
+                .deviceVoltage(parseVoltage(reqVO.getDeviceVoltage()))
+                .deviceBalance(reqVO.getDeviceBalance())
+                .deviceTotalData(reqVO.getDeviceTotalData())
+                .deviceSettleDayData(reqVO.getDeviceSettleDayData())
+                .deviceLastData(reqVO.getDeviceLastData())
+                .deviceSettleDay(reqVO.getDeviceSettleDay())
+                .deviceCurrentData(reqVO.getDeviceCurrentData())
+                .valveStatus(reqVO.getValveStatus())
+                .voltageStatus(reqVO.getVoltageStatus())
+                .feeStatus(reqVO.getFeeStatus())
+                .lastSyncTime(now)
+                .build();
+    }
+
+    private MemberWaterDeviceHistoryDO buildDeviceHistory(MemberWaterDeviceDataPushReqVO reqVO) {
+        MemberWaterDeviceDataPushReqVO.CycleDataObject cycleDataObject = reqVO.getCycleDataObject();
+        return MemberWaterDeviceHistoryDO.builder()
+                .deviceNo(reqVO.getDeviceCode())
+                .deviceAddress(StrUtil.nullToEmpty(reqVO.getDeviceAddress()))
+                .deviceUserName(StrUtil.nullToEmpty(reqVO.getDeviceUserName()))
+                .deviceClock(parseTime(reqVO.getDeviceClock()))
+                .deviceUpdateTime(parseEpochMillis(reqVO.getUpdateTime()))
+                .deviceRssi(reqVO.getDeviceRSSI())
+                .deviceBuyTimes(reqVO.getDeviceBuyTimes())
+                .deviceVoltage(parseVoltage(reqVO.getDeviceVoltage()))
+                .deviceBalance(reqVO.getDeviceBalance())
+                .deviceTotalData(reqVO.getDeviceTotalData())
+                .deviceSettleDayData(reqVO.getDeviceSettleDayData())
+                .deviceLastData(reqVO.getDeviceLastData())
+                .deviceSettleDay(reqVO.getDeviceSettleDay())
+                .deviceCurrentData(reqVO.getDeviceCurrentData())
+                .valveStatus(reqVO.getValveStatus())
+                .voltageStatus(reqVO.getVoltageStatus())
+                .feeStatus(reqVO.getFeeStatus())
+                .reportReason(reqVO.getReportReason())
+                .cycleReportContent(cycleDataObject == null ? null : cycleDataObject.getReportContent())
+                .cycleReportType(cycleDataObject == null ? null : cycleDataObject.getReportType())
+                .build();
+    }
+
     private LocalDateTime parseTime(String time) {
         if (StrUtil.isBlank(time)) {
             return null;
@@ -232,6 +305,13 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         }
     }
 
+    private LocalDateTime parseEpochMillis(Long epochMillis) {
+        if (epochMillis == null) {
+            return null;
+        }
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault());
+    }
+
     private BigDecimal parseVoltage(String voltage) {
         if (StrUtil.isBlank(voltage)) {
             return null;
@@ -242,5 +322,12 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             log.warn("[parseVoltage][voltage({}) parse failed]", voltage, ex);
             return null;
         }
+    }
+
+    private BigDecimal parseVoltage(Double voltage) {
+        if (voltage == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(voltage);
     }
 }
