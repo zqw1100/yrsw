@@ -6,7 +6,9 @@ import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFaultPageReqVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFaultPageReqVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFaultDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
+import cn.hutool.core.util.StrUtil;
 
 @Mapper
 public interface MemberWaterFaultMapper extends BaseMapperX<MemberWaterFaultDO> {
@@ -31,5 +33,15 @@ public interface MemberWaterFaultMapper extends BaseMapperX<MemberWaterFaultDO> 
                 .eqIfPresent(MemberWaterFaultDO::getPriority, reqVO.getPriority())
                 .eqIfPresent(MemberWaterFaultDO::getProcessStatus, reqVO.getProcessStatus())
                 .orderByDesc(MemberWaterFaultDO::getId));
+    }
+
+    default int updateDeviceNo(String oldDeviceNo, String newDeviceNo) {
+        if (StrUtil.isBlank(oldDeviceNo) || StrUtil.isBlank(newDeviceNo)) {
+            return 0;
+        }
+        LambdaUpdateWrapper<MemberWaterFaultDO> updateWrapper = new LambdaUpdateWrapper<MemberWaterFaultDO>()
+                .set(MemberWaterFaultDO::getDeviceNo, newDeviceNo)
+                .eq(MemberWaterFaultDO::getDeviceNo, oldDeviceNo);
+        return update(null, updateWrapper);
     }
 }
