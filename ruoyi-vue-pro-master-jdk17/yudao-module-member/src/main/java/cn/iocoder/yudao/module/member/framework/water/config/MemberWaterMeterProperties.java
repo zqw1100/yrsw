@@ -52,4 +52,13 @@ public class MemberWaterMeterProperties {
      * openId
      */
     private String openId = "1";
+
+    /**
+     * 设备数据推送厂商编码
+     */
+    private String pushVendorCode = "default";
+    /**
+     * 设备数据推送鉴权密钥
+     */
+    private String pushApiKey = "change-me";
 }
