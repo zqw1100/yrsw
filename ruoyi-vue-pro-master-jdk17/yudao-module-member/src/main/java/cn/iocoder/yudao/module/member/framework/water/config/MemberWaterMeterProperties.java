@@ -29,6 +29,14 @@ public class MemberWaterMeterProperties {
      */
     private String readInfoPath = "/open/openapi/read/info";
     /**
+     * 设备新增接口路径前缀
+     */
+    private String addDevicePath = "/open/openapi/v3/add/device";
+    /**
+     * 默认设备版本名称
+     */
+    private String deviceVersionName = "NB-IoT水表";
+    /**
      * openId
      */
     private String openId = "1";

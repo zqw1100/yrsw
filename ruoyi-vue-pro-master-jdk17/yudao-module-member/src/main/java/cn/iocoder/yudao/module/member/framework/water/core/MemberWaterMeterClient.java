@@ -43,6 +43,27 @@ public class MemberWaterMeterClient {
         return respDTO.getData().getExtendDict();
     }
 
+    public boolean addDevice(MemberWaterMeterAddDeviceReqDTO reqDTO) {
+        if (reqDTO == null) {
+            return false;
+        }
+        String token = getAccessToken();
+        if (StrUtil.isBlank(token)) {
+            return false;
+        }
+        String url = properties.getBaseUrl() + properties.getAddDevicePath() + "/" + properties.getOpenId();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        headers.put("Content-Type", "application/json");
+        String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
+        MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
+        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+            log.warn("[addDevice][deviceCode({}) response({})]", reqDTO.getDeviceCode(), responseBody);
+            return false;
+        }
+        return true;
+    }
+
     private String getAccessToken() {
         if (StrUtil.isNotBlank(accessToken) && tokenExpireTime != null
                 && tokenExpireTime.isAfter(LocalDateTime.now().plusSeconds(30))) {
@@ -102,6 +123,14 @@ public class MemberWaterMeterClient {
     }
 
     @Data
+    public static class MemberWaterMeterCommonRespDTO {
+
+        private Integer code;
+        private String msg;
+        private Object data;
+    }
+
+    @Data
     public static class MemberWaterMeterReadInfoDataDTO {
 
         private Integer responseCode;
@@ -128,5 +157,17 @@ public class MemberWaterMeterClient {
         private Integer feeStatus;
         private String deviceAddress;
         private String deviceUserName;
+    }
+
+    @Data
+    public static class MemberWaterMeterAddDeviceReqDTO {
+
+        private String address;
+        private String deviceCode;
+        private String deviceName;
+        private String userName;
+        private String description;
+        private String deviceVersionName;
+        private String imei;
     }
 }

@@ -6,10 +6,13 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDevicePageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDeviceRespVO;
+import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterExtendDictDTO;
+import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterAddDeviceReqDTO;
+import cn.iocoder.yudao.module.member.framework.water.config.MemberWaterMeterProperties;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,8 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -35,6 +40,8 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
     private MemberWaterDeviceMapper deviceMapper;
     @Resource
     private MemberWaterMeterClient meterClient;
+    @Resource
+    private MemberWaterMeterProperties meterProperties;
 
     @Override
     public PageResult<MemberWaterDeviceRespVO> getDevicePage(MemberWaterDevicePageReqVO pageReqVO) {
@@ -65,12 +72,56 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
     }
 
     @Override
+    public void registerDeviceForApply(MemberWaterApplyDO apply, String deviceNo) {
+        if (apply == null || StrUtil.isBlank(deviceNo)) {
+            return;
+        }
+        MemberWaterMeterAddDeviceReqDTO reqDTO = new MemberWaterMeterAddDeviceReqDTO();
+        reqDTO.setAddress(buildDeviceAddress(apply));
+        reqDTO.setDeviceCode(deviceNo);
+        reqDTO.setDeviceName(buildDeviceName(apply, deviceNo));
+        reqDTO.setUserName(StrUtil.nullToEmpty(apply.getContactName()));
+        reqDTO.setDescription(StrUtil.blankToDefault(apply.getRemark(), "居民报装"));
+        reqDTO.setDeviceVersionName(meterProperties.getDeviceVersionName());
+        meterClient.addDevice(reqDTO);
+        registerOrUpdateDevice(deviceNo);
+    }
+
+    @Override
     public void refreshDevice(Long id) {
         MemberWaterDeviceDO device = deviceMapper.selectById(id);
         if (device == null) {
             throw exception(WATER_DEVICE_NOT_EXISTS);
         }
         registerOrUpdateDevice(device.getDeviceNo());
+    }
+
+    private String buildDeviceAddress(MemberWaterApplyDO apply) {
+        List<String> parts = new ArrayList<>();
+        if (StrUtil.isNotBlank(apply.getAreaName())) {
+            parts.add(apply.getAreaName());
+        }
+        if (StrUtil.isNotBlank(apply.getCommunityName())) {
+            parts.add(apply.getCommunityName());
+        }
+        if (StrUtil.isNotBlank(apply.getBuildingName())) {
+            parts.add(apply.getBuildingName());
+        }
+        if (StrUtil.isNotBlank(apply.getUnitName())) {
+            parts.add(apply.getUnitName());
+        }
+        if (StrUtil.isNotBlank(apply.getRoomNo())) {
+            parts.add(apply.getRoomNo());
+        }
+        return String.join("", parts);
+    }
+
+    private String buildDeviceName(MemberWaterApplyDO apply, String deviceNo) {
+        String address = buildDeviceAddress(apply);
+        if (StrUtil.isNotBlank(address)) {
+            return address;
+        }
+        return deviceNo;
     }
 
     private MemberWaterDeviceDO buildDevice(String deviceNo, MemberWaterMeterExtendDictDTO info, LocalDateTime now) {
