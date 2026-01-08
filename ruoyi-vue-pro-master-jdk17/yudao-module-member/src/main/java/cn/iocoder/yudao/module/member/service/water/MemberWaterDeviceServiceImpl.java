@@ -12,6 +12,8 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterExtendDictDTO;
 import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterAddDeviceReqDTO;
+import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterChangeDeviceReqDTO;
+import cn.iocoder.yudao.module.member.framework.water.core.MemberWaterMeterClient.MemberWaterMeterUploadModeReqDTO;
 import cn.iocoder.yudao.module.member.framework.water.config.MemberWaterMeterProperties;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
@@ -94,6 +96,33 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             throw exception(WATER_DEVICE_NOT_EXISTS);
         }
         registerOrUpdateDevice(device.getDeviceNo());
+    }
+
+    @Override
+    public boolean operateValve(String deviceNo, Integer valveStatus) {
+        return meterClient.operateValve(deviceNo, valveStatus);
+    }
+
+    @Override
+    public boolean changeDevice(String originalDeviceCode, String newDeviceCode, Long originalTotalData) {
+        MemberWaterMeterChangeDeviceReqDTO reqDTO = new MemberWaterMeterChangeDeviceReqDTO();
+        reqDTO.setOriginalDeviceCode(originalDeviceCode);
+        reqDTO.setNewDeviceCode(newDeviceCode);
+        reqDTO.setOriginalTotalData(originalTotalData);
+        boolean success = meterClient.changeDevice(reqDTO);
+        if (success) {
+            registerOrUpdateDevice(newDeviceCode);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean setUploadMode(String deviceCode, Integer uploadType, Integer value) {
+        MemberWaterMeterUploadModeReqDTO reqDTO = new MemberWaterMeterUploadModeReqDTO();
+        reqDTO.setDeviceCode(deviceCode);
+        reqDTO.setUploadType(uploadType);
+        reqDTO.setValue(value);
+        return meterClient.setUploadMode(reqDTO);
     }
 
     private String buildDeviceAddress(MemberWaterApplyDO apply) {

@@ -279,6 +279,9 @@ yudao:
       token-authorization: Basic b3BlbmNsaWVudDpvcGVuY2xpZW50
       read-info-path: /open/openapi/read/info
       add-device-path: /open/openapi/v3/add/device
+      valve-path: /open/openapi/valve
+      change-device-path: /open/openapi/device
+      upload-mode-path: /open/openapi/device
       device-version-name: NB-IoT水表
       open-id: 1
   api-encrypt:

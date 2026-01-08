@@ -38,4 +38,33 @@ public interface MemberWaterDeviceService {
      * @param id 设备编号
      */
     void refreshDevice(Long id);
+
+    /**
+     * 阀门操作
+     *
+     * @param deviceNo 设备号
+     * @param valveStatus 阀门状态
+     * @return 是否成功
+     */
+    boolean operateValve(String deviceNo, Integer valveStatus);
+
+    /**
+     * 换表
+     *
+     * @param originalDeviceCode 旧表设备编码
+     * @param newDeviceCode 新表设备编码
+     * @param originalTotalData 旧表累计流量
+     * @return 是否成功
+     */
+    boolean changeDevice(String originalDeviceCode, String newDeviceCode, Long originalTotalData);
+
+    /**
+     * 设置设备上传周期
+     *
+     * @param deviceCode 设备编码
+     * @param uploadType 上传类型
+     * @param value 上传周期
+     * @return 是否成功
+     */
+    boolean setUploadMode(String deviceCode, Integer uploadType, Integer value);
 }
