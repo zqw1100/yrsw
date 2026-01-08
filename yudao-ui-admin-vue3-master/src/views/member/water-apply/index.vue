@@ -240,12 +240,10 @@ const resetQuery = () => {
   handleQuery()
 }
 
-const handleUpdateStatus = async (row: any, processStatus: number | string) => {
-  const ps = Number(processStatus)
-
+const handleUpdateStatus = async (row: any, processStatus: number) => {
   try {
     let deviceNo: string | undefined
-    if (ps === 3) {
+    if (processStatus === 3) {
       const { value } = await ElMessageBox.prompt('请输入设备号', '施工完成', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -253,18 +251,20 @@ const handleUpdateStatus = async (row: any, processStatus: number | string) => {
         inputErrorMessage: '设备号不能为空'
       })
       deviceNo = value
-
       if (deviceNo && deviceNo !== row.deviceNo) {
-        const used = await WaterApplyApi.checkDeviceNo(deviceNo, row.id)
-        if (used === true || used?.data === true) {
+        const data = await WaterApplyApi.getWaterApplyPage({
+          pageNo: 1,
+          pageSize: 1,
+          deviceNo
+        })
+        if (data?.list?.some((item) => item.id !== row.id)) {
           message.error('设备号已被使用，无法重复绑定')
           await getList()
           return
         }
       }
     }
-
-    await WaterApplyApi.updateWaterApplyStatus({ id: row.id, processStatus: ps, deviceNo })
+    await WaterApplyApi.updateWaterApplyStatus({ id: row.id, processStatus, deviceNo })
     message.success('状态更新成功')
   } catch {
     await getList()
