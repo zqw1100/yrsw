@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.pay.dal.mysql.wallet;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
@@ -10,6 +11,7 @@ import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -60,6 +62,15 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
                 PayWalletTransactionDO::getBizType, bizType);
     }
 
-}
+    default int updateDeviceNo(String oldDeviceNo, String newDeviceNo) {
+        if (StrUtil.isBlank(oldDeviceNo) || StrUtil.isBlank(newDeviceNo)) {
+            return 0;
+        }
+        LambdaUpdateWrapper<PayWalletTransactionDO> updateWrapper = new LambdaUpdateWrapper<PayWalletTransactionDO>()
+                .set(PayWalletTransactionDO::getDeviceNo, newDeviceNo)
+                .eq(PayWalletTransactionDO::getDeviceNo, oldDeviceNo);
+        return update(null, updateWrapper);
+    }
 
+}
 

@@ -34,6 +34,16 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
                 .orderByDesc(PayWalletDO::getId));
     }
 
+    default int updateDeviceNo(String oldDeviceNo, String newDeviceNo) {
+        if (StrUtil.isBlank(oldDeviceNo) || StrUtil.isBlank(newDeviceNo)) {
+            return 0;
+        }
+        LambdaUpdateWrapper<PayWalletDO> updateWrapper = new LambdaUpdateWrapper<PayWalletDO>()
+                .set(PayWalletDO::getDeviceNo, newDeviceNo)
+                .eq(PayWalletDO::getDeviceNo, oldDeviceNo);
+        return update(null, updateWrapper);
+    }
+
     /**
      * 当消费退款时候， 更新钱包
      *

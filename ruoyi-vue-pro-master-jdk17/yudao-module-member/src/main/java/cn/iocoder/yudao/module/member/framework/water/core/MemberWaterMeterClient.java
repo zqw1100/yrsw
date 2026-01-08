@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.invalidParamException;
+
 /**
  * 物联网水表接口客户端
  */
@@ -36,7 +38,12 @@ public class MemberWaterMeterClient {
         headers.put("Authorization", "Bearer " + token);
         String responseBody = HttpUtils.get(url, headers);
         MemberWaterMeterReadInfoRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterReadInfoRespDTO.class);
-        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0 || respDTO.getData() == null) {
+        if (respDTO == null || respDTO.getCode() == null) {
+            log.warn("[readDeviceInfo][deviceCode({}) response({})]", deviceCode, responseBody);
+            return null;
+        }
+        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getCode() != 0 || respDTO.getData() == null) {
             log.warn("[readDeviceInfo][deviceCode({}) response({})]", deviceCode, responseBody);
             return null;
         }
@@ -57,7 +64,12 @@ public class MemberWaterMeterClient {
         headers.put("Content-Type", "application/json");
         String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
         MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
-        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+        if (respDTO == null || respDTO.getCode() == null) {
+            log.warn("[addDevice][deviceCode({}) response({})]", reqDTO.getDeviceCode(), responseBody);
+            return false;
+        }
+        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getCode() != 0) {
             log.warn("[addDevice][deviceCode({}) response({})]", reqDTO.getDeviceCode(), responseBody);
             return false;
         }
@@ -78,7 +90,12 @@ public class MemberWaterMeterClient {
         headers.put("Authorization", "Bearer " + token);
         String responseBody = HttpUtils.post(url, headers, "");
         MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
-        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+        if (respDTO == null || respDTO.getCode() == null) {
+            log.warn("[operateValve][deviceCode({}) valveStatus({}) response({})]", deviceCode, valveStatus, responseBody);
+            return false;
+        }
+        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getCode() != 0) {
             log.warn("[operateValve][deviceCode({}) valveStatus({}) response({})]", deviceCode, valveStatus, responseBody);
             return false;
         }
@@ -99,7 +116,13 @@ public class MemberWaterMeterClient {
         headers.put("Content-Type", "application/json");
         String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
         MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
-        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+        if (respDTO == null || respDTO.getCode() == null) {
+            log.warn("[changeDevice][originalDeviceCode({}) newDeviceCode({}) response({})]",
+                    reqDTO.getOriginalDeviceCode(), reqDTO.getNewDeviceCode(), responseBody);
+            return false;
+        }
+        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getCode() != 0) {
             log.warn("[changeDevice][originalDeviceCode({}) newDeviceCode({}) response({})]",
                     reqDTO.getOriginalDeviceCode(), reqDTO.getNewDeviceCode(), responseBody);
             return false;
@@ -121,7 +144,13 @@ public class MemberWaterMeterClient {
         headers.put("Content-Type", "application/json");
         String responseBody = HttpUtils.post(url, headers, JsonUtils.toJsonString(reqDTO));
         MemberWaterMeterCommonRespDTO respDTO = parseSafely(responseBody, MemberWaterMeterCommonRespDTO.class);
-        if (respDTO == null || respDTO.getCode() == null || respDTO.getCode() != 0) {
+        if (respDTO == null || respDTO.getCode() == null) {
+            log.warn("[setUploadMode][deviceCode({}) uploadType({}) value({}) response({})]",
+                    reqDTO.getDeviceCode(), reqDTO.getUploadType(), reqDTO.getValue(), responseBody);
+            return false;
+        }
+        throwIfResponseError(respDTO.getCode(), respDTO.getMsg());
+        if (respDTO.getCode() != 0) {
             log.warn("[setUploadMode][deviceCode({}) uploadType({}) value({}) response({})]",
                     reqDTO.getDeviceCode(), reqDTO.getUploadType(), reqDTO.getValue(), responseBody);
             return false;
@@ -164,6 +193,12 @@ public class MemberWaterMeterClient {
         } catch (Exception ex) {
             log.warn("[parseSafely][clazz({}) response({}) parse failed]", clazz.getSimpleName(), responseBody, ex);
             return null;
+        }
+    }
+
+    private void throwIfResponseError(Integer code, String message) {
+        if (code != null && code == 1) {
+            throw invalidParamException(StrUtil.blankToDefault(message, "接口调用失败"));
         }
     }
 
