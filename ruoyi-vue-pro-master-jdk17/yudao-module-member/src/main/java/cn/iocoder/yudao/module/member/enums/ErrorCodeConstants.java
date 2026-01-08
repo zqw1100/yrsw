@@ -70,4 +70,8 @@ public interface ErrorCodeConstants {
     ErrorCode GROUP_NOT_EXISTS = new ErrorCode(1_004_012_000, "用户分组不存在");
     ErrorCode GROUP_HAS_USER = new ErrorCode(1_004_012_001, "用户分组下存在用户，无法删除");
 
+    // 远程错误
+    ErrorCode GET_REMOTE_WATER_METER_INFORMATION = new ErrorCode(0_001_001_001, "获取远程水表信息有误");
+
+
 }

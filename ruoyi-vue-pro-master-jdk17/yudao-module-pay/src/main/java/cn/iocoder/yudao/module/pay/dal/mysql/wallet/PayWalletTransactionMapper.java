@@ -62,15 +62,6 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
                 PayWalletTransactionDO::getBizType, bizType);
     }
 
-    default int updateDeviceNo(String oldDeviceNo, String newDeviceNo) {
-        if (StrUtil.isBlank(oldDeviceNo) || StrUtil.isBlank(newDeviceNo)) {
-            return 0;
-        }
-        LambdaUpdateWrapper<PayWalletTransactionDO> updateWrapper = new LambdaUpdateWrapper<PayWalletTransactionDO>()
-                .set(PayWalletTransactionDO::getDeviceNo, newDeviceNo)
-                .eq(PayWalletTransactionDO::getDeviceNo, oldDeviceNo);
-        return update(null, updateWrapper);
-    }
 
 }
 

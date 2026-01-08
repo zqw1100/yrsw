@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.member.service.water;
 
 import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.common.exception.ServerException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_APPLY_NOT_ALLOW;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_DEVICE_NOT_EXISTS;
 
 /**
@@ -77,7 +79,8 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         try {
             info = meterClient.readDeviceInfo(deviceNo);
         } catch (Exception ex) {
-            log.warn("[registerOrUpdateDevice][deviceNo({}) read info failed]", deviceNo, ex);
+            throw new RuntimeException(ex);
+           // log.warn("[registerOrUpdateDevice][deviceNo({}) read info failed]", deviceNo, ex);
         }
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(deviceNo, info, now);
@@ -148,11 +151,10 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         if (deviceUpdated == 0) {
             log.warn("[updateDeviceNoData][originalDeviceCode({}) not found in device table]", originalDeviceCode);
         }
-        applyMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
-        faultMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
-        payWalletMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
-        payWalletRechargeMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
-        payWalletTransactionMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        int i = applyMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        int i1 = faultMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        int i2 = payWalletMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
+        int i3 = payWalletRechargeMapper.updateDeviceNo(originalDeviceCode, newDeviceCode);
     }
 
     private String buildDeviceAddress(MemberWaterApplyDO apply) {

@@ -109,13 +109,12 @@
         :formatter="dateFormatter"
         width="170px"
       />
-      <el-table-column label="操作" align="center" fixed="right" width="220px">
+      <el-table-column label="操作" align="center" fixed="right" width="320px">
         <template #default="{ row }">
           <el-button
             link
             type="primary"
             @click="handleRefresh(row.id)"
-            v-hasPermi="['member:water-device:update']"
           >
             刷新
           </el-button>
@@ -131,7 +130,6 @@
             link
             type="primary"
             @click="openChangeDialog(row)"
-            v-hasPermi="['member:water-device:update']"
           >
             换表
           </el-button>
@@ -139,7 +137,6 @@
             link
             type="primary"
             @click="openUploadDialog(row)"
-            v-hasPermi="['member:water-device:update']"
           >
             上传周期
           </el-button>
@@ -314,9 +311,11 @@ const feeStatusOptions = [
 const getList = async () => {
   loading.value = true
   try {
-    const { data } = await WaterDeviceApi.getWaterDevicePage(queryParams)
-    list.value = data.list
-    total.value = data.total
+    const res = await WaterDeviceApi.getWaterDevicePage(queryParams)
+    console.log("ssss")
+    console.log(res)
+    list.value = res.list
+    total.value = res.total
   } finally {
     loading.value = false
   }
