@@ -158,6 +158,7 @@
         <template #default="{ row }">
           <el-select
             v-model="row.processStatus"
+            disabled
             size="small"
             class="!w-130px"
             @change="(value) => handleUpdateStatus(row, value)"
