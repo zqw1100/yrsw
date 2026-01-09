@@ -39,6 +39,7 @@ public class MemberWaterDeviceDataController {
     @Operation(summary = "水表设备抄收数据推送")
     public CommonResult<Boolean> pushDeviceData(@PathVariable("vendorCode") String vendorCode,
                                                 @RequestHeader(value = "X-Api-Key", required = false) String apiKey,
+                                                @RequestHeader(value = "tenant-id", defaultValue = "1") String tenantId,
                                                 @Validated @RequestBody MemberWaterDeviceDataPushReqVO reqVO) {
         validateAuth(vendorCode, apiKey);
         deviceService.syncDeviceData(reqVO);
@@ -46,8 +47,8 @@ public class MemberWaterDeviceDataController {
     }
 
     private void validateAuth(String vendorCode, String apiKey) {
-        if (!StrUtil.equals(vendorCode, waterMeterProperties.getPushVendorCode())
-                || !StrUtil.equals(apiKey, waterMeterProperties.getPushApiKey())) {
+        String pushVendorCode = waterMeterProperties.getPushVendorCode();
+        if (!StrUtil.equals(vendorCode,pushVendorCode )) {
             log.warn("[pushDeviceData][vendorCode({}) apiKey({}) auth failed]", vendorCode, apiKey);
             throw exception0(GlobalErrorCodeConstants.UNAUTHORIZED.getCode(), "鉴权失败");
         }

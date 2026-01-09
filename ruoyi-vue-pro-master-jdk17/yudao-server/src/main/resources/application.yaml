@@ -284,7 +284,7 @@ yudao:
       upload-mode-path: /open/openapi/device
       device-version-name: NB-IoT水表
       open-id: 1
-      push-vendor-code: default
+      push-vendor-code: TkSrqJi4gBydrDcQpIW
       push-api-key: change-me
   api-encrypt:
     enable: true # 是否开启 API 加密

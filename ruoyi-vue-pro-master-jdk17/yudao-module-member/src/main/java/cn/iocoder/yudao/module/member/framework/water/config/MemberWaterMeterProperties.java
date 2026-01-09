@@ -56,7 +56,7 @@ public class MemberWaterMeterProperties {
     /**
      * 设备数据推送厂商编码
      */
-    private String pushVendorCode = "default";
+    private String pushVendorCode = "TkSrqJi4gBydrDcQpIW";
     /**
      * 设备数据推送鉴权密钥
      */
