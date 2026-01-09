@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.member.service.water;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFeeBillPageReqVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeBillDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeBillMapper;
@@ -26,6 +27,9 @@ public class MemberWaterFeeBillServiceImpl implements MemberWaterFeeBillService 
 
     @Override
     public PageResult<MemberWaterFeeBillDO> getFeeBillPage(MemberWaterFeeBillPageReqVO pageReqVO) {
-        return feeBillMapper.selectPage(pageReqVO);
+        return feeBillMapper.selectPage(pageReqVO, new LambdaQueryWrapperX<MemberWaterFeeBillDO>()
+                .likeIfPresent(MemberWaterFeeBillDO::getDeviceNo, pageReqVO.getDeviceNo())
+                .betweenIfPresent(MemberWaterFeeBillDO::getStatDate, pageReqVO.getStatDate())
+                .orderByDesc(MemberWaterFeeBillDO::getId));
     }
 }

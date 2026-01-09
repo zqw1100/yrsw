@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFeeCo
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterFeeConfigConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeConfigDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeConfigMapper;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -54,7 +55,10 @@ public class MemberWaterFeeConfigServiceImpl implements MemberWaterFeeConfigServ
 
     @Override
     public PageResult<MemberWaterFeeConfigDO> getFeeConfigPage(MemberWaterFeeConfigPageReqVO pageReqVO) {
-        return feeConfigMapper.selectPage(pageReqVO);
+        return feeConfigMapper.selectPage(pageReqVO, new LambdaQueryWrapperX<MemberWaterFeeConfigDO>()
+                .eqIfPresent(MemberWaterFeeConfigDO::getStatus, pageReqVO.getStatus())
+                .betweenIfPresent(MemberWaterFeeConfigDO::getCreateTime, pageReqVO.getCreateTime())
+                .orderByDesc(MemberWaterFeeConfigDO::getId));
     }
 
     private void validateFeeConfigExists(Long id) {
