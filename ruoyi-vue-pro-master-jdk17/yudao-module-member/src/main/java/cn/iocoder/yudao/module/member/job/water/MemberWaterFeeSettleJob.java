@@ -17,6 +17,7 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeBillMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeConfigMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeDeductFailMapper;
+import cn.iocoder.yudao.module.member.service.water.MemberWaterDeviceService;
 import cn.iocoder.yudao.module.member.service.water.MemberWaterFeeSettleService;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
@@ -28,12 +29,16 @@ import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
+import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANCE_NOT_ENOUGH;
+
 /**
  * 水费结算 Job
  */
 @Component
 @Slf4j
 public class MemberWaterFeeSettleJob implements JobHandler {
+
+    private static final Integer VALVE_CLOSE_STATUS = 2;
 
     @Resource
     private MemberWaterDeviceMapper deviceMapper;
@@ -53,6 +58,8 @@ public class MemberWaterFeeSettleJob implements JobHandler {
     private MemberWaterFeeSettleService memberWaterFeeSettleService;
     @Resource
     private MemberWaterFeeDeductFailMapper feeDeductFailMapper;
+    @Resource
+    private MemberWaterDeviceService deviceService;
 
     @Override
     @TenantJob
@@ -129,6 +136,12 @@ public class MemberWaterFeeSettleJob implements JobHandler {
                 if (ex instanceof ServiceException serviceException) {
                     failDO.setErrorCode(serviceException.getCode());
                     failDO.setErrorMessage(serviceException.getMessage());
+                    if (WALLET_BALANCE_NOT_ENOUGH.getCode().equals(serviceException.getCode())) {
+                        boolean valveClosed = deviceService.operateValve(deviceNo, VALVE_CLOSE_STATUS);
+                        if (!valveClosed) {
+                            log.warn("[execute][deviceNo({}) 余额不足关阀失败]", deviceNo);
+                        }
+                    }
                 } else {
                     failDO.setErrorMessage(ex.getMessage());
                 }
