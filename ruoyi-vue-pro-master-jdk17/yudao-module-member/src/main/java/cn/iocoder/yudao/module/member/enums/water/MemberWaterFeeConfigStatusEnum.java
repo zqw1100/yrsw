@@ -16,8 +16,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum MemberWaterFeeConfigStatusEnum implements ArrayValuable<Integer> {
 
-    DISABLE(0, "停用"),
-    ENABLE(1, "启用");
+    DISABLE(1, "停用"),
+    ENABLE(0, "启用");
 
     public static final Integer[] ARRAYS =
             Arrays.stream(values()).map(MemberWaterFeeConfigStatusEnum::getStatus).toArray(Integer[]::new);
