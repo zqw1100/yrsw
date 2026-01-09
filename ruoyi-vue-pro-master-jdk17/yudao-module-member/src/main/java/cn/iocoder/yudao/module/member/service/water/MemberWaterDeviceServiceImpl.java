@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.common.exception.ServerException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils;
+import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDevicePageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDeviceRespVO;
 import cn.iocoder.yudao.module.member.controller.open.water.vo.MemberWaterDeviceDataPushReqVO;
@@ -24,6 +25,7 @@ import cn.iocoder.yudao.module.member.framework.water.config.MemberWaterMeterPro
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletRechargeMapper;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletTransactionMapper;
+import cn.iocoder.yudao.module.pay.service.wallet.PayWalletService;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +71,8 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
     private PayWalletRechargeMapper payWalletRechargeMapper;
     @Resource
     private PayWalletTransactionMapper payWalletTransactionMapper;
+    @Resource
+    private PayWalletService payWalletService;
 
     @Override
     public PageResult<MemberWaterDeviceRespVO> getDevicePage(MemberWaterDevicePageReqVO pageReqVO) {
@@ -113,6 +117,7 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         reqDTO.setDeviceVersionName(meterProperties.getDeviceVersionName());
         meterClient.addDevice(reqDTO);
         registerOrUpdateDevice(deviceNo);
+        payWalletService.getOrCreateWallet(apply.getUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo);
     }
 
     @Override
