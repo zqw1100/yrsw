@@ -69,7 +69,7 @@ public class PayWalletServiceImpl implements PayWalletService {
     @SneakyThrows
     public PayWalletDO getOrCreateWallet(Long userId, Integer userType, String deviceNo) {
         if(StringUtils.isBlank(deviceNo)){
-            deviceNo = null;
+           throw exception(WALLET_DEVICE_NO_NOT_BLANK);
         }
         PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType, deviceNo);
         if (wallet == null) {

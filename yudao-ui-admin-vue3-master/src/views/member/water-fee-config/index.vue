@@ -32,8 +32,8 @@
       <el-table-column label="每升单价(分)" align="center" prop="pricePerLiter" width="140px" />
       <el-table-column label="状态" align="center" width="100px">
         <template #default="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : 'info'">
-            {{ scope.row.status === 1 ? '启用' : '停用' }}
+          <el-tag :type="scope.row.status === 0 ? 'success' : 'info'">
+            {{ scope.row.status === 0 ? '启用' : '停用' }}
           </el-tag>
         </template>
       </el-table-column>

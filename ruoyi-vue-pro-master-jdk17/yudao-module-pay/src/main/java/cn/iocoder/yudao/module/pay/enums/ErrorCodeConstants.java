@@ -47,7 +47,7 @@ public interface ErrorCodeConstants {
     ErrorCode WALLET_TRANSACTION_NOT_FOUND = new ErrorCode(1_007_007_002, "未找到对应的钱包交易");
     ErrorCode WALLET_REFUND_EXIST = new ErrorCode(1_007_007_003, "已经存在钱包退款");
     ErrorCode WALLET_FREEZE_PRICE_NOT_ENOUGH = new ErrorCode(1_007_007_004, "钱包冻结余额不足");
-
+    ErrorCode WALLET_DEVICE_NO_NOT_BLANK = new ErrorCode(1_007_007_005, "钱包设备号不能为空");
     // ========== 钱包充值模块 1-007-008-000 ==========
     ErrorCode WALLET_RECHARGE_NOT_FOUND = new ErrorCode(1_007_008_000, "钱包充值记录不存在");
     ErrorCode WALLET_RECHARGE_UPDATE_PAID_STATUS_NOT_UNPAID = new ErrorCode(1_007_008_001, "钱包充值更新支付状态失败，钱包充值记录不是【未支付】状态");

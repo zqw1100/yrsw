@@ -22,9 +22,12 @@ public interface MemberWaterFeeConfigMapper extends BaseMapperX<MemberWaterFeeCo
     }
 
     default MemberWaterFeeConfigDO selectLatestEnabled() {
-        return selectOne(new LambdaQueryWrapperX<MemberWaterFeeConfigDO>()
+
+        MemberWaterFeeConfigDO m = selectOne(new LambdaQueryWrapperX<MemberWaterFeeConfigDO>()
                 .eq(MemberWaterFeeConfigDO::getStatus, CommonStatusEnum.ENABLE.getStatus())
                 .orderByDesc(MemberWaterFeeConfigDO::getId)
                 .last("LIMIT 1"));
+
+        return m;
     }
 }
