@@ -108,6 +108,18 @@
 			}
 		},
 		{
+			"path": "pages/water/history",
+			"style": {
+				"navigationBarTitleText": "用水历史"
+			},
+			"meta": {
+				"auth": true,
+				"sync": true,
+				"title": "用水历史",
+				"group": "水务"
+			}
+		},
+		{
 			"path": "pages/water/fault-report",
 			"style": {
 				"navigationBarTitleText": "故障报修"

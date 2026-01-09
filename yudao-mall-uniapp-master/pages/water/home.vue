@@ -67,7 +67,10 @@
     </view>
 
     <view class="history-card">
-      <view class="history-title">用水历史</view>
+      <view class="history-title-row ss-flex ss-row-between ss-col-center">
+        <view class="history-title">用水历史</view>
+        <view class="history-more" @tap="onGoHistoryPage">更多</view>
+      </view>
       <view class="history-summary">
         <view class="summary-item summary-blue">
           <view class="summary-label">昨日用水详情</view>
@@ -93,8 +96,8 @@
           <view class="history-cell">费用(元)</view>
           <view class="history-cell">日期</view>
         </view>
-        <view v-if="historyList.length">
-          <view v-for="item in historyList" :key="item.id" class="history-row">
+        <view v-if="historyPreview.length">
+          <view v-for="item in historyPreview" :key="item.id" class="history-row">
             <view class="history-cell">{{ formatVolume(item.deviceTotalData) }}</view>
             <view class="history-cell">{{ formatVolume(getUsageValue(item)) }}</view>
             <view class="history-cell">{{ formatFee(item) }}</view>
@@ -147,6 +150,7 @@
   );
   const latestNotice = ref(null);
   const historyList = ref([]);
+  const historyPreview = computed(() => historyList.value.slice(0, 3));
 
   const activeDevice = computed(() => waterDeviceStore.activeDevice);
   const activeDeviceLabel = computed(() => {
@@ -182,6 +186,10 @@
 
   function onGoHistory() {
     uni.pageScrollTo({ selector: '.history-card', duration: 300 });
+  }
+
+  function onGoHistoryPage() {
+    sheep.$router.go('/pages/water/history');
   }
 
   function onPayRecharge() {
@@ -296,7 +304,7 @@
     }
     const { code, data } = await WaterHistoryApi.getHistoryPage({
       pageNo: 1,
-      pageSize: 20,
+      pageSize: 100,
       deviceNo: waterDeviceStore.activeDeviceNo,
     });
     if (code !== 0) {
@@ -552,11 +560,18 @@
     }
 
     .history-title {
-      text-align: center;
       font-size: 30rpx;
       font-weight: 600;
       color: #333333;
+    }
+
+    .history-title-row {
       margin-bottom: 20rpx;
+    }
+
+    .history-more {
+      font-size: 24rpx;
+      color: #3c7eff;
     }
 
     .history-summary {
