@@ -23,4 +23,12 @@ public interface MemberWaterDeviceHistoryMapper extends BaseMapperX<MemberWaterD
                 .betweenIfPresent(MemberWaterDeviceHistoryDO::getDeviceUpdateTime, reqVO.getDeviceUpdateTime())
                 .orderByDesc(MemberWaterDeviceHistoryDO::getId));
     }
+
+    default MemberWaterDeviceHistoryDO selectLatestByDeviceNo(String deviceNo) {
+        return selectOne(new LambdaQueryWrapperX<MemberWaterDeviceHistoryDO>()
+                .eq(MemberWaterDeviceHistoryDO::getDeviceNo, deviceNo)
+                .orderByDesc(MemberWaterDeviceHistoryDO::getDeviceUpdateTime)
+                .orderByDesc(MemberWaterDeviceHistoryDO::getId)
+                .last("LIMIT 1"));
+    }
 }
