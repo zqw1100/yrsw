@@ -4400,6 +4400,31 @@ CREATE TABLE `member_water_fee_bill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='水费结算流水';
 
 -- ----------------------------
+-- 水费扣费失败记录
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_fee_deduct_fail`;
+CREATE TABLE `member_water_fee_deduct_fail` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `stat_date` date NOT NULL COMMENT '统计日期',
+  `total_usage` bigint DEFAULT NULL COMMENT '总用水量（升）',
+  `last_total_usage` bigint DEFAULT NULL COMMENT '上次用水量（升）',
+  `usage_diff` bigint DEFAULT NULL COMMENT '用量差额（升）',
+  `fee` int DEFAULT NULL COMMENT '费用（分）',
+  `wallet_id` bigint DEFAULT NULL COMMENT '钱包编号',
+  `error_code` int DEFAULT NULL COMMENT '错误码',
+  `error_message` varchar(512) DEFAULT '' COMMENT '错误信息',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`),
+  KEY `idx_member_water_fee_deduct_fail_device` (`tenant_id`, `device_no`, `stat_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='水费扣费失败记录';
+
+-- ----------------------------
 -- 故障报修字典
 -- ----------------------------
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (3009, '设备故障原因', 'device-fault-code', 0, '', '1', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0', '1970-01-01 00:00:00');

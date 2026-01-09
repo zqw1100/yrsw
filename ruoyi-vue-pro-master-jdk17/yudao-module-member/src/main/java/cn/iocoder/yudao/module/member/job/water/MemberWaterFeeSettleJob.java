@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.member.job.water;
 
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
+import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.quartz.core.handler.JobHandler;
 import cn.iocoder.yudao.framework.tenant.core.job.TenantJob;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterApplyDO;
@@ -9,15 +10,17 @@ import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterDeviceHistoryDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeBillDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeConfigDO;
+import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeDeductFailDO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceHistoryMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeBillMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeConfigMapper;
+import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFeeDeductFailMapper;
+import cn.iocoder.yudao.module.member.service.water.MemberWaterDeviceService;
+import cn.iocoder.yudao.module.member.service.water.MemberWaterFeeSettleService;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
-import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
-import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,12 +29,16 @@ import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
+import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANCE_NOT_ENOUGH;
+
 /**
  * 水费结算 Job
  */
 @Component
 @Slf4j
 public class MemberWaterFeeSettleJob implements JobHandler {
+
+    private static final Integer VALVE_CLOSE_STATUS = 2;
 
     @Resource
     private MemberWaterDeviceMapper deviceMapper;
@@ -47,6 +54,12 @@ public class MemberWaterFeeSettleJob implements JobHandler {
     private PayWalletService payWalletService;
     @Resource
     private PayWalletMapper payWalletMapper;
+    @Resource
+    private MemberWaterFeeSettleService memberWaterFeeSettleService;
+    @Resource
+    private MemberWaterFeeDeductFailMapper feeDeductFailMapper;
+    @Resource
+    private MemberWaterDeviceService deviceService;
 
     @Override
     @TenantJob
@@ -96,30 +109,43 @@ public class MemberWaterFeeSettleJob implements JobHandler {
                     .fee(fee)
                     .walletId(wallet.getId())
                     .build();
-            feeBillMapper.insert(bill);
-            billed++;
 
             if (fee <= 0) {
+                feeBillMapper.insert(bill);
                 MemberWaterFeeBillDO updateBill = new MemberWaterFeeBillDO();
                 updateBill.setId(bill.getId());
                 updateBill.setBalance(wallet.getBalance());
                 feeBillMapper.updateById(updateBill);
+                billed++;
                 continue;
             }
 
             try {
-                PayWalletTransactionDO transaction = payWalletService.reduceWalletBalance(wallet.getId(),
-                        bill.getId(), PayWalletBizTypeEnum.WATER_FEE, fee);
-                MemberWaterFeeBillDO updateBill = new MemberWaterFeeBillDO();
-                updateBill.setId(bill.getId());
-                updateBill.setBalance(transaction.getBalance());
-                feeBillMapper.updateById(updateBill);
+                memberWaterFeeSettleService.createBillAndReduceWallet(bill, fee);
+                billed++;
             } catch (Exception ex) {
                 log.warn("[execute][deviceNo({}) 扣费失败：{}]", deviceNo, ex.getMessage());
-                MemberWaterFeeBillDO updateBill = new MemberWaterFeeBillDO();
-                updateBill.setId(bill.getId());
-                updateBill.setBalance(wallet.getBalance());
-                feeBillMapper.updateById(updateBill);
+                MemberWaterFeeDeductFailDO failDO = new MemberWaterFeeDeductFailDO();
+                failDO.setDeviceNo(deviceNo);
+                failDO.setStatDate(statDate);
+                failDO.setTotalUsage(totalUsage);
+                failDO.setLastTotalUsage(lastTotalUsage);
+                failDO.setUsageDiff(usageDiff);
+                failDO.setFee(fee);
+                failDO.setWalletId(wallet.getId());
+                if (ex instanceof ServiceException serviceException) {
+                    failDO.setErrorCode(serviceException.getCode());
+                    failDO.setErrorMessage(serviceException.getMessage());
+                    if (WALLET_BALANCE_NOT_ENOUGH.getCode().equals(serviceException.getCode())) {
+                        boolean valveClosed = deviceService.operateValve(deviceNo, VALVE_CLOSE_STATUS);
+                        if (!valveClosed) {
+                            log.warn("[execute][deviceNo({}) 余额不足关阀失败]", deviceNo);
+                        }
+                    }
+                } else {
+                    failDO.setErrorMessage(ex.getMessage());
+                }
+                feeDeductFailMapper.insert(failDO);
             }
         }
 
