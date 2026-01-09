@@ -1827,6 +1827,8 @@ INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_i
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5058, '设备管理', '', 2, 23, 2262, 'water-device', 'ep:cpu', 'member/water-device/index', 'MemberWaterDevice', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5059, '设备管理查询', 'member:water-device:query', 3, 1, 5058, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '', '2025-09-10 00:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5060, '设备管理更新', 'member:water-device:update', 3, 2, 5058, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5061, '历史用水数据', '', 2, 24, 2262, 'water-device-history', 'ep:histogram', 'member/water-device-history/index', 'MemberWaterDeviceHistory', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '1', '2025-09-10 00:00:00', b'0');
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5062, '历史用水数据查询', 'member:water-device-history:query', 3, 1, 5061, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-09-10 00:00:00', '', '2025-09-10 00:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5047, '报装充值套餐', '', 2, 20, 2262, 'water-recharge-package', 'ep:coin', 'member/water-recharge-package/index', 'MemberWaterRechargePackage', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '1', '2025-03-22 12:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5048, '报装充值套餐查询', 'member:water-recharge-package:query', 3, 1, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (5049, '报装充值套餐新增', 'member:water-recharge-package:create', 3, 2, 5047, '', '', '', '', 0, b'1', b'1', b'1', '', '2025-03-22 12:00:00', '', '2025-03-22 12:00:00', b'0');
@@ -4310,6 +4312,42 @@ CREATE TABLE `member_water_device` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_member_water_device_no` (`tenant_id`, `device_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民设备信息';
+
+-- ----------------------------
+-- 居民设备用水历史
+-- ----------------------------
+DROP TABLE IF EXISTS `member_water_device_history`;
+CREATE TABLE `member_water_device_history` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `device_address` varchar(255) NOT NULL DEFAULT '' COMMENT '设备用户地址',
+  `device_user_name` varchar(128) NOT NULL DEFAULT '' COMMENT '设备所属用户名称',
+  `device_clock` datetime DEFAULT NULL COMMENT '设备时钟',
+  `device_update_time` datetime DEFAULT NULL COMMENT '数据抄收时间',
+  `device_rssi` int DEFAULT NULL COMMENT '信号强度',
+  `device_buy_times` int DEFAULT NULL COMMENT '购买次数',
+  `device_voltage` decimal(10,2) DEFAULT NULL COMMENT '电池电压',
+  `device_balance` bigint DEFAULT NULL COMMENT '设备余额（分）',
+  `device_total_data` bigint DEFAULT NULL COMMENT '设备累计流量（升）',
+  `device_settle_day_data` bigint DEFAULT NULL COMMENT '结算日流量（升）',
+  `device_last_data` bigint DEFAULT NULL COMMENT '上月使用流量（升）',
+  `device_settle_day` int DEFAULT NULL COMMENT '结算日',
+  `device_current_data` bigint DEFAULT NULL COMMENT '瞬时流量（升）',
+  `valve_status` tinyint DEFAULT NULL COMMENT '阀门状态',
+  `voltage_status` tinyint DEFAULT NULL COMMENT '电池状态',
+  `fee_status` tinyint DEFAULT NULL COMMENT '表端预付费费用状态',
+  `report_reason` tinyint DEFAULT NULL COMMENT '设备上报原因',
+  `cycle_report_content` text COMMENT '周期数据内容',
+  `cycle_report_type` tinyint DEFAULT NULL COMMENT '周期数据类型',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`),
+  KEY `idx_member_water_device_history_device` (`tenant_id`, `device_no`, `device_update_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民设备用水历史';
 
 -- ----------------------------
 -- 故障报修字典
