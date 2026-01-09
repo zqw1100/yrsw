@@ -192,6 +192,10 @@ public class PayWalletServiceImpl implements PayWalletService {
                     updateCounts = walletMapper.updateWhenConsumption(payWallet.getId(), price);
                     break;
                 }
+                case WATER_FEE: {
+                    updateCounts = walletMapper.updateWhenConsumption(payWallet.getId(), price);
+                    break;
+                }
                 case RECHARGE_REFUND: {
                     updateCounts = walletMapper.updateWhenRechargeRefund(payWallet.getId(), price);
                     break;
