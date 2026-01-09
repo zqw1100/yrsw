@@ -20,7 +20,8 @@ public enum PayWalletBizTypeEnum implements ArrayValuable<Integer> {
     PAYMENT(3, "支付"),
     PAYMENT_REFUND(4, "支付退款"),
     UPDATE_BALANCE(5, "更新余额"),
-    TRANSFER(6, "转账");
+    TRANSFER(6, "转账"),
+    WATER_FEE(7, "水费结算");
 
     /**
      * 业务分类

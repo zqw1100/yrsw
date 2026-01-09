@@ -25,6 +25,11 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
         return selectOne(query);
     }
 
+    default PayWalletDO selectByDeviceNo(String deviceNo) {
+        return selectOne(new LambdaQueryWrapperX<PayWalletDO>()
+                .eq(PayWalletDO::getDeviceNo, deviceNo));
+    }
+
     default PageResult<PayWalletDO> selectPage(PayWalletPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<PayWalletDO>()
                 .eqIfPresent(PayWalletDO::getUserId, reqVO.getUserId())
