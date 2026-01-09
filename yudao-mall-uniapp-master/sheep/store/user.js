@@ -8,6 +8,7 @@ import UserApi from '@/sheep/api/member/user';
 import PayWalletApi from '@/sheep/api/pay/wallet';
 import OrderApi from '@/sheep/api/trade/order';
 import CouponApi from '@/sheep/api/promotion/coupon';
+import waterDevice from './waterDevice';
 
 // 默认用户信息
 const defaultUserInfo = {
@@ -59,8 +60,12 @@ const user = defineStore({
     },
 
     // 获得用户钱包
-    async getWallet() {
-      const { code, data } = await PayWalletApi.getPayWallet();
+    async getWallet(params = {}) {
+      if (!params.deviceNo) {
+        this.userWallet = clone(defaultUserWallet);
+        return;
+      }
+      const { code, data } = await PayWalletApi.getPayWallet(params);
       if (code !== 0) {
         return;
       }
@@ -111,7 +116,12 @@ const user = defineStore({
 
       // 获取最新信息
       await this.getInfo();
-      this.getWallet();
+      const waterDeviceStore = waterDevice();
+      if (waterDeviceStore.activeDeviceNo) {
+        this.getWallet({ deviceNo: waterDeviceStore.activeDeviceNo });
+      } else {
+        this.userWallet = clone(defaultUserWallet);
+      }
       this.getNumData();
       return this.userInfo;
     },
