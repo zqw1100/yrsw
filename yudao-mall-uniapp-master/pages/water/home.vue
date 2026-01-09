@@ -66,6 +66,45 @@
       </view>
     </view>
 
+    <view class="history-card">
+      <view class="history-title">用水历史</view>
+      <view class="history-summary">
+        <view class="summary-item summary-blue">
+          <view class="summary-label">昨日用水详情</view>
+          <view class="summary-value">总用水量：{{ formatVolume(historySummary.yesterday) }} L</view>
+        </view>
+        <view class="summary-item summary-purple">
+          <view class="summary-label">本月用水详情</view>
+          <view class="summary-value">总用水量：{{ formatVolume(historySummary.month) }} L</view>
+        </view>
+        <view class="summary-item summary-green">
+          <view class="summary-label">上月用水详情</view>
+          <view class="summary-value">总用水量：{{ formatVolume(historySummary.lastMonth) }} L</view>
+        </view>
+        <view class="summary-item summary-orange">
+          <view class="summary-label">本年用水详情</view>
+          <view class="summary-value">总用水量：{{ formatVolume(historySummary.year) }} L</view>
+        </view>
+      </view>
+      <view class="history-table">
+        <view class="history-row history-header">
+          <view class="history-cell">本期示数(L)</view>
+          <view class="history-cell">用水量(L)</view>
+          <view class="history-cell">费用(元)</view>
+          <view class="history-cell">日期</view>
+        </view>
+        <view v-if="historyList.length">
+          <view v-for="item in historyList" :key="item.id" class="history-row">
+            <view class="history-cell">{{ formatVolume(item.deviceTotalData) }}</view>
+            <view class="history-cell">{{ formatVolume(getUsageValue(item)) }}</view>
+            <view class="history-cell">{{ formatFee(item) }}</view>
+            <view class="history-cell">{{ formatHistoryTime(item) }}</view>
+          </view>
+        </view>
+        <view v-else class="history-empty">暂无用水历史</view>
+      </view>
+    </view>
+
     <view class="notice-card">
       <view class="notice-header ss-flex ss-col-center ss-row-between">
         <view class="notice-title ss-flex ss-col-center">
@@ -94,6 +133,7 @@
   import { fen2yuan } from '@/sheep/hooks/useGoods';
   import { formatDate } from '@/sheep/helper/utils';
   import ArticleApi from '@/sheep/api/promotion/article';
+  import WaterHistoryApi from '@/sheep/api/water/history';
 
   const NOTICE_CATEGORY_ID = 4;
 
@@ -106,6 +146,7 @@
     lastUpdateTime.value ? formatDate(lastUpdateTime.value) : ''
   );
   const latestNotice = ref(null);
+  const historyList = ref([]);
 
   const activeDevice = computed(() => waterDeviceStore.activeDevice);
   const activeDeviceLabel = computed(() => {
@@ -119,7 +160,7 @@
   );
 
   const quickMenus = [
-    { title: '用水历史', icon: 'calendar', action: onPlaceholder },
+    { title: '用水历史', icon: 'calendar', action: onGoHistory },
     { title: '消息通知', icon: 'notification', action: onGoNotice },
     { title: '在线缴费', icon: 'wallet', action: onPayRecharge },
   ];
@@ -128,6 +169,7 @@
     sheep.$store('user').updateUserData();
     await waterDeviceStore.fetchDevices();
     await waterDeviceStore.fetchWallet();
+    await fetchHistory();
     await getLatestNotice();
   });
 
@@ -136,6 +178,10 @@
       title: '功能建设中',
       icon: 'none',
     });
+  }
+
+  function onGoHistory() {
+    uni.pageScrollTo({ selector: '.history-card', duration: 300 });
   }
 
   function onPayRecharge() {
@@ -174,6 +220,7 @@
         if (!selected) return;
         waterDeviceStore.setActiveDeviceNo(selected.deviceNo);
         await waterDeviceStore.fetchWallet();
+        await fetchHistory();
       },
     });
   }
@@ -203,6 +250,107 @@
       return;
     }
     latestNotice.value = data.list?.[0] || null;
+  }
+
+  const historySummary = computed(() => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(todayStart.getDate() - 1);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+    const summary = {
+      yesterday: 0,
+      month: 0,
+      lastMonth: 0,
+      year: 0,
+    };
+    historyList.value.forEach((item) => {
+      const timeValue = getHistoryTime(item);
+      if (!timeValue) return;
+      const time = new Date(timeValue);
+      const usage = getUsageValue(item);
+      if (Number.isNaN(time.getTime())) return;
+      if (time >= yesterdayStart && time < todayStart) {
+        summary.yesterday += usage;
+      }
+      if (time >= monthStart) {
+        summary.month += usage;
+      }
+      if (time >= lastMonthStart && time <= lastMonthEnd) {
+        summary.lastMonth += usage;
+      }
+      if (time >= yearStart) {
+        summary.year += usage;
+      }
+    });
+    return summary;
+  });
+
+  async function fetchHistory() {
+    if (!waterDeviceStore.activeDeviceNo) {
+      historyList.value = [];
+      return;
+    }
+    const { code, data } = await WaterHistoryApi.getHistoryPage({
+      pageNo: 1,
+      pageSize: 20,
+      deviceNo: waterDeviceStore.activeDeviceNo,
+    });
+    if (code !== 0) {
+      historyList.value = [];
+      return;
+    }
+    historyList.value = data.list || [];
+  }
+
+  function getHistoryTime(item) {
+    return item.deviceUpdateTime || item.createTime || item.deviceClock || '';
+  }
+
+  function formatHistoryTime(item) {
+    const value = getHistoryTime(item);
+    return value ? sheep.$helper.timeFormat(value, 'mm-dd hh:MM') : '--';
+  }
+
+  function getUsageValue(item) {
+    return Number(item.deviceSettleDayData ?? item.deviceCurrentData ?? 0);
+  }
+
+  function formatVolume(value) {
+    if (value === null || value === undefined || value === '') {
+      return '--';
+    }
+    const numberValue = Number(value);
+    if (Number.isNaN(numberValue)) {
+      return '--';
+    }
+    return numberValue.toFixed(2);
+  }
+
+  function parseCycleFee(content) {
+    if (!content) return null;
+    try {
+      const data = JSON.parse(content);
+      const feeValue = data?.fee ?? data?.amount ?? data?.waterFee ?? data?.feeAmount;
+      return feeValue ?? null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function formatFee(item) {
+    const feeValue = parseCycleFee(item.cycleReportContent);
+    if (feeValue === null || feeValue === undefined || feeValue === '') {
+      return '--';
+    }
+    const feeNumber = Number(feeValue);
+    if (Number.isNaN(feeNumber)) {
+      return '--';
+    }
+    return feeNumber.toFixed(2);
   }
 </script>
 
@@ -393,6 +541,100 @@
     .stat-label {
       font-size: 22rpx;
       opacity: 0.85;
+    }
+
+    .history-card {
+      margin: 20rpx 30rpx 0;
+      border-radius: 20rpx;
+      background: #ffffff;
+      padding: 24rpx;
+      box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.06);
+    }
+
+    .history-title {
+      text-align: center;
+      font-size: 30rpx;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 20rpx;
+    }
+
+    .history-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16rpx;
+      margin-bottom: 20rpx;
+    }
+
+    .summary-item {
+      border-radius: 16rpx;
+      padding: 18rpx;
+      color: #ffffff;
+      min-height: 120rpx;
+    }
+
+    .summary-blue {
+      background: linear-gradient(135deg, #2f8cff, #5bb4ff);
+    }
+
+    .summary-purple {
+      background: linear-gradient(135deg, #7b6dff, #a78bfa);
+    }
+
+    .summary-green {
+      background: linear-gradient(135deg, #1ecb6b, #2ed57b);
+    }
+
+    .summary-orange {
+      background: linear-gradient(135deg, #ff8b3d, #ffb04a);
+    }
+
+    .summary-label {
+      font-size: 24rpx;
+      font-weight: 600;
+      margin-bottom: 10rpx;
+    }
+
+    .summary-value {
+      font-size: 22rpx;
+    }
+
+    .history-table {
+      border-radius: 16rpx;
+      overflow: hidden;
+      border: 1rpx solid #e9f0fa;
+    }
+
+    .history-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 16rpx 8rpx;
+      text-align: center;
+      font-size: 24rpx;
+      color: #345;
+      background: #f7fbff;
+    }
+
+    .history-row:nth-child(odd) {
+      background: #eef6ff;
+    }
+
+    .history-header {
+      font-size: 22rpx;
+      font-weight: 600;
+      color: #7a8794;
+      background: #f4f7fb;
+    }
+
+    .history-cell {
+      padding: 0 6rpx;
+    }
+
+    .history-empty {
+      text-align: center;
+      padding: 20rpx 0;
+      font-size: 24rpx;
+      color: #9aa5b1;
     }
 
     .notice-card {
