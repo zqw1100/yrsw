@@ -4,7 +4,7 @@ const WaterHistoryApi = {
   // 获得设备用水历史分页
   getHistoryPage: (params) => {
     return request({
-      url: '/member/water-device-history/page',
+      url: '/member/water-fee-bill/page',
       method: 'GET',
       params,
     });

@@ -14,7 +14,7 @@
         <view class="history-cell">日期</view>
       </view>
       <view v-for="item in state.pagination.list" :key="item.id" class="history-row">
-        <view class="history-cell">{{ formatVolume(item.deviceTotalData) }}</view>
+        <view class="history-cell">{{ formatVolume(getTotalUsage(item)) }}</view>
         <view class="history-cell">{{ formatVolume(getUsageValue(item)) }}</view>
         <view class="history-cell">{{ formatFee(item) }}</view>
         <view class="history-cell">{{ formatHistoryTime(item) }}</view>
@@ -58,7 +58,7 @@
   );
 
   function getHistoryTime(item) {
-    return item.deviceUpdateTime || item.createTime || item.deviceClock || '';
+    return item.statDate || item.createTime || '';
   }
 
   function formatHistoryTime(item) {
@@ -67,7 +67,17 @@
   }
 
   function getUsageValue(item) {
+    if (item.usageDiff !== undefined && item.usageDiff !== null) {
+      return Number(item.usageDiff);
+    }
+    if (item.totalUsage !== undefined && item.lastTotalUsage !== undefined) {
+      return Number(item.totalUsage) - Number(item.lastTotalUsage);
+    }
     return Number(item.deviceSettleDayData ?? item.deviceCurrentData ?? 0);
+  }
+
+  function getTotalUsage(item) {
+    return item.totalUsage ?? item.deviceTotalData ?? null;
   }
 
   function formatVolume(value) {
@@ -81,19 +91,8 @@
     return numberValue.toFixed(2);
   }
 
-  function parseCycleFee(content) {
-    if (!content) return null;
-    try {
-      const data = JSON.parse(content);
-      const feeValue = data?.fee ?? data?.amount ?? data?.waterFee ?? data?.feeAmount;
-      return feeValue ?? null;
-    } catch (error) {
-      return null;
-    }
-  }
-
   function formatFee(item) {
-    const feeValue = parseCycleFee(item.cycleReportContent);
+    const feeValue = item.fee ?? item.feeAmount ?? null;
     if (feeValue === null || feeValue === undefined || feeValue === '') {
       return '--';
     }
@@ -101,7 +100,7 @@
     if (Number.isNaN(feeNumber)) {
       return '--';
     }
-    return feeNumber.toFixed(2);
+    return (feeNumber / 100).toFixed(2);
   }
 
   async function getHistoryList() {

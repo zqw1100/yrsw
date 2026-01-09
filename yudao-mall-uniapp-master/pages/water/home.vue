@@ -315,7 +315,7 @@
   }
 
   function getHistoryTime(item) {
-    return item.deviceUpdateTime || item.createTime || item.deviceClock || '';
+    return item.statDate || item.createTime || '';
   }
 
   function formatHistoryTime(item) {
@@ -324,6 +324,12 @@
   }
 
   function getUsageValue(item) {
+    if (item.usageDiff !== undefined && item.usageDiff !== null) {
+      return Number(item.usageDiff);
+    }
+    if (item.totalUsage !== undefined && item.lastTotalUsage !== undefined) {
+      return Number(item.totalUsage) - Number(item.lastTotalUsage);
+    }
     return Number(item.deviceSettleDayData ?? item.deviceCurrentData ?? 0);
   }
 
@@ -338,19 +344,8 @@
     return numberValue.toFixed(2);
   }
 
-  function parseCycleFee(content) {
-    if (!content) return null;
-    try {
-      const data = JSON.parse(content);
-      const feeValue = data?.fee ?? data?.amount ?? data?.waterFee ?? data?.feeAmount;
-      return feeValue ?? null;
-    } catch (error) {
-      return null;
-    }
-  }
-
   function formatFee(item) {
-    const feeValue = parseCycleFee(item.cycleReportContent);
+    const feeValue = item.fee ?? item.feeAmount ?? null;
     if (feeValue === null || feeValue === undefined || feeValue === '') {
       return '--';
     }
@@ -358,7 +353,7 @@
     if (Number.isNaN(feeNumber)) {
       return '--';
     }
-    return feeNumber.toFixed(2);
+    return (feeNumber / 100).toFixed(2);
   }
 </script>
 
