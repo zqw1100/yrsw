@@ -31,5 +31,6 @@ public class MemberWaterFeeSettleServiceImpl implements MemberWaterFeeSettleServ
         updateBill.setId(bill.getId());
         updateBill.setBalance(transaction.getBalance());
         feeBillMapper.updateById(updateBill);
+        bill.setBalance(transaction.getBalance());
     }
 }
