@@ -178,15 +178,23 @@ public class MemberWaterFeeSettleJob implements JobHandler {
         if (lowBalanceCount != 1) {
             return;
         }
+        MemberWaterApplyDO apply = applyMapper.selectLatestByDeviceNo(deviceNo);
+        String communityName = apply != null ? apply.getCommunityName() : null;
+        if (StrUtil.isBlank(communityName)) {
+            log.warn("[sendLowBalanceSmsIfNeeded][deviceNo({}) 缺少报装小区名称]", deviceNo);
+            communityName = "";
+        }
+        int arrears = Math.max(LOW_BALANCE_THRESHOLD - balance, 0);
         smsSendService.sendSingleSmsToMember(null, userId, SMS_TEMPLATE_CODE_LOW_BALANCE,
                 Map.of(
+                        "communityName", communityName,
                         "deviceNo", deviceNo,
-                        "balance", formatBalance(balance)
+                        "amount", formatAmount(arrears)
                 ));
     }
 
-    private String formatBalance(Integer balance) {
-        return BigDecimal.valueOf(balance)
+    private String formatAmount(Integer amount) {
+        return BigDecimal.valueOf(amount)
                 .movePointLeft(2)
                 .setScale(2, RoundingMode.HALF_UP)
                 .toPlainString();
