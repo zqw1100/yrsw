@@ -5,11 +5,12 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterDashb
 import cn.iocoder.yudao.module.member.service.water.MemberWaterDashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
