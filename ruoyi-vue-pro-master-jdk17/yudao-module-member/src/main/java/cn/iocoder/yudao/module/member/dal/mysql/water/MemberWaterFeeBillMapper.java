@@ -64,4 +64,18 @@ public interface MemberWaterFeeBillMapper extends BaseMapperX<MemberWaterFeeBill
     List<AppWaterFeeBillMonthlyStatsRespVO> selectMonthlyStats(@Param("deviceNo") String deviceNo,
                                                                @Param("startDate") LocalDate startDate,
                                                                @Param("endDate") LocalDate endDate);
+
+    @Select("""
+            SELECT COUNT(1)
+            FROM member_water_fee_bill
+            WHERE device_no = #{deviceNo}
+              AND stat_date >= #{startDate}
+              AND stat_date <= #{endDate}
+              AND balance IS NOT NULL
+              AND balance < #{threshold}
+            """)
+    int countLowBalanceInMonth(@Param("deviceNo") String deviceNo,
+                               @Param("startDate") LocalDate startDate,
+                               @Param("endDate") LocalDate endDate,
+                               @Param("threshold") Integer threshold);
 }
