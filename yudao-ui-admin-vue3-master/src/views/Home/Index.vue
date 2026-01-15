@@ -77,17 +77,10 @@
     </el-row>
 
     <el-row :gutter="12" class="mb-12px">
-      <el-col :xl="16" :lg="16" :md="24" :sm="24" :xs="24">
+      <el-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
         <el-card shadow="never">
           <el-skeleton :loading="loading" animated>
             <Echart :options="dailyLineOptionsData" :height="320" />
-          </el-skeleton>
-        </el-card>
-      </el-col>
-      <el-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24">
-        <el-card shadow="never">
-          <el-skeleton :loading="loading" animated>
-            <Echart :options="rechargePieOptionsData" :height="320" />
           </el-skeleton>
         </el-card>
       </el-col>
@@ -117,7 +110,7 @@ import { set } from 'lodash-es'
 import { EChartsOption } from 'echarts'
 import dayjs from 'dayjs'
 import { getWaterDashboard, type WaterDashboardResp } from '@/api/member/water-dashboard'
-import { dailyLineOptions, monthlyBarOptions, rechargePieOptions, valvePieOptions } from './echarts-data'
+import { dailyLineOptions, monthlyBarOptions, valvePieOptions } from './echarts-data'
 
 defineOptions({ name: 'Index' })
 
@@ -138,7 +131,6 @@ const summary = ref<WaterDashboardResp['summary']>({
 
 const dailyLineOptionsData = reactive<EChartsOption>(dailyLineOptions) as EChartsOption
 const monthlyBarOptionsData = reactive<EChartsOption>(monthlyBarOptions) as EChartsOption
-const rechargePieOptionsData = reactive<EChartsOption>(rechargePieOptions) as EChartsOption
 const valvePieOptionsData = reactive<EChartsOption>(valvePieOptions) as EChartsOption
 
 const dashboardData = ref<WaterDashboardResp | null>(null)
@@ -214,7 +206,7 @@ const fillMonthlyBar = (data: WaterDashboardResp['monthlyTrend']) => {
   ])
 }
 
-const fillPie = (option: EChartsOption, data: WaterDashboardResp['rechargeChannelStats']) => {
+const fillPie = (option: EChartsOption, data: WaterDashboardResp['valveStatusStats']) => {
   set(option, 'legend.data', data.map((item) => item.name))
   set(option, 'series', [
     {
@@ -237,7 +229,6 @@ const fetchDashboard = async () => {
     summary.value = data.summary
     fillDailyLine(data.dailyTrend)
     fillMonthlyBar(data.monthlyTrend)
-    fillPie(rechargePieOptionsData, data.rechargeChannelStats)
     fillPie(valvePieOptionsData, data.valveStatusStats)
     refreshTime.value = dayjs().format('YYYY-MM-DD HH:mm')
   } finally {

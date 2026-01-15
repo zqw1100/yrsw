@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class MemberWaterDashboardUsageFeeSummaryVO {
 
-    private Long usage;
+    private Long usageAmount;
 
     private Integer fee;
 }

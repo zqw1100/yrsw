@@ -58,23 +58,6 @@ export const monthlyBarOptions: EChartsOption = {
   series: []
 }
 
-export const rechargePieOptions: EChartsOption = {
-  title: {
-    text: '充值渠道分布',
-    left: 'center'
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c} ({d}%)'
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left',
-    data: []
-  },
-  series: []
-}
-
 export const valvePieOptions: EChartsOption = {
   title: {
     text: '阀门状态分布',

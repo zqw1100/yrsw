@@ -28,7 +28,6 @@ export interface WaterDashboardResp {
   summary: WaterDashboardSummary
   dailyTrend: WaterDashboardTrend[]
   monthlyTrend: WaterDashboardTrend[]
-  rechargeChannelStats: WaterDashboardPieItem[]
   valveStatusStats: WaterDashboardPieItem[]
 }
 

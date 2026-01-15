@@ -19,9 +19,6 @@ public class MemberWaterDashboardRespVO {
     @Schema(description = "近 6 月趋势")
     private List<Trend> monthlyTrend;
 
-    @Schema(description = "充值渠道分布")
-    private List<PieItem> rechargeChannelStats;
-
     @Schema(description = "阀门状态分布")
     private List<PieItem> valveStatusStats;
 

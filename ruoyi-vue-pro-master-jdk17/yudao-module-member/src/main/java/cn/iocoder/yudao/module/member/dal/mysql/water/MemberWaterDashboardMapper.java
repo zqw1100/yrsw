@@ -17,7 +17,7 @@ import java.util.List;
 public interface MemberWaterDashboardMapper {
 
     @Select("""
-            SELECT COALESCE(SUM(usage_diff), 0) AS usage,
+            SELECT COALESCE(SUM(usage_diff), 0) AS usageAmount,
                    COALESCE(SUM(fee), 0) AS fee
             FROM member_water_fee_bill
             """)
@@ -25,7 +25,7 @@ public interface MemberWaterDashboardMapper {
 
     @Select("""
             SELECT stat_date AS statDate,
-                   SUM(usage_diff) AS usage,
+                   SUM(usage_diff) AS usageAmount,
                    SUM(fee) AS fee
             FROM member_water_fee_bill
             WHERE stat_date >= #{startDate}
@@ -38,7 +38,7 @@ public interface MemberWaterDashboardMapper {
 
     @Select("""
             SELECT DATE_FORMAT(stat_date, '%Y-%m') AS statMonth,
-                   SUM(usage_diff) AS usage,
+                   SUM(usage_diff) AS usageAmount,
                    SUM(fee) AS fee
             FROM member_water_fee_bill
             WHERE stat_date >= #{startDate}
@@ -85,16 +85,6 @@ public interface MemberWaterDashboardMapper {
             """)
     List<MemberWaterDashboardRechargeStatVO> selectMonthlyRecharge(@Param("startTime") LocalDateTime startTime,
                                                                    @Param("endTime") LocalDateTime endTime);
-
-    @Select("""
-            SELECT IFNULL(pay_channel_code, 'unknown') AS name,
-                   SUM(pay_price) AS value
-            FROM pay_wallet_recharge
-            WHERE pay_status = 1
-            GROUP BY pay_channel_code
-            ORDER BY value DESC
-            """)
-    List<MemberWaterDashboardPieStatVO> selectRechargeChannelStats();
 
     @Select("""
             SELECT CASE

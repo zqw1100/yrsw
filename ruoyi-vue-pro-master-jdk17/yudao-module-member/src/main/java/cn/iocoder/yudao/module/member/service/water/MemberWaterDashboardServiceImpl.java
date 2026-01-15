@@ -11,12 +11,10 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDashboardMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterDeviceMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
-import cn.iocoder.yudao.module.member.dal.mysql.water.vo.MemberWaterDashboardPieStatVO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.vo.MemberWaterDashboardRechargeStatVO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.vo.MemberWaterDashboardRechargeSummaryVO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.vo.MemberWaterDashboardUsageFeeStatVO;
 import cn.iocoder.yudao.module.member.dal.mysql.water.vo.MemberWaterDashboardUsageFeeSummaryVO;
-import cn.iocoder.yudao.module.pay.enums.PayChannelEnum;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,7 +47,6 @@ public class MemberWaterDashboardServiceImpl implements MemberWaterDashboardServ
         respVO.setSummary(buildSummary());
         respVO.setDailyTrend(buildDailyTrend());
         respVO.setMonthlyTrend(buildMonthlyTrend());
-        respVO.setRechargeChannelStats(buildRechargeChannelStats());
         respVO.setValveStatusStats(buildValveStatusStats());
         return respVO;
     }
@@ -60,7 +57,7 @@ public class MemberWaterDashboardServiceImpl implements MemberWaterDashboardServ
         MemberWaterDashboardRechargeSummaryVO rechargeSummary = ObjectUtil.defaultIfNull(
                 dashboardMapper.selectRechargeSummary(), new MemberWaterDashboardRechargeSummaryVO());
         MemberWaterDashboardRespVO.Summary summary = new MemberWaterDashboardRespVO.Summary();
-        summary.setTotalUsage(ObjectUtil.defaultIfNull(usageFeeSummary.getUsage(), 0L));
+        summary.setTotalUsage(ObjectUtil.defaultIfNull(usageFeeSummary.getUsageAmount(), 0L));
         summary.setTotalFeeAmount(MoneyUtils.fenToYuan(ObjectUtil.defaultIfNull(usageFeeSummary.getFee(), 0)));
         summary.setTotalRechargeAmount(MoneyUtils.fenToYuan(ObjectUtil.defaultIfNull(rechargeSummary.getPayAmount(), 0)));
         summary.setTotalRechargeBonusAmount(MoneyUtils.fenToYuan(ObjectUtil.defaultIfNull(rechargeSummary.getBonusAmount(), 0)));
@@ -124,19 +121,6 @@ public class MemberWaterDashboardServiceImpl implements MemberWaterDashboardServ
         return trends;
     }
 
-    private List<MemberWaterDashboardRespVO.PieItem> buildRechargeChannelStats() {
-        List<MemberWaterDashboardPieStatVO> stats = dashboardMapper.selectRechargeChannelStats();
-        List<MemberWaterDashboardRespVO.PieItem> result = new ArrayList<>();
-        for (MemberWaterDashboardPieStatVO stat : stats) {
-            MemberWaterDashboardRespVO.PieItem item = new MemberWaterDashboardRespVO.PieItem();
-            PayChannelEnum channelEnum = PayChannelEnum.getByCode(stat.getName());
-            item.setName(channelEnum != null ? channelEnum.getName() : stat.getName());
-            item.setValue(ObjectUtil.defaultIfNull(stat.getValue(), 0L));
-            result.add(item);
-        }
-        return result;
-    }
-
     private List<MemberWaterDashboardRespVO.PieItem> buildValveStatusStats() {
         List<MemberWaterDashboardPieStatVO> stats = dashboardMapper.selectValveStatusStats();
         List<MemberWaterDashboardRespVO.PieItem> result = new ArrayList<>();
@@ -154,7 +138,7 @@ public class MemberWaterDashboardServiceImpl implements MemberWaterDashboardServ
                                                       MemberWaterDashboardRechargeStatVO recharge) {
         MemberWaterDashboardRespVO.Trend trend = new MemberWaterDashboardRespVO.Trend();
         trend.setTime(time);
-        trend.setUsage(usageFee != null ? ObjectUtil.defaultIfNull(usageFee.getUsage(), 0L) : 0L);
+        trend.setUsage(usageFee != null ? ObjectUtil.defaultIfNull(usageFee.getUsageAmount(), 0L) : 0L);
         trend.setFeeAmount(toYuan(usageFee != null ? usageFee.getFee() : null));
         trend.setRechargeAmount(toYuan(recharge != null ? recharge.getAmount() : null));
         return trend;

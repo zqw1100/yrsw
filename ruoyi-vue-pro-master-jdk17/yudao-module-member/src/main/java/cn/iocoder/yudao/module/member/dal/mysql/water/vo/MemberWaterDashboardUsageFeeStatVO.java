@@ -11,7 +11,7 @@ public class MemberWaterDashboardUsageFeeStatVO {
 
     private String statMonth;
 
-    private Long usage;
+    private Long usageAmount;
 
     private Integer fee;
 }
