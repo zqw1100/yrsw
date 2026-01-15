@@ -15,6 +15,6 @@ public class AppWaterFeeBillMonthlyStatsReqVO {
 
     @Schema(description = "统计年份，格式：YYYY", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "统计年份不能为空")
-    @Pattern(regexp = "\\\\d{4}", message = "统计年份格式应为 YYYY")
+    @Pattern(regexp = "\\d{4}", message = "统计年份格式应为 YYYY")
     private String year;
 }

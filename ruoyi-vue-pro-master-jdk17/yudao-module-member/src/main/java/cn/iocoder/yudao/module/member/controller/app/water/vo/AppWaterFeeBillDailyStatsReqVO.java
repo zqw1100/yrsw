@@ -15,6 +15,6 @@ public class AppWaterFeeBillDailyStatsReqVO {
 
     @Schema(description = "统计月份，格式：YYYY-MM", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "统计月份不能为空")
-    @Pattern(regexp = "\\\\d{4}-\\\\d{2}", message = "统计月份格式应为 YYYY-MM")
+    @Pattern(regexp = "\\d{4}-\\d{2}", message = "统计月份格式应为 YYYY-MM")
     private String month;
 }
