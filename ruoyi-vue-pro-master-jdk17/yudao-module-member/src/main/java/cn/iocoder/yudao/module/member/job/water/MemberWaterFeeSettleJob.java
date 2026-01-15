@@ -22,12 +22,16 @@ import cn.iocoder.yudao.module.member.service.water.MemberWaterFeeSettleService;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletService;
+import cn.iocoder.yudao.module.system.service.sms.SmsSendService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANCE_NOT_ENOUGH;
 
@@ -39,6 +43,8 @@ import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANC
 public class MemberWaterFeeSettleJob implements JobHandler {
 
     private static final Integer VALVE_CLOSE_STATUS = 2;
+    private static final Integer LOW_BALANCE_THRESHOLD = 2000;
+    private static final String SMS_TEMPLATE_CODE_LOW_BALANCE = "SMS_500470233";
 
     @Resource
     private MemberWaterDeviceMapper deviceMapper;
@@ -60,6 +66,8 @@ public class MemberWaterFeeSettleJob implements JobHandler {
     private MemberWaterFeeDeductFailMapper feeDeductFailMapper;
     @Resource
     private MemberWaterDeviceService deviceService;
+    @Resource
+    private SmsSendService smsSendService;
 
     @Override
     @TenantJob
@@ -116,12 +124,15 @@ public class MemberWaterFeeSettleJob implements JobHandler {
                 updateBill.setId(bill.getId());
                 updateBill.setBalance(wallet.getBalance());
                 feeBillMapper.updateById(updateBill);
+                bill.setBalance(wallet.getBalance());
+                sendLowBalanceSmsIfNeeded(deviceNo, wallet, statDate, bill.getBalance());
                 billed++;
                 continue;
             }
 
             try {
                 memberWaterFeeSettleService.createBillAndReduceWallet(bill, fee);
+                sendLowBalanceSmsIfNeeded(deviceNo, wallet, statDate, bill.getBalance());
                 billed++;
             } catch (Exception ex) {
                 log.warn("[execute][deviceNo({}) 扣费失败：{}]", deviceNo, ex.getMessage());
@@ -150,6 +161,35 @@ public class MemberWaterFeeSettleJob implements JobHandler {
         }
 
         return StrUtil.format("水费结算完成，处理设备 {} 个，生成结算 {} 条", processed, billed);
+    }
+
+    private void sendLowBalanceSmsIfNeeded(String deviceNo, PayWalletDO wallet, LocalDate statDate, Integer balance) {
+        if (balance == null || balance >= LOW_BALANCE_THRESHOLD) {
+            return;
+        }
+        Long userId = wallet.getUserId();
+        if (userId == null) {
+            log.warn("[sendLowBalanceSmsIfNeeded][deviceNo({}) 余额不足但缺少用户编号]", deviceNo);
+            return;
+        }
+        LocalDate startDate = statDate.withDayOfMonth(1);
+        LocalDate endDate = statDate.withDayOfMonth(statDate.lengthOfMonth());
+        int lowBalanceCount = feeBillMapper.countLowBalanceInMonth(deviceNo, startDate, endDate, LOW_BALANCE_THRESHOLD);
+        if (lowBalanceCount != 1) {
+            return;
+        }
+        smsSendService.sendSingleSmsToMember(null, userId, SMS_TEMPLATE_CODE_LOW_BALANCE,
+                Map.of(
+                        "deviceNo", deviceNo,
+                        "balance", formatBalance(balance)
+                ));
+    }
+
+    private String formatBalance(Integer balance) {
+        return BigDecimal.valueOf(balance)
+                .movePointLeft(2)
+                .setScale(2, RoundingMode.HALF_UP)
+                .toPlainString();
     }
 
     private PayWalletDO findWallet(String deviceNo) {
