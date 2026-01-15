@@ -5,6 +5,10 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFeeBillPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterFeeBillRespVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFeeBillDailyStatsReqVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFeeBillDailyStatsRespVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFeeBillMonthlyStatsReqVO;
+import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFeeBillMonthlyStatsRespVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterFeeBillPageReqVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterFeeBillConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterFeeBillDO;
@@ -17,6 +21,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
@@ -36,5 +42,19 @@ public class AppWaterFeeBillController {
         MemberWaterFeeBillPageReqVO reqVO = BeanUtils.toBean(pageReqVO, MemberWaterFeeBillPageReqVO.class);
         PageResult<MemberWaterFeeBillDO> pageResult = feeBillService.getFeeBillPage(reqVO);
         return success(MemberWaterFeeBillConvert.INSTANCE.convertPage(pageResult));
+    }
+
+    @GetMapping("/stats/daily")
+    @Operation(summary = "获得设备日用水统计")
+    public CommonResult<List<AppWaterFeeBillDailyStatsRespVO>> getDailyStats(
+            @Valid AppWaterFeeBillDailyStatsReqVO reqVO) {
+        return success(feeBillService.getDailyStats(reqVO.getDeviceNo(), reqVO.getMonth()));
+    }
+
+    @GetMapping("/stats/monthly")
+    @Operation(summary = "获得设备月度水费统计")
+    public CommonResult<List<AppWaterFeeBillMonthlyStatsRespVO>> getMonthlyStats(
+            @Valid AppWaterFeeBillMonthlyStatsReqVO reqVO) {
+        return success(feeBillService.getMonthlyStats(reqVO.getDeviceNo(), reqVO.getYear()));
     }
 }
