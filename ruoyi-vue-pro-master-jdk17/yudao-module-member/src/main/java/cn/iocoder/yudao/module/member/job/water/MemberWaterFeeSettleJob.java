@@ -175,9 +175,9 @@ public class MemberWaterFeeSettleJob implements JobHandler {
         LocalDate startDate = statDate.withDayOfMonth(1);
         LocalDate endDate = statDate.withDayOfMonth(statDate.lengthOfMonth());
         int lowBalanceCount = feeBillMapper.countLowBalanceInMonth(deviceNo, startDate, endDate, LOW_BALANCE_THRESHOLD);
-        if (lowBalanceCount != 1) {
-            return;
-        }
+//        if (lowBalanceCount != 1) {
+//            return;
+//        }
         MemberWaterApplyDO apply = applyMapper.selectLatestByDeviceNo(deviceNo);
         String communityName = apply != null ? apply.getCommunityName() : null;
         if (StrUtil.isBlank(communityName)) {
