@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.invalidParamException;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.ERROR_WITH_THE_REMOTE_INTERFACE;
 
 /**
  * 物联网水表接口客户端
@@ -180,7 +182,7 @@ public class MemberWaterMeterClient {
 
     private void ensureSuccess(Integer code, String message) {
         if (code != null && code != 0) {
-            throw invalidParamException(StrUtil.blankToDefault(message, "接口调用失败"));
+            throw exception(ERROR_WITH_THE_REMOTE_INTERFACE);
         }
     }
 

@@ -42,8 +42,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_APPLY_NOT_ALLOW;
-import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_DEVICE_NOT_EXISTS;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
 
 /**
  * 居民设备信息 Service 实现类
@@ -115,7 +114,10 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         reqDTO.setUserName(StrUtil.nullToEmpty(apply.getContactName()));
         reqDTO.setDescription(StrUtil.blankToDefault(apply.getRemark(), "居民报装"));
         reqDTO.setDeviceVersionName(meterProperties.getDeviceVersionName());
-        meterClient.addDevice(reqDTO);
+        boolean b = meterClient.addDevice(reqDTO);
+        if(!b){
+            throw exception(ERROR_WITH_THE_REMOTE_INTERFACE);
+        }
         registerOrUpdateDevice(deviceNo);
         payWalletService.getOrCreateWallet(apply.getUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo);
     }

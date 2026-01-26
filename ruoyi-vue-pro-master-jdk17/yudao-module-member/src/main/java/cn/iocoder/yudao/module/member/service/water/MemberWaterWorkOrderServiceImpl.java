@@ -166,6 +166,7 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void finishWorkOrder(Long userId, AppWaterWorkOrderFinishReqVO reqVO) {
         MemberWaterWorkOrderDO order = workOrderMapper.selectById(reqVO.getId());
         validateOrderExists(order);

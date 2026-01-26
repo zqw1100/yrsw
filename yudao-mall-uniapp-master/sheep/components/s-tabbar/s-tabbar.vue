@@ -1,26 +1,26 @@
 <template>
   <view class="u-page__item" v-if="tabbar?.items?.length > 0">
     <su-tabbar
-      :value="activePath"
-      :fixed="true"
-      :placeholder="true"
-      :safeAreaInsetBottom="true"
-      :inactiveColor="tabbar.style.color"
-      :activeColor="tabbar.style.activeColor"
-      :midTabBar="tabbar.mode === 2"
-      :customStyle="tabbarStyle"
+        :value="path"
+        :fixed="true"
+        :placeholder="true"
+        :safeAreaInsetBottom="true"
+        :inactiveColor="tabbar.style.color"
+        :activeColor="tabbar.style.activeColor"
+        :midTabBar="tabbar.mode === 2"
+        :customStyle="tabbarStyle"
     >
       <su-tabbar-item
-        v-for="(item, index) in tabbar.items"
-        :key="item.text"
-        :text="item.text"
-        :name="item.url"
-        :badge="item.badge"
-        :dot="item.dot"
-        :badgeStyle="tabbar.badgeStyle"
-        :isCenter="getTabbarCenter(index)"
-        :centerImage="sheep.$url.cdn(item.iconUrl)"
-        @click="sheep.$router.go(item.url)"
+          v-for="(item, index) in tabbar.items"
+          :key="item.text"
+          :text="item.text"
+          :name="item.url"
+          :badge="item.badge"
+          :dot="item.dot"
+          :badgeStyle="tabbar.badgeStyle"
+          :isCenter="getTabbarCenter(index)"
+          :centerImage="sheep.$url.cdn(item.iconUrl)"
+          @click="sheep.$router.go(item.url)"
       >
         <template v-slot:active-icon>
           <image class="u-page__item__slot-icon" :src="sheep.$url.cdn(item.activeIconUrl)"></image>
@@ -34,98 +34,67 @@
 </template>
 
 <script setup>
-  import { computed, onMounted, ref, unref, watch } from 'vue';
-  import { onShow } from '@dcloudio/uni-app';
-  import sheep from '@/sheep';
-  import SuTabbar from '@/sheep/ui/su-tabbar/su-tabbar.vue';
+import { computed, unref } from 'vue';
+import sheep from '@/sheep';
+import SuTabbar from '@/sheep/ui/su-tabbar/su-tabbar.vue';
 
-  const props = defineProps({
-    path: {
-      type: String,
-      default: '',
-    },
-  });
+const tabbar = computed(() => {
+  return sheep.$store('app').template.basic?.tabbar;
+});
 
-  const activePath = ref('');
-
-  const resolveCurrentPath = () => {
-    const pages = getCurrentPages();
-    const current = pages[pages.length - 1];
-    if (!current?.route) return '';
-    return current.route.startsWith('/') ? current.route : `/${current.route}`;
-  };
-
-  const syncActivePath = () => {
-    activePath.value = props.path || resolveCurrentPath();
-  };
-
-  const tabbar = computed(() => {
-    return sheep.$store('app').template.basic?.tabbar;
-  });
-
-  const tabbarStyle = computed(() => {
-    const backgroundStyle = tabbar.value.style || {};
-    if (backgroundStyle.bgType === 'color') {
-      const bgColor =
+const tabbarStyle = computed(() => {
+  const backgroundStyle = tabbar.value.style || {};
+  if (backgroundStyle.bgType === 'color') {
+    const bgColor =
         backgroundStyle.bgColor && backgroundStyle.bgColor !== 'transparent'
-          ? backgroundStyle.bgColor
-          : '#ffffff';
-      return { background: bgColor };
-    }
-    if (backgroundStyle.bgType === 'img') {
-      return {
-        background: `url(${sheep.$url.cdn(
+            ? backgroundStyle.bgColor
+            : '#ffffff';
+    return { background: bgColor };
+  }
+  if (backgroundStyle.bgType === 'img') {
+    return {
+      background: `url(${sheep.$url.cdn(
           backgroundStyle.bgImg,
-        )}) no-repeat top center / 100% auto`,
-      };
-    }
-    return { background: '#ffffff' };
-  });
+      )}) no-repeat top center / 100% auto`,
+    };
+  }
+  return { background: '#ffffff' };
+});
 
-  const getTabbarCenter = (index) => {
-    if (unref(tabbar).mode !== 2) return false;
-    return unref(tabbar).items % 2 > 0
+const getTabbarCenter = (index) => {
+  if (unref(tabbar).mode !== 2) return false;
+  return unref(tabbar).items % 2 > 0
       ? Math.ceil(unref(tabbar).items.length / 2) === index + 1
       : false;
-  };
+};
 
-  watch(
-    () => props.path,
-    () => {
-      syncActivePath();
-    },
-  );
-
-  onMounted(() => {
-    syncActivePath();
-  });
-
-  onShow(() => {
-    syncActivePath();
-  });
+const props = defineProps({
+  path: String,
+  default: '',
+});
 </script>
 
 <style lang="scss">
-  .u-page {
-    padding: 0;
+.u-page {
+  padding: 0;
 
-    &__item {
-      &__title {
+  &__item {
+    &__title {
+      color: var(--textSize);
+      background-color: #fff;
+      padding: 15px;
+      font-size: 15px;
+
+      &__slot-title {
         color: var(--textSize);
-        background-color: #fff;
-        padding: 15px;
-        font-size: 15px;
-
-        &__slot-title {
-          color: var(--textSize);
-          font-size: 14px;
-        }
-      }
-
-      &__slot-icon {
-        width: 25px;
-        height: 25px;
+        font-size: 14px;
       }
     }
+
+    &__slot-icon {
+      width: 25px;
+      height: 25px;
+    }
   }
+}
 </style>
