@@ -23,10 +23,14 @@ import jakarta.annotation.Resource;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAULT_INIT_NOT_EXISTS;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAULT_NOT_EXISTS;
+import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAULT_STATUS_NOT_ALLOWED;
 
 @Service
 @Validated
 public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
+
+    private static final int PROCESS_STATUS_PENDING_CONFIRM = 2;
+    private static final int PROCESS_STATUS_COMPLETE = 3;
 
     @Resource
     private MemberWaterFaultMapper faultMapper;
@@ -100,6 +104,11 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
         MemberWaterFaultDO fault = faultMapper.selectById(updateReqVO.getId());
         if (fault == null) {
             throw exception(WATER_FAULT_NOT_EXISTS);
+        }
+        if (updateReqVO.getProcessStatus() != null
+                && updateReqVO.getProcessStatus() != PROCESS_STATUS_PENDING_CONFIRM
+                && updateReqVO.getProcessStatus() != PROCESS_STATUS_COMPLETE) {
+            throw exception(WATER_FAULT_STATUS_NOT_ALLOWED);
         }
         MemberWaterFaultDO updateObj = MemberWaterFaultDO.builder()
                 .id(updateReqVO.getId())
