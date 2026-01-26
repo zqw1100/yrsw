@@ -180,11 +180,14 @@
       uni.showToast({ title: '请上传施工前图片', icon: 'none' });
       return;
     }
-    await WorkOrderApi.startWorkOrder({
+    const startResult = await WorkOrderApi.startWorkOrder({
       id: Number(orderId.value),
       beforeImageUrls: form.beforeImageUrls,
       beforeRemark: form.beforeRemark,
     });
+    if (!startResult || startResult.code !== 0) {
+      return;
+    }
     uni.showToast({ title: '提交成功', icon: 'success' });
     setTimeout(() => {
       uni.navigateBack();
@@ -237,12 +240,15 @@
         }
       }
     }
-    await WorkOrderApi.finishWorkOrder({
+    const finishResult = await WorkOrderApi.finishWorkOrder({
       id: Number(orderId.value),
       afterImageUrls: form.afterImageUrls,
       afterRemark: form.afterRemark,
       deviceNo: form.deviceNo,
     });
+    if (!finishResult || finishResult.code !== 0) {
+      return;
+    }
     uni.showToast({ title: '提交成功', icon: 'success' });
     setTimeout(() => {
       uni.navigateBack();
