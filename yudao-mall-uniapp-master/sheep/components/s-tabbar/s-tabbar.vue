@@ -43,16 +43,22 @@
   });
 
   const tabbarStyle = computed(() => {
-    const backgroundStyle = tabbar.value.style;
+    const backgroundStyle = tabbar.value.style || {};
     if (backgroundStyle.bgType === 'color') {
-      return { background: backgroundStyle.bgColor };
+      const bgColor =
+        backgroundStyle.bgColor && backgroundStyle.bgColor !== 'transparent'
+          ? backgroundStyle.bgColor
+          : '#ffffff';
+      return { background: bgColor };
     }
-    if (backgroundStyle.bgType === 'img')
+    if (backgroundStyle.bgType === 'img') {
       return {
         background: `url(${sheep.$url.cdn(
           backgroundStyle.bgImg,
         )}) no-repeat top center / 100% auto`,
       };
+    }
+    return { background: '#ffffff' };
   });
 
   const getTabbarCenter = (index) => {

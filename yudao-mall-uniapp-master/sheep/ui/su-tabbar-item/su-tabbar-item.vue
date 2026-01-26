@@ -159,7 +159,13 @@
         // 本子组件在u-tabbar的children数组中的索引
         const index = this.parent.children.indexOf(this);
         // 判断本组件的name(如果没有定义name，就用index索引)是否等于父组件的value参数
-        this.isActive = (this.name.split('?')[0] || index) === this.parentData.value;
+        this.isActive =
+          (this.normalizePath(this.name) || index) === this.normalizePath(this.parentData.value);
+      },
+      normalizePath(path) {
+        if (!path) return path;
+        const normalized = String(path).split('?')[0];
+        return normalized.startsWith('/') ? normalized.slice(1) : normalized;
       },
       updateParentData() {
         // 此方法在mixin中

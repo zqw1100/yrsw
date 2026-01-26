@@ -7,17 +7,16 @@
 		}
 	},
 	"pages": [{
-			"path": "pages/index/index",
+			"path": "pages/water/home",
 			"aliasPath": "/",
 			"style": {
-				"navigationBarTitleText": "首页",
-				"enablePullDownRefresh": true
+				"navigationBarTitleText": "水务首页"
 			},
 			"meta": {
-				"auth": false,
+				"auth": true,
 				"sync": true,
-				"title": "首页",
-				"group": "商城"
+				"title": "水务首页",
+				"group": "水务"
 			}
 		},
 		{
@@ -84,15 +83,16 @@
 			}
 		},
 		{
-			"path": "pages/water/home",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "水务首页"
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": true
 			},
 			"meta": {
-				"auth": true,
+				"auth": false,
 				"sync": true,
-				"title": "水务首页",
-				"group": "水务"
+				"title": "首页",
+				"group": "商城"
 			}
 		},
 		{
