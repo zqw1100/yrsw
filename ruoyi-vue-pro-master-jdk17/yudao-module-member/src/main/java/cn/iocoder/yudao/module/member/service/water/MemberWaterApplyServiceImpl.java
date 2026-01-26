@@ -46,6 +46,8 @@ import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
 public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
 
     private static final String TEMP_DEVICE_NO_PREFIX = "TMP-APPLY-";
+    private static final int PROCESS_STATUS_PENDING_CONFIRM = 3;
+    private static final int PROCESS_STATUS_COMPLETE = 4;
 
     @Resource
     private MemberWaterApplyMapper applyMapper;
@@ -150,8 +152,15 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         if (apply == null) {
             throw exception(WATER_APPLY_NOT_EXISTS);
         }
-        if (updateReqVO.getProcessStatus() != null && updateReqVO.getProcessStatus() == 3
-                && StrUtil.isBlank(updateReqVO.getDeviceNo())) {
+        if (updateReqVO.getProcessStatus() != null
+                && updateReqVO.getProcessStatus() != PROCESS_STATUS_PENDING_CONFIRM
+                && updateReqVO.getProcessStatus() != PROCESS_STATUS_COMPLETE) {
+            throw exception(WATER_APPLY_STATUS_NOT_ALLOWED);
+        }
+        if (updateReqVO.getProcessStatus() != null
+                && updateReqVO.getProcessStatus() >= PROCESS_STATUS_PENDING_CONFIRM
+                && StrUtil.isBlank(updateReqVO.getDeviceNo())
+                && StrUtil.isBlank(apply.getDeviceNo())) {
             throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
         }
         boolean needRegisterDevice = StrUtil.isBlank(apply.getDeviceNo()) && StrUtil.isNotBlank(updateReqVO.getDeviceNo());

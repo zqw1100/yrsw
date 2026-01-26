@@ -39,6 +39,8 @@ public interface ErrorCodeConstants {
     ErrorCode WATER_WORK_ORDER_STATUS_NOT_ALLOWED = new ErrorCode(1_004_005_011, "施工工单状态不支持此操作");
     ErrorCode WATER_DEVICE_NOT_EXISTS = new ErrorCode(1_004_005_012, "设备不存在");
     ErrorCode WATER_FEE_CONFIG_NOT_EXISTS = new ErrorCode(1_004_005_013, "水费配置不存在");
+    ErrorCode WATER_APPLY_STATUS_NOT_ALLOWED = new ErrorCode(1_004_005_014, "居民报装状态不支持此操作");
+    ErrorCode WATER_FAULT_STATUS_NOT_ALLOWED = new ErrorCode(1_004_005_015, "故障报修状态不支持此操作");
 
     //========== 用户标签 1-004-006-000 ==========
     ErrorCode TAG_NOT_EXISTS = new ErrorCode(1_004_006_000, "用户标签不存在");

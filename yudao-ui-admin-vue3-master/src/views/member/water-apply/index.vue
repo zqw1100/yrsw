@@ -158,7 +158,7 @@
         <template #default="{ row }">
           <el-select
             v-model="row.processStatus"
-            disabled
+            :disabled="!canUpdateStatus(row)"
             size="small"
             class="!w-130px"
             @change="(value) => handleUpdateStatus(row, value)"
@@ -168,6 +168,7 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
+              :disabled="!updateProcessStatusValues.includes(item.value)"
             />
           </el-select>
         </template>
@@ -191,7 +192,6 @@
 
 <script setup lang="ts" name="MemberWaterApply">
 import { dateFormatter } from '@/utils/formatTime'
-import { ElMessageBox } from 'element-plus'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { createImageViewer } from '@/components/ImageViewer'
 import * as WaterApplyApi from '@/api/member/water-apply'
@@ -219,6 +219,9 @@ const applyStatusOptions = [
   { label: '已提交', value: 1 }
 ]
 const processStatusOptions = getIntDictOptions(DICT_TYPE.MEMBER_WATER_APPLY_STATUS)
+const PENDING_CONFIRM_STATUS = 3
+const COMPLETE_STATUS = 4
+const updateProcessStatusValues = [PENDING_CONFIRM_STATUS, COMPLETE_STATUS]
 
 const getList = async () => {
   loading.value = true
@@ -241,27 +244,16 @@ const resetQuery = () => {
   handleQuery()
 }
 
+const canUpdateStatus = (row: any) => row.processStatus === PENDING_CONFIRM_STATUS
+
 const handleUpdateStatus = async (row: any, processStatus: number) => {
   try {
-    let deviceNo: string | undefined
-    if (processStatus === 3) {
-      const { value } = await ElMessageBox.prompt('请输入设备号', '施工完成', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /\S+/,
-        inputErrorMessage: '设备号不能为空'
-      })
-      deviceNo = value
-      if (deviceNo && deviceNo !== row.deviceNo) {
-        const used = await WaterApplyApi.checkDeviceNo(deviceNo, row.id)
-        if (used) {
-          message.error('设备号已被使用，无法重复绑定')
-          await getList()
-          return
-        }
-      }
+    if (processStatus === COMPLETE_STATUS && !row.deviceNo) {
+      message.error('设备号为空，无法确认完成')
+      await getList()
+      return
     }
-    await WaterApplyApi.updateWaterApplyStatus({ id: row.id, processStatus, deviceNo })
+    await WaterApplyApi.updateWaterApplyStatus({ id: row.id, processStatus })
     message.success('状态更新成功')
   } catch {
     await getList()

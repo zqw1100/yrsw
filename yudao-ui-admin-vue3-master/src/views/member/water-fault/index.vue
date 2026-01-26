@@ -143,6 +143,7 @@
         <template #default="{ row }">
           <el-select
             v-model="row.processStatus"
+            :disabled="!canUpdateStatus(row)"
             size="small"
             class="!w-130px"
             @change="(value) => handleUpdateStatus(row.id, value)"
@@ -152,6 +153,7 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
+              :disabled="!updateProcessStatusValues.includes(item.value)"
             />
           </el-select>
         </template>
@@ -215,6 +217,9 @@ const priorityOptions = [
   { label: '高', value: 3 }
 ]
 const processStatusOptions = getIntDictOptions(DICT_TYPE.MEMBER_WATER_FAULT_STATUS)
+const PENDING_CONFIRM_STATUS = 2
+const COMPLETE_STATUS = 3
+const updateProcessStatusValues = [PENDING_CONFIRM_STATUS, COMPLETE_STATUS]
 const faultTypeOptions = getStrDictOptions(DICT_TYPE.DEVICE_FAULT_CODE)
 
 const getList = async () => {
@@ -237,6 +242,8 @@ const resetQuery = () => {
   queryFormRef.value.resetFields()
   handleQuery()
 }
+
+const canUpdateStatus = (row: any) => row.processStatus === PENDING_CONFIRM_STATUS
 
 const handleUpdateStatus = async (id: number, processStatus: number) => {
   try {

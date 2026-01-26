@@ -80,8 +80,26 @@
             :inputBorder="false"
             placeholder="请输入设备号"
             class="input"
+            @paste.prevent="handleDeviceClipboard"
+            @copy.prevent="handleDeviceClipboard"
+            @cut.prevent="handleDeviceClipboard"
           />
           <view class="device-hint">完成报装工单时请绑定设备号</view>
+        </view>
+      </view>
+      <view v-if="order.orderType === 0" class="info-row">
+        <text class="label">确认设备号：</text>
+        <view class="value device-card">
+          <uni-easyinput
+            v-model="form.deviceNoConfirm"
+            :inputBorder="false"
+            placeholder="请再次输入设备号"
+            class="input"
+            @paste.prevent="handleDeviceClipboard"
+            @copy.prevent="handleDeviceClipboard"
+            @cut.prevent="handleDeviceClipboard"
+          />
+          <view class="device-hint">请再次输入确认，避免录入错误</view>
         </view>
       </view>
       <s-uploader
@@ -126,6 +144,7 @@
     afterImageUrls: [],
     afterRemark: '',
     deviceNo: '',
+    deviceNoConfirm: '',
   });
 
   const statusOptions = ref([]);
@@ -174,23 +193,50 @@
     }, 600);
   };
 
+  const confirmDeviceNo = async () => {
+    return new Promise((resolve) => {
+      uni.showModal({
+        title: '请确认设备号',
+        content: `设备号：${form.deviceNo}`,
+        confirmText: '确认无误',
+        cancelText: '返回修改',
+        success: (res) => resolve(res.confirm),
+        fail: () => resolve(false),
+      });
+    });
+  };
+
+  const handleDeviceClipboard = () => {
+    uni.showToast({ title: '请手动输入设备号', icon: 'none' });
+  };
+
   const onFinishSubmit = async () => {
     if (!form.afterImageUrls || form.afterImageUrls.length === 0) {
       uni.showToast({ title: '请上传施工后图片', icon: 'none' });
       return;
     }
-    if (order.orderType === 0 && !form.deviceNo) {
-      uni.showToast({ title: '请输入设备号', icon: 'none' });
-      return;
-    }
-    if (order.orderType === 0 && form.deviceNo && form.deviceNo !== order.deviceNo) {
-      const { code, data } = await WaterApplyApi.checkDeviceNo({
-        deviceNo: form.deviceNo,
-        excludeApplyId: order.bizId || null,
-      });
-      if (code === 0 && data) {
-        uni.showToast({ title: '设备号已被使用，无法重复绑定', icon: 'none' });
+    if (order.orderType === 0) {
+      if (!form.deviceNo || !form.deviceNoConfirm) {
+        uni.showToast({ title: '请完整输入设备号', icon: 'none' });
         return;
+      }
+      if (form.deviceNo !== form.deviceNoConfirm) {
+        uni.showToast({ title: '两次输入的设备号不一致', icon: 'none' });
+        return;
+      }
+      const confirmed = await confirmDeviceNo();
+      if (!confirmed) {
+        return;
+      }
+      if (form.deviceNo && form.deviceNo !== order.deviceNo) {
+        const { code, data } = await WaterApplyApi.checkDeviceNo({
+          deviceNo: form.deviceNo,
+          excludeApplyId: order.bizId || null,
+        });
+        if (code === 0 && data) {
+          uni.showToast({ title: '设备号已被使用，无法重复绑定', icon: 'none' });
+          return;
+        }
       }
     }
     await WorkOrderApi.finishWorkOrder({
@@ -211,6 +257,7 @@
     await fetchDict();
     await fetchOrder();
     form.deviceNo = order.deviceNo || '';
+    form.deviceNoConfirm = '';
   });
 </script>
 
