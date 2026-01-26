@@ -1,7 +1,7 @@
 <template>
   <view class="u-page__item" v-if="tabbar?.items?.length > 0">
     <su-tabbar
-      :value="path"
+      :value="activePath"
       :fixed="true"
       :placeholder="true"
       :safeAreaInsetBottom="true"
@@ -34,9 +34,30 @@
 </template>
 
 <script setup>
-  import { computed, unref } from 'vue';
+  import { computed, onMounted, ref, unref, watch } from 'vue';
+  import { onShow } from '@dcloudio/uni-app';
   import sheep from '@/sheep';
   import SuTabbar from '@/sheep/ui/su-tabbar/su-tabbar.vue';
+
+  const props = defineProps({
+    path: {
+      type: String,
+      default: '',
+    },
+  });
+
+  const activePath = ref('');
+
+  const resolveCurrentPath = () => {
+    const pages = getCurrentPages();
+    const current = pages[pages.length - 1];
+    if (!current?.route) return '';
+    return current.route.startsWith('/') ? current.route : `/${current.route}`;
+  };
+
+  const syncActivePath = () => {
+    activePath.value = props.path || resolveCurrentPath();
+  };
 
   const tabbar = computed(() => {
     return sheep.$store('app').template.basic?.tabbar;
@@ -68,9 +89,19 @@
       : false;
   };
 
-  const props = defineProps({
-    path: String,
-    default: '',
+  watch(
+    () => props.path,
+    () => {
+      syncActivePath();
+    },
+  );
+
+  onMounted(() => {
+    syncActivePath();
+  });
+
+  onShow(() => {
+    syncActivePath();
   });
 </script>
 
