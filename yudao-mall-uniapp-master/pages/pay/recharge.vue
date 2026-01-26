@@ -25,30 +25,51 @@
         <view v-if="activeDeviceAddress" class="device-address">{{ activeDeviceAddress }}</view>
       </view>
       <view class="recharge-card-box">
-        <view class="input-label ss-m-b-50">充值金额</view>
-        <view class="input-box ss-flex border-bottom ss-p-b-20">
-          <view class="unit">￥</view>
-          <uni-easyinput
-            v-model="state.recharge_money"
-            type="digit"
-            placeholder="请输入充值金额"
-            :inputBorder="false"
-          />
-        </view>
-        <view class="face-value-box ss-flex ss-flex-wrap ss-m-y-40">
+        <view class="recharge-tabs ss-flex">
           <button
-            class="ss-reset-button face-value-btn"
-            v-for="item in state.packageList"
-            :key="item.money"
-            :class="[{ 'btn-active': state.recharge_money === fen2yuan(item.payPrice) }]"
-            @tap="onCard(item.payPrice)"
+            class="ss-reset-button tab-btn"
+            :class="{ active: state.rechargeTab === 'package' }"
+            @tap="onSwitchTab('package')"
           >
-            <text class="face-value-title">{{ fen2yuan(item.payPrice) }}</text>
-            <view v-if="item.bonusPrice" class="face-value-tag">
-              送 {{ fen2yuan(item.bonusPrice) }} 元
-            </view>
+            套餐充值
+          </button>
+          <button
+            class="ss-reset-button tab-btn"
+            :class="{ active: state.rechargeTab === 'custom' }"
+            @tap="onSwitchTab('custom')"
+          >
+            自定义充值
           </button>
         </view>
+        <template v-if="state.rechargeTab === 'custom'">
+          <view class="input-label ss-m-b-50">自定义金额</view>
+          <view class="input-box ss-flex border-bottom ss-p-b-20">
+            <view class="unit">￥</view>
+            <uni-easyinput
+              v-model="state.recharge_money"
+              type="digit"
+              placeholder="请输入充值金额"
+              :inputBorder="false"
+            />
+          </view>
+        </template>
+        <template v-else>
+          <view class="input-label ss-m-b-50">套餐金额</view>
+          <view class="face-value-box ss-flex ss-flex-wrap ss-m-y-40">
+            <button
+              class="ss-reset-button face-value-btn"
+              v-for="item in state.packageList"
+              :key="item.money"
+              :class="[{ 'btn-active': state.recharge_money === fen2yuan(item.payPrice) }]"
+              @tap="onCard(item.payPrice)"
+            >
+              <text class="face-value-title">{{ fen2yuan(item.payPrice) }}</text>
+              <view v-if="item.bonusPrice" class="face-value-tag">
+                送 {{ fen2yuan(item.bonusPrice) }} 元
+              </view>
+            </button>
+          </view>
+        </template>
         <button class="ss-reset-button save-btn ss-m-t-60" @tap="onConfirm">
           确认充值
         </button>
@@ -71,6 +92,7 @@
   const state = reactive({
     recharge_money: '', // 输入的充值金额
     packageList: [],
+    rechargeTab: 'package',
   });
 
   const activeDevice = computed(() => waterDeviceStore.activeDevice);
@@ -89,6 +111,14 @@
     state.recharge_money = fen2yuan(e);
   }
 
+  function onSwitchTab(tab) {
+    if (state.rechargeTab === tab) {
+      return;
+    }
+    state.rechargeTab = tab;
+    state.recharge_money = '';
+  }
+
   // 获得钱包充值套餐列表
   async function getRechargeTabs() {
     const { code, data } = await PayWalletApi.getWalletRechargePackageList();
@@ -102,6 +132,14 @@
   async function onConfirm() {
     if (!waterDeviceStore.activeDeviceNo) {
       uni.showToast({ title: '暂无可充值设备', icon: 'none' });
+      return;
+    }
+    if (state.rechargeTab === 'package' && !state.recharge_money) {
+      uni.showToast({ title: '请选择套餐金额', icon: 'none' });
+      return;
+    }
+    if (state.rechargeTab === 'custom' && !state.recharge_money) {
+      uni.showToast({ title: '请输入充值金额', icon: 'none' });
       return;
     }
     const { code, data } = await PayWalletApi.createWalletRecharge({
@@ -226,6 +264,29 @@
       font-size: 30rpx;
       font-weight: 500;
       color: #333;
+    }
+
+    .recharge-tabs {
+      margin-bottom: 30rpx;
+      background: #f5f7fb;
+      border-radius: 16rpx;
+      padding: 6rpx;
+    }
+
+    .tab-btn {
+      flex: 1;
+      height: 68rpx;
+      line-height: 68rpx;
+      border-radius: 12rpx;
+      font-size: 28rpx;
+      color: #8a8a8a;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #3c7eff;
+      font-weight: 600;
+      box-shadow: 0 6rpx 16rpx rgba(60, 126, 255, 0.15);
     }
 
     .unit {
