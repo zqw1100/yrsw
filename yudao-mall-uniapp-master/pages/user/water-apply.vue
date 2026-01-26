@@ -113,7 +113,6 @@
     </view>
 
     <view class="footer">
-      <button class="ghost-btn" @tap="onMyContract">我的签约</button>
       <button class="primary-btn" @tap="onSubmit">信息提交</button>
     </view>
 

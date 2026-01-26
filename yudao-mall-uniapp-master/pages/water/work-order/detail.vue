@@ -73,7 +73,6 @@
       <view class="section-title">施工完成信息</view>
       <view class="required-tip">* 施工后图片必填</view>
       <view v-if="order.orderType === 0" class="info-row">
-        <text class="label">设备号：</text>
         <view class="value device-card">
           <uni-easyinput
             v-model="form.deviceNo"
@@ -88,7 +87,6 @@
         </view>
       </view>
       <view v-if="order.orderType === 0" class="info-row">
-        <text class="label">确认设备号：</text>
         <view class="value device-card">
           <uni-easyinput
             v-model="form.deviceNoConfirm"
@@ -319,7 +317,7 @@
       background: #f7f9fc;
       border-radius: 12rpx;
       padding: 8rpx 12rpx;
-      width: 100%;
+      width: 90%;
     }
 
     .required-tip {
