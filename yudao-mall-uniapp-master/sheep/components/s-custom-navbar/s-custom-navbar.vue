@@ -17,10 +17,6 @@
               <text class="sicon-back" v-if="hasHistory" />
               <text class="sicon-home" v-else />
             </view>
-            <view class="line"></view>
-            <view class="icon-button icon-button-right ss-flex ss-row-center" @tap="onClickRight">
-              <text class="sicon-more" />
-            </view>
           </view>
         </view>
         <view
@@ -52,7 +48,6 @@
   import sheep from '@/sheep';
   import Navbar from './components/navbar.vue';
   import NavbarItem from './components/navbar-item.vue';
-  import { showMenuTools } from '@/sheep/hooks/useModal';
 
   const props = defineProps({
     data: {
@@ -132,10 +127,6 @@
     }
   }
 
-  // 右侧按钮：打开快捷菜单
-  function onClickRight() {
-    showMenuTools();
-  }
 </script>
 
 <style lang="scss" scoped>
@@ -165,15 +156,9 @@
         background: #ffffff;
         box-shadow: 0px 0px 4rpx rgba(51, 51, 51, 0.08), 0px 4rpx 6rpx 2rpx rgba(102, 102, 102, 0.12);
         border-radius: 30rpx;
-        width: 134rpx;
+        width: 67rpx;
         height: 56rpx;
         margin-left: 8rpx;
-
-        .line {
-          width: 2rpx;
-          height: 24rpx;
-          background: #e5e5e7;
-        }
 
         .sicon-back {
           font-size: 32rpx;
@@ -183,9 +168,6 @@
           font-size: 32rpx;
         }
 
-        .sicon-more {
-          font-size: 32rpx;
-        }
 
         .icon-button {
           width: 67rpx;
@@ -193,12 +175,7 @@
 
           &-left:hover {
             background: rgba(0, 0, 0, 0.16);
-            border-radius: 30rpx 0px 0px 30rpx;
-          }
-
-          &-right:hover {
-            background: rgba(0, 0, 0, 0.16);
-            border-radius: 0px 30rpx 30rpx 0px;
+            border-radius: 30rpx;
           }
         }
       }
