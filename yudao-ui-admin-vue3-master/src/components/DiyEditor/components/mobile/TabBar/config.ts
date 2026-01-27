@@ -52,7 +52,7 @@ export const component = {
     items: [
       {
         text: '首页',
-        url: '/pages/index/index',
+        url: '/pages/water/home',
         iconUrl: 'http://mall.yudao.iocoder.cn/static/images/1-001.png',
         activeIconUrl: 'http://mall.yudao.iocoder.cn/static/images/1-002.png'
       },

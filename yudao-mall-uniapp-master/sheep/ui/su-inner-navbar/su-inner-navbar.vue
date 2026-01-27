@@ -12,7 +12,7 @@
     :placeholder="props.placeholder"
   >
     <su-status-bar />
-    <!-- 
+    <!--
       :class="[{ 'border-bottom': !props.opacity && props.bg != 'bg-none' }]"
      -->
     <view class="ui-navbar-box">
@@ -146,7 +146,7 @@
     if (hasHistory) {
       sheep.$router.back();
     } else {
-      sheep.$router.go('/pages/index/index');
+      sheep.$router.go('/pages/water/home');
     }
     emits('clickLeft');
   }

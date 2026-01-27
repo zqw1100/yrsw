@@ -24,7 +24,7 @@
 
       <!-- 操作区 -->
       <view class="btn-box ss-flex ss-row-center ss-m-t-50">
-        <button class="back-btn ss-reset-button" @tap="sheep.$router.go('/pages/index/index')">
+        <button class="back-btn ss-reset-button" @tap="sheep.$router.go('/pages/water/home')">
           返回首页
         </button>
         <button

@@ -4,7 +4,7 @@
     <s-layout
       title="首页"
       navbar="custom"
-      tabbar="/pages/index/index"
+      tabbar="/pages/water/home"
       :bgStyle="template.page"
       :navbarStyle="template.navigationBar"
       onShareAppMessage
