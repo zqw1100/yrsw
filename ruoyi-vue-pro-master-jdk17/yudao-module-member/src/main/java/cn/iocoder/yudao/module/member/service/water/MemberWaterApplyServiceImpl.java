@@ -147,6 +147,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateApplyStatus(MemberWaterApplyStatusUpdateReqVO updateReqVO) {
         MemberWaterApplyDO apply = applyMapper.selectById(updateReqVO.getId());
         if (apply == null) {
@@ -163,22 +164,14 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 && StrUtil.isBlank(apply.getDeviceNo())) {
             throw exception(WATER_APPLY_DEVICE_NO_REQUIRED);
         }
-        boolean needRegisterDevice = StrUtil.isBlank(apply.getDeviceNo()) && StrUtil.isNotBlank(updateReqVO.getDeviceNo());
-        if (needRegisterDevice) {
-            String tempDeviceNo = TEMP_DEVICE_NO_PREFIX + apply.getId();
-            payWalletService.updateWalletDeviceNo(apply.getUserId(), UserTypeEnum.MEMBER.getValue(),
-                    tempDeviceNo, updateReqVO.getDeviceNo());
-        }
+
         MemberWaterApplyDO updateObj = MemberWaterApplyDO.builder()
                 .id(updateReqVO.getId())
                 .processStatus(updateReqVO.getProcessStatus())
                 .deviceNo(updateReqVO.getDeviceNo())
                 .build();
         applyMapper.updateById(updateObj);
-        if (needRegisterDevice) {
-            apply.setDeviceNo(updateReqVO.getDeviceNo());
-            deviceService.registerDeviceForApply(apply, updateReqVO.getDeviceNo());
-        }
+        workOrderService.updateForApply(apply.getId(), updateReqVO.getProcessStatus());
     }
 
     @Override

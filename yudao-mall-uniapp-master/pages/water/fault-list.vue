@@ -77,7 +77,8 @@
     const statusMap = {
       0: '待处理',
       1: '处理中',
-      2: '已完成',
+      3: '待确认完成',
+      4: '完成',
     };
     return statusMap[value] || '处理中';
   };
@@ -202,7 +203,12 @@
       background: #e6f4ff;
     }
 
-    .status-2 {
+    .status-3 {
+      color: #52c41a;
+      background: #f6ffed;
+    }
+
+    .status-4 {
       color: #52c41a;
       background: #f6ffed;
     }

@@ -217,8 +217,8 @@ const priorityOptions = [
   { label: '高', value: 3 }
 ]
 const processStatusOptions = getIntDictOptions(DICT_TYPE.MEMBER_WATER_FAULT_STATUS)
-const PENDING_CONFIRM_STATUS = 2
-const COMPLETE_STATUS = 3
+const PENDING_CONFIRM_STATUS = 3
+const COMPLETE_STATUS = 4
 const updateProcessStatusValues = [PENDING_CONFIRM_STATUS, COMPLETE_STATUS]
 const faultTypeOptions = getStrDictOptions(DICT_TYPE.DEVICE_FAULT_CODE)
 

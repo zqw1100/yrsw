@@ -30,4 +30,8 @@ public interface MemberWaterWorkOrderService {
     void createForApply(MemberWaterApplyDO apply);
 
     void createForFault(MemberWaterFaultDO fault);
+
+    void updateForFault(Long id, Integer processStatus);
+
+    void updateForApply(Long id, Integer processStatus);
 }

@@ -232,6 +232,29 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
         workOrderMapper.insert(order);
     }
 
+    @Override
+    public void updateForFault(Long id, Integer processStatus) {
+        workOrderMapper.update(
+                null,
+                new LambdaUpdateWrapper<MemberWaterWorkOrderDO>()
+                        .eq(MemberWaterWorkOrderDO::getOrderType, 1)
+                        .eq(MemberWaterWorkOrderDO::getBizId, id)
+                        .set(MemberWaterWorkOrderDO::getStatus, processStatus)
+        );
+
+    }
+
+    @Override
+    public void updateForApply(Long id, Integer processStatus) {
+        workOrderMapper.update(
+                null,
+                new LambdaUpdateWrapper<MemberWaterWorkOrderDO>()
+                        .eq(MemberWaterWorkOrderDO::getOrderType, 0)
+                        .eq(MemberWaterWorkOrderDO::getBizId, id)
+                        .set(MemberWaterWorkOrderDO::getStatus, processStatus)
+        );
+    }
+
     private boolean isManager(Long userId) {
         MemberUserDO user = memberUserService.getUser(userId);
         return user != null && MANAGER_GROUP_ID.equals(user.getGroupId());
@@ -261,27 +284,15 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                     .build();
             applyMapper.updateById(updateObj);
         } else if (order.getOrderType() == 1) {
-            Integer processStatus = mapFaultStatus(status);
             MemberWaterFaultDO updateObj = MemberWaterFaultDO.builder()
                     .id(order.getBizId())
-                    .processStatus(processStatus)
+                    .processStatus(status)
                     .build();
             faultMapper.updateById(updateObj);
         }
     }
 
-    private Integer mapFaultStatus(Integer status) {
-        if (status == null) {
-            return null;
-        }
-        if (status <= 1) {
-            return 0;
-        }
-        if (status == 2) {
-            return 1;
-        }
-        return 2;
-    }
+
 
     private Map<Long, MemberWaterApplyDO> getApplyMap(List<MemberWaterWorkOrderDO> orders) {
         Set<Long> applyIds = orders.stream()

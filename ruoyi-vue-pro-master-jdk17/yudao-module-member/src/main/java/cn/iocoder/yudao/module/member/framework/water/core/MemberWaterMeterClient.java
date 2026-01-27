@@ -182,6 +182,7 @@ public class MemberWaterMeterClient {
 
     private void ensureSuccess(Integer code, String message) {
         if (code != null && code != 0) {
+            log.warn("水表远程接口错误[code({}) message({})]", code, message);
             throw exception(ERROR_WITH_THE_REMOTE_INTERFACE);
         }
     }

@@ -16,6 +16,7 @@ import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterApplyMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterFaultMapper;
 import cn.iocoder.yudao.module.member.dal.mysql.water.MemberWaterHouseOwnerMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.annotation.Resource;
@@ -29,8 +30,8 @@ import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.WATER_FAUL
 @Validated
 public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
 
-    private static final int PROCESS_STATUS_PENDING_CONFIRM = 2;
-    private static final int PROCESS_STATUS_COMPLETE = 3;
+    private static final int PROCESS_STATUS_PENDING_CONFIRM = 3;
+    private static final int PROCESS_STATUS_COMPLETE = 4;
 
     @Resource
     private MemberWaterFaultMapper faultMapper;
@@ -100,6 +101,7 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateFaultStatus(MemberWaterFaultStatusUpdateReqVO updateReqVO) {
         MemberWaterFaultDO fault = faultMapper.selectById(updateReqVO.getId());
         if (fault == null) {
@@ -116,6 +118,7 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
                 .remark(updateReqVO.getRemark())
                 .build();
         faultMapper.updateById(updateObj);
+        workOrderService.updateForFault(fault.getId(), updateReqVO.getProcessStatus());
     }
 
     private MemberWaterApplyDO getLatestApply(Long userId, String deviceNo) {
