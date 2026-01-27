@@ -89,8 +89,8 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         try {
             info = meterClient.readDeviceInfo(deviceNo);
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
-           // log.warn("[registerOrUpdateDevice][deviceNo({}) read info failed]", deviceNo, ex);
+            log.warn("[registerOrUpdateDevice][deviceNo({}) read info failed]", deviceNo, ex);
+           // throw new RuntimeException(ex);
         }
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(deviceNo, info, now);
