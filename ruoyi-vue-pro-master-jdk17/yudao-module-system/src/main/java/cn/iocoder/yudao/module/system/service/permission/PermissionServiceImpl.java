@@ -7,15 +7,19 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.datapermission.core.annotation.DataPermission;
+import cn.iocoder.yudao.framework.common.biz.system.permission.dto.CommunityDataPermissionRespDTO;
 import cn.iocoder.yudao.framework.common.biz.system.permission.dto.DeptDataPermissionRespDTO;
 import cn.iocoder.yudao.module.system.dal.dataobject.permission.MenuDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.permission.RoleDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.permission.RoleMenuDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.permission.UserRoleDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.user.UserCommunityDO;
 import cn.iocoder.yudao.module.system.dal.mysql.permission.RoleMenuMapper;
 import cn.iocoder.yudao.module.system.dal.mysql.permission.UserRoleMapper;
+import cn.iocoder.yudao.module.system.dal.mysql.user.UserCommunityMapper;
 import cn.iocoder.yudao.module.system.dal.redis.RedisKeyConstants;
 import cn.iocoder.yudao.module.system.enums.permission.DataScopeEnum;
+import cn.iocoder.yudao.module.system.enums.permission.RoleCodeEnum;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import cn.iocoder.yudao.module.system.service.user.AdminUserService;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
@@ -49,6 +53,8 @@ public class PermissionServiceImpl implements PermissionService {
     private RoleMenuMapper roleMenuMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
+    @Resource
+    private UserCommunityMapper userCommunityMapper;
 
     @Resource
     private RoleService roleService;
@@ -231,6 +237,7 @@ public class PermissionServiceImpl implements PermissionService {
     @CacheEvict(value = RedisKeyConstants.USER_ROLE_ID_LIST, key = "#userId")
     public void processUserDeleted(Long userId) {
         userRoleMapper.deleteListByUserId(userId);
+        userCommunityMapper.deleteListByUserId(userId);
     }
 
     @Override
@@ -326,6 +333,23 @@ public class PermissionServiceImpl implements PermissionService {
             // 未知情况，error log 即可
             log.error("[getDeptDataPermission][LoginUser({}) role({}) 无法处理]", userId, toJsonString(result));
         }
+        return result;
+    }
+
+    @Override
+    @DataPermission(enable = false)
+    public CommunityDataPermissionRespDTO getCommunityDataPermission(Long userId) {
+        List<RoleDO> roles = getEnableUserRoleListByUserIdFromCache(userId);
+        CommunityDataPermissionRespDTO result = new CommunityDataPermissionRespDTO();
+        if (CollUtil.isEmpty(roles)) {
+            return result;
+        }
+        if (roles.stream().anyMatch(role -> RoleCodeEnum.isSuperAdmin(role.getCode()))) {
+            result.setAll(true);
+            return result;
+        }
+        result.setCommunityIds(convertSet(userCommunityMapper.selectListByUserId(userId),
+                UserCommunityDO::getCommunityId));
         return result;
     }
 

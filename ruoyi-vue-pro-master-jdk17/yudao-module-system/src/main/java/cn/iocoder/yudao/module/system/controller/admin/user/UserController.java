@@ -133,7 +133,9 @@ public class UserController {
         }
         // 拼接数据
         DeptDO dept = deptService.getDept(user.getDeptId());
-        return success(UserConvert.INSTANCE.convert(user, dept));
+        UserRespVO userRespVO = UserConvert.INSTANCE.convert(user, dept);
+        userRespVO.setCommunityIds(userService.getUserCommunityIds(id));
+        return success(userRespVO);
     }
 
     @GetMapping("/export-excel")
