@@ -45,6 +45,10 @@ public class UserSaveReqVO {
     @DiffLogField(name = "岗位", function = PostParseFunction.NAME)
     private Set<Long> postIds;
 
+    @Schema(description = "小区编号数组", example = "[\"e10adc3949ba59abbe56e057f20f883e\"]")
+    @DiffLogField(name = "小区编号")
+    private Set<String> communityIds;
+
     @Schema(description = "用户邮箱", example = "yudao@iocoder.cn")
     @Email(message = "邮箱格式不正确")
     @Size(max = 50, message = "邮箱长度不能超过 50 个字符")

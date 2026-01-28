@@ -23,8 +23,10 @@ import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserSaveReqV
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.UserPostDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.user.UserCommunityDO;
 import cn.iocoder.yudao.module.system.dal.mysql.dept.UserPostMapper;
 import cn.iocoder.yudao.module.system.dal.mysql.user.AdminUserMapper;
+import cn.iocoder.yudao.module.system.dal.mysql.user.UserCommunityMapper;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import cn.iocoder.yudao.module.system.service.dept.PostService;
 import cn.iocoder.yudao.module.system.service.oauth2.OAuth2TokenService;
@@ -85,6 +87,9 @@ public class AdminUserServiceImpl implements AdminUserService {
     private UserPostMapper userPostMapper;
 
     @Resource
+    private UserCommunityMapper userCommunityMapper;
+
+    @Resource
     private ConfigApi configApi;
 
     @Override
@@ -111,6 +116,11 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (CollectionUtil.isNotEmpty(user.getPostIds())) {
             userPostMapper.insertBatch(convertList(user.getPostIds(),
                     postId -> new UserPostDO().setUserId(user.getId()).setPostId(postId)));
+        }
+        // 2.3 插入关联小区
+        if (CollectionUtil.isNotEmpty(createReqVO.getCommunityIds())) {
+            userCommunityMapper.insertBatch(convertList(createReqVO.getCommunityIds(),
+                    communityId -> new UserCommunityDO().setUserId(user.getId()).setCommunityId(communityId)));
         }
 
         // 3. 记录操作日志上下文
@@ -157,6 +167,8 @@ public class AdminUserServiceImpl implements AdminUserService {
         userMapper.updateById(updateObj);
         // 2.2 更新岗位
         updateUserPost(updateReqVO, updateObj);
+        // 2.3 更新小区
+        updateUserCommunity(updateReqVO);
 
         // 3. 记录操作日志上下文
         LogRecordContext.putVariable(DiffParseFunction.OLD_OBJECT, BeanUtils.toBean(oldUser, UserSaveReqVO.class));
@@ -177,6 +189,22 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
         if (!CollectionUtil.isEmpty(deletePostIds)) {
             userPostMapper.deleteByUserIdAndPostId(userId, deletePostIds);
+        }
+    }
+
+    private void updateUserCommunity(UserSaveReqVO reqVO) {
+        Long userId = reqVO.getId();
+        Set<String> dbCommunityIds = convertSet(userCommunityMapper.selectListByUserId(userId),
+                UserCommunityDO::getCommunityId);
+        Set<String> communityIds = CollUtil.emptyIfNull(reqVO.getCommunityIds());
+        Collection<String> createCommunityIds = CollUtil.subtract(communityIds, dbCommunityIds);
+        Collection<String> deleteCommunityIds = CollUtil.subtract(dbCommunityIds, communityIds);
+        if (!CollectionUtil.isEmpty(createCommunityIds)) {
+            userCommunityMapper.insertBatch(convertList(createCommunityIds,
+                    communityId -> new UserCommunityDO().setUserId(userId).setCommunityId(communityId)));
+        }
+        if (!CollectionUtil.isEmpty(deleteCommunityIds)) {
+            userCommunityMapper.deleteListByUserIdAndCommunityIds(userId, deleteCommunityIds);
         }
     }
 
@@ -253,6 +281,8 @@ public class AdminUserServiceImpl implements AdminUserService {
         permissionService.processUserDeleted(id);
         // 2.2 删除用户岗位
         userPostMapper.deleteByUserId(id);
+        // 2.3 删除用户小区
+        userCommunityMapper.deleteListByUserId(id);
 
         // 3. 记录操作日志上下文
         LogRecordContext.putVariable("user", user);
@@ -268,6 +298,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         ids.forEach(id -> {
             permissionService.processUserDeleted(id);
             userPostMapper.deleteByUserId(id);
+            userCommunityMapper.deleteListByUserId(id);
         });
     }
 
@@ -296,6 +327,11 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     public AdminUserDO getUser(Long id) {
         return userMapper.selectById(id);
+    }
+
+    @Override
+    public Set<String> getUserCommunityIds(Long userId) {
+        return convertSet(userCommunityMapper.selectListByUserId(userId), UserCommunityDO::getCommunityId);
     }
 
     @Override

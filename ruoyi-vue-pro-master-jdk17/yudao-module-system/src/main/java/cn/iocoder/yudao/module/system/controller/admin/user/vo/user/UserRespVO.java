@@ -40,6 +40,9 @@ public class UserRespVO{
     @Schema(description = "岗位编号数组", example = "1")
     private Set<Long> postIds;
 
+    @Schema(description = "小区编号数组", example = "[\"e10adc3949ba59abbe56e057f20f883e\"]")
+    private Set<String> communityIds;
+
     @Schema(description = "用户邮箱", example = "yudao@iocoder.cn")
     @ExcelProperty("用户邮箱")
     private String email;

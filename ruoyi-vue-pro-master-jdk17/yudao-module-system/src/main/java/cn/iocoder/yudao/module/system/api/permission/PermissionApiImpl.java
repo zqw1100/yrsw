@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.system.api.permission;
 
+import cn.iocoder.yudao.framework.common.biz.system.permission.dto.CommunityDataPermissionRespDTO;
 import cn.iocoder.yudao.framework.common.biz.system.permission.dto.DeptDataPermissionRespDTO;
 import cn.iocoder.yudao.module.system.service.permission.PermissionService;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,11 @@ public class PermissionApiImpl implements PermissionApi {
     @Override
     public DeptDataPermissionRespDTO getDeptDataPermission(Long userId) {
         return permissionService.getDeptDataPermission(userId);
+    }
+
+    @Override
+    public CommunityDataPermissionRespDTO getCommunityDataPermission(Long userId) {
+        return permissionService.getCommunityDataPermission(userId);
     }
 
 }

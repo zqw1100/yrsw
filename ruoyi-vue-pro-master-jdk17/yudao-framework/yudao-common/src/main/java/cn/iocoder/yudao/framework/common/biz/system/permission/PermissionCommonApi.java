@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.framework.common.biz.system.permission;
 
+import cn.iocoder.yudao.framework.common.biz.system.permission.dto.CommunityDataPermissionRespDTO;
 import cn.iocoder.yudao.framework.common.biz.system.permission.dto.DeptDataPermissionRespDTO;
 
 /**
@@ -34,5 +35,13 @@ public interface PermissionCommonApi {
      * @return 部门数据权限
      */
     DeptDataPermissionRespDTO getDeptDataPermission(Long userId);
+
+    /**
+     * 获得登陆用户的小区数据权限
+     *
+     * @param userId 用户编号
+     * @return 小区数据权限
+     */
+    CommunityDataPermissionRespDTO getCommunityDataPermission(Long userId);
 
 }
