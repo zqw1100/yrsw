@@ -4138,6 +4138,7 @@ CREATE TABLE `member_water_house` (
   `area_id` bigint NOT NULL COMMENT '地区编号（区县）',
   `area_name` varchar(255) NOT NULL COMMENT '地区名称',
   `community_name` varchar(128) NOT NULL COMMENT '小区名称',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `building_name` varchar(128) NOT NULL COMMENT '楼栋名称',
   `unit_name` varchar(128) NOT NULL COMMENT '单元名称',
   `room_no` varchar(64) NOT NULL COMMENT '房间号',
@@ -4165,6 +4166,7 @@ CREATE TABLE `member_water_apply` (
   `area_id` bigint NOT NULL COMMENT '地区编号（区县）',
   `area_name` varchar(255) NOT NULL COMMENT '地区名称',
   `community_name` varchar(128) NOT NULL COMMENT '小区名称',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `building_name` varchar(128) NOT NULL COMMENT '楼栋名称',
   `unit_name` varchar(128) NOT NULL COMMENT '单元名称',
   `room_no` varchar(64) NOT NULL COMMENT '房间号',
@@ -4296,6 +4298,7 @@ DROP TABLE IF EXISTS `member_water_device`;
 CREATE TABLE `member_water_device` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `device_address` varchar(255) NOT NULL DEFAULT '' COMMENT '设备用户地址',
   `device_user_name` varchar(128) NOT NULL DEFAULT '' COMMENT '设备所属用户名称',
   `device_clock` datetime DEFAULT NULL COMMENT '设备时钟',

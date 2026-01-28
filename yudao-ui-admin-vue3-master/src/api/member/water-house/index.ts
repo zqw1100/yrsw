@@ -5,6 +5,7 @@ export interface WaterHouseVO {
   areaId: number
   areaName: string
   communityName: string
+  communityId?: string
   buildingName: string
   unitName: string
   roomNo: string

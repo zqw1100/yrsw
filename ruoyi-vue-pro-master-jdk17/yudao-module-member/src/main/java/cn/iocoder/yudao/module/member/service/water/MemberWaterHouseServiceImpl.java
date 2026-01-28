@@ -1,9 +1,11 @@
 package cn.iocoder.yudao.module.member.service.water;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.validation.ValidationUtils;
-import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.*;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterHouseRoomRespVO;
 import cn.iocoder.yudao.module.member.convert.water.MemberWaterHouseConvert;
@@ -39,6 +41,7 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
     @Override
     public Long createMemberWaterHouse(MemberWaterHouseCreateReqVO createReqVO) {
         MemberWaterHouseDO waterHouse = MemberWaterHouseConvert.INSTANCE.convert(createReqVO);
+        waterHouse.setCommunityId(buildCommunityId(createReqVO.getAreaId(), createReqVO.getCommunityName()));
         waterHouseMapper.insert(waterHouse);
         return waterHouse.getId();
     }
@@ -47,6 +50,7 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
     public void updateMemberWaterHouse(MemberWaterHouseUpdateReqVO updateReqVO) {
         validateWaterHouseExists(updateReqVO.getId());
         MemberWaterHouseDO updateObj = MemberWaterHouseConvert.INSTANCE.convert(updateReqVO);
+        updateObj.setCommunityId(buildCommunityId(updateReqVO.getAreaId(), updateReqVO.getCommunityName()));
         waterHouseMapper.updateById(updateObj);
     }
 
@@ -162,7 +166,9 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
                     createReqVO.getUnitName(),
                     createReqVO.getRoomNo());
             if (exist == null) {
-                waterHouseMapper.insert(MemberWaterHouseConvert.INSTANCE.convert(createReqVO));
+                MemberWaterHouseDO createDO = MemberWaterHouseConvert.INSTANCE.convert(createReqVO);
+                createDO.setCommunityId(buildCommunityId(createReqVO.getAreaId(), createReqVO.getCommunityName()));
+                waterHouseMapper.insert(createDO);
                 respVO.getCreateKeys().add(key);
                 return;
             }
@@ -172,7 +178,9 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
             }
             MemberWaterHouseUpdateReqVO updateReqVO = BeanUtils.toBean(createReqVO, MemberWaterHouseUpdateReqVO.class);
             updateReqVO.setId(exist.getId());
-            waterHouseMapper.updateById(MemberWaterHouseConvert.INSTANCE.convert(updateReqVO));
+            MemberWaterHouseDO updateDO = MemberWaterHouseConvert.INSTANCE.convert(updateReqVO);
+            updateDO.setCommunityId(buildCommunityId(updateReqVO.getAreaId(), updateReqVO.getCommunityName()));
+            waterHouseMapper.updateById(updateDO);
             respVO.getUpdateKeys().add(key);
         });
         return respVO;
@@ -207,5 +215,12 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
                 Objects.toString(importItem.getBuildingName(), ""),
                 Objects.toString(importItem.getUnitName(), ""),
                 Objects.toString(importItem.getRoomNo(), ""));
+    }
+
+    private String buildCommunityId(Long areaId, String communityName) {
+        String raw = String.format("%s:%s",
+                Objects.toString(areaId, ""),
+                StrUtil.blankToDefault(communityName, ""));
+        return DigestUtil.md5Hex(raw);
     }
 }

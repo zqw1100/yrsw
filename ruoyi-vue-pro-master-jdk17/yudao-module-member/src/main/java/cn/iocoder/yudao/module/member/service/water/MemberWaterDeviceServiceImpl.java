@@ -98,6 +98,7 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             deviceMapper.insert(updateObj);
         } else {
             updateObj.setId(device.getId());
+            updateObj.setCommunityId(device.getCommunityId());
             deviceMapper.updateById(updateObj);
         }
     }
@@ -119,6 +120,11 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             throw exception(ERROR_WITH_THE_REMOTE_INTERFACE);
         }
         registerOrUpdateDevice(deviceNo);
+        MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(deviceNo);
+        if (device != null && StrUtil.isNotBlank(apply.getCommunityId())) {
+            device.setCommunityId(apply.getCommunityId());
+            deviceMapper.updateById(device);
+        }
         payWalletService.getOrCreateWallet(apply.getUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo);
     }
 
@@ -132,9 +138,14 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(reqVO, now);
         if (device == null) {
+            MemberWaterApplyDO apply = applyMapper.selectLatestByDeviceNo(reqVO.getDeviceCode());
+            if (apply != null) {
+                updateObj.setCommunityId(apply.getCommunityId());
+            }
             deviceMapper.insert(updateObj);
         } else {
             updateObj.setId(device.getId());
+            updateObj.setCommunityId(device.getCommunityId());
             deviceMapper.updateById(updateObj);
         }
     }

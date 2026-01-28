@@ -57,6 +57,7 @@ const waterDevice = defineStore({
           contactMobile: item.contactMobile,
           areaName: item.areaName,
           communityName: item.communityName,
+          communityId: item.communityId,
           buildingName: item.buildingName,
           unitName: item.unitName,
           roomNo: item.roomNo,
