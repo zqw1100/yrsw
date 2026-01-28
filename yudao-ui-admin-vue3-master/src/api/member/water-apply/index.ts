@@ -5,6 +5,7 @@ export interface WaterApplyPageParams {
   pageSize: number
   areaId?: number
   communityName?: string
+  communityId?: string
   buildingName?: string
   unitName?: string
   roomNo?: string

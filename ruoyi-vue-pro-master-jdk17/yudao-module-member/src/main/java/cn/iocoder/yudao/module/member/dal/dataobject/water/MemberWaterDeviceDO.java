@@ -37,6 +37,10 @@ public class MemberWaterDeviceDO extends TenantBaseDO {
      */
     private String deviceNo;
     /**
+     * 小区编号
+     */
+    private String communityId;
+    /**
      * 设备用户地址
      */
     private String deviceAddress;

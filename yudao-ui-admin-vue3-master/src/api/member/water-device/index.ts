@@ -4,6 +4,7 @@ export interface WaterDevicePageParams {
   pageNo: number
   pageSize: number
   deviceNo?: string
+  communityId?: string
   deviceUserName?: string
   deviceAddress?: string
   valveStatus?: number
