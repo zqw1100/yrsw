@@ -125,7 +125,7 @@
   const statusClass = (value) => `status-${value ?? 'default'}`;
 
   const typeLabel = (value) => {
-    return typeOptions.find((item) => Number(item.value) === Number(value))?.label || '-';
+    return typeOptions.find((item) => item.value === String(value))?.label || '-';
   };
 
   const selectedTypeLabel = computed(() => {
