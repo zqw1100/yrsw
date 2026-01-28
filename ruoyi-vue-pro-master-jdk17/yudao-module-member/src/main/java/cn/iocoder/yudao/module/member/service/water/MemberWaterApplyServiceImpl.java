@@ -86,6 +86,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
         MemberWaterApplyDO apply = MemberWaterApplyConvert.INSTANCE.convert(createReqVO);
         apply.setUserId(userId);
         apply.setWaterHouseId(waterHouse.getId());
+        apply.setCommunityId(waterHouse.getCommunityId());
         apply.setApplyStatus(0);
         apply.setProcessStatus(0);
         applyMapper.insert(apply);
@@ -109,6 +110,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .applyId(apply.getId())
                 .waterHouseId(apply.getWaterHouseId())
                 .userId(userId)
+                .communityId(apply.getCommunityId())
                 .ownerName(completeReqVO.getOwnerName())
                 .ownerIdCard(completeReqVO.getOwnerIdCard())
                 .contractImageUrls(completeReqVO.getContractImageUrls())

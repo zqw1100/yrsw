@@ -13,6 +13,9 @@ public class MemberWaterFaultPageReqVO extends PageParam {
     @Schema(description = "小区名称", example = "桂桂小区")
     private String communityName;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "楼栋名称", example = "1栋")
     private String buildingName;
 

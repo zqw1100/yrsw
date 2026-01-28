@@ -35,6 +35,7 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
                 .eqIfPresent(PayWalletDO::getUserId, reqVO.getUserId())
                 .eqIfPresent(PayWalletDO::getUserType, reqVO.getUserType())
                 .eqIfPresent(PayWalletDO::getDeviceNo, reqVO.getDeviceNo())
+                .eqIfPresent(PayWalletDO::getCommunityId, reqVO.getCommunityId())
                 .betweenIfPresent(PayWalletDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(PayWalletDO::getId));
     }
@@ -46,6 +47,16 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
         LambdaUpdateWrapper<PayWalletDO> updateWrapper = new LambdaUpdateWrapper<PayWalletDO>()
                 .set(PayWalletDO::getDeviceNo, newDeviceNo)
                 .eq(PayWalletDO::getDeviceNo, oldDeviceNo);
+        return update(null, updateWrapper);
+    }
+
+    default int updateCommunityIdByDeviceNo(String deviceNo, String communityId) {
+        if (StrUtil.isBlank(deviceNo) || StrUtil.isBlank(communityId)) {
+            return 0;
+        }
+        LambdaUpdateWrapper<PayWalletDO> updateWrapper = new LambdaUpdateWrapper<PayWalletDO>()
+                .set(PayWalletDO::getCommunityId, communityId)
+                .eq(PayWalletDO::getDeviceNo, deviceNo);
         return update(null, updateWrapper);
     }
 

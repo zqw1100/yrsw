@@ -7,14 +7,21 @@
       :inline="true"
       label-width="90px"
     >
-      <el-form-item label="小区名称" prop="communityName">
-        <el-input
-          v-model="queryParams.communityName"
-          placeholder="请输入小区名称"
+      <el-form-item label="小区名称" prop="communityId">
+        <el-select
+          v-model="queryParams.communityId"
+          placeholder="请选择小区"
           clearable
-          @keyup.enter="handleQuery"
+          filterable
           class="!w-220px"
-        />
+        >
+          <el-option
+            v-for="item in communityOptions"
+            :key="item.communityId"
+            :label="item.communityName"
+            :value="item.communityId"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="楼栋名称" prop="buildingName">
         <el-input
@@ -190,16 +197,18 @@ import { dateFormatter } from '@/utils/formatTime'
 import { DICT_TYPE, getDictLabel, getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import { createImageViewer } from '@/components/ImageViewer'
 import * as WaterFaultApi from '@/api/member/water-fault'
+import * as WaterHouseApi from '@/api/member/water-house'
 
 const message = useMessage()
 const loading = ref(true)
 const total = ref(0)
 const list = ref<any[]>([])
 const queryFormRef = ref()
+const communityOptions = ref<WaterHouseApi.WaterCommunityOption[]>([])
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  communityName: undefined,
+  communityId: undefined,
   buildingName: undefined,
   unitName: undefined,
   roomNo: undefined,
@@ -238,6 +247,10 @@ const handleQuery = () => {
   getList()
 }
 
+const loadCommunityOptions = async () => {
+  communityOptions.value = await WaterHouseApi.getCommunityOptions()
+}
+
 const resetQuery = () => {
   queryFormRef.value.resetFields()
   handleQuery()
@@ -271,7 +284,8 @@ const imagePreview = (urls: string[], index: number) => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadCommunityOptions()
   getList()
 })
 </script>

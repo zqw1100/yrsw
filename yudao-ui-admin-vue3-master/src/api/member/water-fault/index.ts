@@ -3,7 +3,7 @@ import request from '@/config/axios'
 export interface WaterFaultPageParams {
   pageNo: number
   pageSize: number
-  communityName?: string
+  communityId?: string
   buildingName?: string
   unitName?: string
   roomNo?: string

@@ -23,6 +23,9 @@ public class PayWalletBaseVO {
     @Schema(description = "设备号", example = "DEV-001")
     private String deviceNo;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "余额，单位分", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "余额，单位分不能为空")
     private Integer balance;

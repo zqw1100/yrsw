@@ -16,6 +16,9 @@ public class MemberWaterDeviceRespVO {
     @Schema(description = "设备号", example = "340119025153")
     private String deviceNo;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "设备用户地址", example = "某小区 1 栋 101")
     private String deviceAddress;
 

@@ -35,6 +35,7 @@ public class MemberWaterFeeBillServiceImpl implements MemberWaterFeeBillService 
     public PageResult<MemberWaterFeeBillDO> getFeeBillPage(MemberWaterFeeBillPageReqVO pageReqVO) {
         return feeBillMapper.selectPage(pageReqVO, new LambdaQueryWrapperX<MemberWaterFeeBillDO>()
                 .likeIfPresent(MemberWaterFeeBillDO::getDeviceNo, pageReqVO.getDeviceNo())
+                .eqIfPresent(MemberWaterFeeBillDO::getCommunityId, pageReqVO.getCommunityId())
                 .betweenIfPresent(MemberWaterFeeBillDO::getStatDate, pageReqVO.getStatDate())
                 .orderByDesc(MemberWaterFeeBillDO::getId));
     }

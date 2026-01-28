@@ -85,6 +85,13 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             return;
         }
         MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(deviceNo);
+        String communityId = device != null ? device.getCommunityId() : null;
+        if (StrUtil.isBlank(communityId)) {
+            MemberWaterApplyDO apply = applyMapper.selectLatestByDeviceNo(deviceNo);
+            if (apply != null) {
+                communityId = apply.getCommunityId();
+            }
+        }
         MemberWaterMeterExtendDictDTO info = null;
         try {
             info = meterClient.readDeviceInfo(deviceNo);
@@ -94,6 +101,7 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         }
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(deviceNo, info, now);
+        updateObj.setCommunityId(communityId);
         if (device == null) {
             deviceMapper.insert(updateObj);
         } else {
@@ -119,7 +127,15 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
             throw exception(ERROR_WITH_THE_REMOTE_INTERFACE);
         }
         registerOrUpdateDevice(deviceNo);
+        MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(deviceNo);
+        if (device != null && StrUtil.isNotBlank(apply.getCommunityId())) {
+            device.setCommunityId(apply.getCommunityId());
+            deviceMapper.updateById(device);
+        }
         payWalletService.getOrCreateWallet(apply.getUserId(), UserTypeEnum.MEMBER.getValue(), deviceNo);
+        if (StrUtil.isNotBlank(apply.getCommunityId())) {
+            payWalletMapper.updateCommunityIdByDeviceNo(deviceNo, apply.getCommunityId());
+        }
     }
 
     @Override
@@ -127,10 +143,18 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
         if (reqVO == null || StrUtil.isBlank(reqVO.getDeviceCode())) {
             return;
         }
-        deviceHistoryMapper.insert(buildDeviceHistory(reqVO));
         MemberWaterDeviceDO device = deviceMapper.selectByDeviceNo(reqVO.getDeviceCode());
+        String communityId = device != null ? device.getCommunityId() : null;
+        if (StrUtil.isBlank(communityId)) {
+            MemberWaterApplyDO apply = applyMapper.selectLatestByDeviceNo(reqVO.getDeviceCode());
+            if (apply != null) {
+                communityId = apply.getCommunityId();
+            }
+        }
+        deviceHistoryMapper.insert(buildDeviceHistory(reqVO, communityId));
         LocalDateTime now = LocalDateTime.now();
         MemberWaterDeviceDO updateObj = buildDevice(reqVO, now);
+        updateObj.setCommunityId(communityId);
         if (device == null) {
             deviceMapper.insert(updateObj);
         } else {
@@ -270,10 +294,11 @@ public class MemberWaterDeviceServiceImpl implements MemberWaterDeviceService {
                 .build();
     }
 
-    private MemberWaterDeviceHistoryDO buildDeviceHistory(MemberWaterDeviceDataPushReqVO reqVO) {
+    private MemberWaterDeviceHistoryDO buildDeviceHistory(MemberWaterDeviceDataPushReqVO reqVO, String communityId) {
         MemberWaterDeviceDataPushReqVO.CycleDataObject cycleDataObject = reqVO.getCycleDataObject();
         return MemberWaterDeviceHistoryDO.builder()
                 .deviceNo(reqVO.getDeviceCode())
+                .communityId(StrUtil.nullToEmpty(communityId))
                 .deviceAddress(StrUtil.nullToEmpty(reqVO.getDeviceAddress()))
                 .deviceUserName(StrUtil.nullToEmpty(reqVO.getDeviceUserName()))
                 .deviceClock(parseTime(reqVO.getDeviceClock()))

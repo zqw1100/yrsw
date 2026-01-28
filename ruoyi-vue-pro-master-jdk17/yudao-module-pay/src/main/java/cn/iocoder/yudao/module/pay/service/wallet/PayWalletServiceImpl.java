@@ -81,6 +81,7 @@ public class PayWalletServiceImpl implements PayWalletService {
                 if (newWallet == null) {
                     newWallet = new PayWalletDO().setUserId(userId).setUserType(userType)
                             .setDeviceNo(finalDeviceNo)
+                            .setCommunityId("")
                             .setBalance(0).setTotalExpense(0).setTotalRecharge(0);
                     newWallet.setCreateTime(LocalDateTime.now());
                     walletMapper.insert(newWallet);
@@ -213,6 +214,7 @@ public class PayWalletServiceImpl implements PayWalletService {
             Integer afterBalance = payWallet.getBalance() - price;
             WalletTransactionCreateReqBO bo = new WalletTransactionCreateReqBO().setWalletId(payWallet.getId())
                     .setDeviceNo(payWallet.getDeviceNo())
+                    .setCommunityId(payWallet.getCommunityId())
                     .setPrice(-price).setBalance(afterBalance).setBizId(String.valueOf(bizId))
                     .setBizType(bizType.getType()).setTitle(bizType.getDescription());
             return walletTransactionService.createWalletTransaction(bo);
@@ -255,6 +257,7 @@ public class PayWalletServiceImpl implements PayWalletService {
             // 4. 生成钱包流水
             WalletTransactionCreateReqBO transactionCreateReqBO = new WalletTransactionCreateReqBO()
                     .setWalletId(payWallet.getId()).setDeviceNo(payWallet.getDeviceNo())
+                    .setCommunityId(payWallet.getCommunityId())
                     .setPrice(price).setBalance(payWallet.getBalance() + price)
                     .setBizId(bizId).setBizType(bizType.getType()).setTitle(bizType.getDescription());
             return walletTransactionService.createWalletTransaction(transactionCreateReqBO);

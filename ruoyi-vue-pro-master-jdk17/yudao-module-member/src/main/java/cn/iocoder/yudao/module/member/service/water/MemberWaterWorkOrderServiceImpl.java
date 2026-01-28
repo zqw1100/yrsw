@@ -213,6 +213,7 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                 .orderType(0)
                 .bizId(apply.getId())
                 .status(0)
+                .communityId(apply.getCommunityId())
                 .build();
         workOrderMapper.insert(order);
     }
@@ -228,6 +229,7 @@ public class MemberWaterWorkOrderServiceImpl implements MemberWaterWorkOrderServ
                 .orderType(1)
                 .bizId(fault.getId())
                 .status(0)
+                .communityId(fault.getCommunityId())
                 .build();
         workOrderMapper.insert(order);
     }

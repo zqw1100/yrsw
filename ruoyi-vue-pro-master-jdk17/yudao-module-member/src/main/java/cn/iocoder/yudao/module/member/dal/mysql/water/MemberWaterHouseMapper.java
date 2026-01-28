@@ -17,6 +17,7 @@ public interface MemberWaterHouseMapper extends BaseMapperX<MemberWaterHouseDO> 
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterHouseDO>()
                 .eqIfPresent(MemberWaterHouseDO::getAreaId, reqVO.getAreaId())
                 .likeIfPresent(MemberWaterHouseDO::getCommunityName, reqVO.getCommunityName())
+                .eqIfPresent(MemberWaterHouseDO::getCommunityId, reqVO.getCommunityId())
                 .likeIfPresent(MemberWaterHouseDO::getBuildingName, reqVO.getBuildingName())
                 .likeIfPresent(MemberWaterHouseDO::getUnitName, reqVO.getUnitName())
                 .likeIfPresent(MemberWaterHouseDO::getRoomNo, reqVO.getRoomNo())

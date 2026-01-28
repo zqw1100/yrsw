@@ -16,6 +16,9 @@ public class MemberWaterFeeBillRespVO {
     @Schema(description = "设备号", requiredMode = Schema.RequiredMode.REQUIRED, example = "340119025153")
     private String deviceNo;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "统计日期", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDate statDate;
 

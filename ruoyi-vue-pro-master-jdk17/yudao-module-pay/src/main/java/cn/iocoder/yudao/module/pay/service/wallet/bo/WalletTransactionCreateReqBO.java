@@ -28,6 +28,11 @@ public class WalletTransactionCreateReqBO {
     private String deviceNo;
 
     /**
+     * 小区编号
+     */
+    private String communityId;
+
+    /**
      * 交易金额，单位分
      *
      * 正值表示余额增加，负值表示余额减少

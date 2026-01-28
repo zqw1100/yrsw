@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouse
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHousePageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseUpdateReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterCommunityOptionRespVO;
 import cn.iocoder.yudao.module.member.controller.app.water.vo.AppWaterHouseRoomRespVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.water.MemberWaterHouseDO;
 
@@ -27,6 +28,8 @@ public interface MemberWaterHouseService {
     PageResult<MemberWaterHouseDO> getMemberWaterHousePage(MemberWaterHousePageReqVO pageReqVO);
 
     List<String> getCommunityNameList(Long areaId);
+
+    List<MemberWaterCommunityOptionRespVO> getCommunityOptions(Long areaId);
 
     List<String> getBuildingNameList(Long areaId, String communityName);
 

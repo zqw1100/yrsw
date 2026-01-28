@@ -5,6 +5,7 @@ export interface WaterHouseVO {
   areaId: number
   areaName: string
   communityName: string
+  communityId?: string
   buildingName: string
   unitName: string
   roomNo: string
@@ -12,6 +13,11 @@ export interface WaterHouseVO {
   sort?: number
   remark?: string
   description?: string
+}
+
+export interface WaterCommunityOption {
+  communityId: string
+  communityName: string
 }
 
 export const getWaterHousePage = async (params: any) => {
@@ -37,4 +43,8 @@ export const deleteWaterHouse = async (id: number) => {
 // 下载居民报装房屋导入模板
 export const importWaterHouseTemplate = () => {
   return request.download({ url: '/member/water-house/get-import-template' })
+}
+
+export const getCommunityOptions = async (areaId?: number) => {
+  return await request.get({ url: '/member/water-house/community-options', params: { areaId } })
 }

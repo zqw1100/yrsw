@@ -57,6 +57,10 @@ public class MemberWaterFaultDO extends TenantBaseDO {
      */
     private String communityName;
     /**
+     * 小区编号
+     */
+    private String communityId;
+    /**
      * 楼栋名称
      */
     private String buildingName;

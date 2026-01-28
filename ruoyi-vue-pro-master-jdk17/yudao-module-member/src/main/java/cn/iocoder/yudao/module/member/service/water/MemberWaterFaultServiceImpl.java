@@ -70,6 +70,7 @@ public class MemberWaterFaultServiceImpl implements MemberWaterFaultService {
                 .deviceNo(createReqVO.getDeviceNo())
                 .areaName(apply.getAreaName())
                 .communityName(apply.getCommunityName())
+                .communityId(apply.getCommunityId())
                 .buildingName(apply.getBuildingName())
                 .unitName(apply.getUnitName())
                 .roomNo(apply.getRoomNo())
