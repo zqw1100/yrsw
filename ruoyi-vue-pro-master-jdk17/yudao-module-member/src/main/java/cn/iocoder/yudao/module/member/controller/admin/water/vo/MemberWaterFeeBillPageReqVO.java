@@ -18,6 +18,9 @@ public class MemberWaterFeeBillPageReqVO extends PageParam {
     @Schema(description = "设备号", example = "340119025153")
     private String deviceNo;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "统计日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY)
     private LocalDate[] statDate;

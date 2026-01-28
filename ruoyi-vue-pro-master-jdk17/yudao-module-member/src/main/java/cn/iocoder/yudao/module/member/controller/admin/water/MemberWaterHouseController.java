@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseCreateReqVO;
+import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterCommunityOptionRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportExcelVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHouseImportRespVO;
 import cn.iocoder.yudao.module.member.controller.admin.water.vo.MemberWaterHousePageReqVO;
@@ -76,6 +77,14 @@ public class MemberWaterHouseController {
     public CommonResult<PageResult<MemberWaterHouseRespVO>> getWaterHousePage(@Valid MemberWaterHousePageReqVO pageReqVO) {
         PageResult<MemberWaterHouseDO> pageResult = waterHouseService.getMemberWaterHousePage(pageReqVO);
         return success(MemberWaterHouseConvert.INSTANCE.convertPage(pageResult));
+    }
+
+    @GetMapping("/community-options")
+    @Operation(summary = "获得小区下拉选项")
+    @PreAuthorize("@ss.hasPermission('member:water-house:query')")
+    public CommonResult<List<MemberWaterCommunityOptionRespVO>> getCommunityOptions(
+            @RequestParam(value = "areaId", required = false) Long areaId) {
+        return success(waterHouseService.getCommunityOptions(areaId));
     }
 
     @GetMapping("/get-import-template")

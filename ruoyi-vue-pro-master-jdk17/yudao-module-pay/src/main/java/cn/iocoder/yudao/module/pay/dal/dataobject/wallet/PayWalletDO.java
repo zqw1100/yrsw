@@ -41,6 +41,10 @@ public class PayWalletDO extends BaseDO {
      * 设备号
      */
     private String deviceNo;
+    /**
+     * 小区编号
+     */
+    private String communityId;
 
     /**
      * 余额，单位分

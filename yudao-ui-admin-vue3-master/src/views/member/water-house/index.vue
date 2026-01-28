@@ -16,14 +16,21 @@
           class="!w-220px"
         />
       </el-form-item>
-      <el-form-item label="小区" prop="communityName">
-        <el-input
-          v-model="queryParams.communityName"
-          placeholder="请输入小区名称"
+      <el-form-item label="小区" prop="communityId">
+        <el-select
+          v-model="queryParams.communityId"
+          placeholder="请选择小区"
           clearable
-          @keyup.enter="handleQuery"
+          filterable
           class="!w-200px"
-        />
+        >
+          <el-option
+            v-for="item in communityOptions"
+            :key="item.communityId"
+            :label="item.communityName"
+            :value="item.communityId"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="楼栋" prop="buildingName">
         <el-input
@@ -140,11 +147,12 @@ const total = ref(0)
 const list = ref([])
 const queryFormRef = ref()
 const areaList = ref([])
+const communityOptions = ref<WaterHouseApi.WaterCommunityOption[]>([])
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   areaId: undefined,
-  communityName: undefined,
+  communityId: undefined,
   buildingName: undefined,
   unitName: undefined,
   roomNo: undefined,
@@ -182,6 +190,10 @@ const handleQuery = () => {
   getList()
 }
 
+const loadCommunityOptions = async (areaId?: number) => {
+  communityOptions.value = await WaterHouseApi.getCommunityOptions(areaId)
+}
+
 const resetQuery = () => {
   queryFormRef.value.resetFields()
   handleQuery()
@@ -208,6 +220,15 @@ const handleDelete = async (id: number) => {
 
 onMounted(async () => {
   areaList.value = await AreaApi.getAreaTree()
+  await loadCommunityOptions()
   getList()
 })
+
+watch(
+  () => queryParams.areaId,
+  async (value) => {
+    queryParams.communityId = undefined
+    await loadCommunityOptions(value)
+  }
+)
 </script>

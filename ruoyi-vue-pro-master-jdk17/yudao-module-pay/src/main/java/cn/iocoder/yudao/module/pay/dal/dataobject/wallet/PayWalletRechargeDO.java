@@ -36,6 +36,10 @@ public class PayWalletRechargeDO extends BaseDO {
      * 设备号
      */
     private String deviceNo;
+    /**
+     * 小区编号
+     */
+    private String communityId;
 
     /**
      * 用户实际到账余额

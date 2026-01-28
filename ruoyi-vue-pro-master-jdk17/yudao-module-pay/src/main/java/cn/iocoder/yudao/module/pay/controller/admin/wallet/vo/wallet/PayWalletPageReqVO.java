@@ -29,6 +29,9 @@ public class PayWalletPageReqVO extends PageParam {
     @Schema(description = "设备号", example = "DEV-001")
     private String deviceNo;
 
+    @Schema(description = "小区编号", example = "e10adc3949ba59abbe56e057f20f883e")
+    private String communityId;
+
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;

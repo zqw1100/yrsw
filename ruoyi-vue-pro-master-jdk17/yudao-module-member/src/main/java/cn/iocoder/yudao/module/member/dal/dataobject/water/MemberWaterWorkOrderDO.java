@@ -42,6 +42,10 @@ public class MemberWaterWorkOrderDO extends TenantBaseDO {
      */
     private Integer status;
     /**
+     * 小区编号
+     */
+    private String communityId;
+    /**
      * 指派施工人员编号
      */
     private Long workerId;

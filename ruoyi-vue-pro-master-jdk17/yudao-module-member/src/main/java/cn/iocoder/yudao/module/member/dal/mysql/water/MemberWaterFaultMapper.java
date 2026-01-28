@@ -23,6 +23,7 @@ public interface MemberWaterFaultMapper extends BaseMapperX<MemberWaterFaultDO> 
     default PageResult<MemberWaterFaultDO> selectPage(MemberWaterFaultPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterFaultDO>()
                 .likeIfPresent(MemberWaterFaultDO::getCommunityName, reqVO.getCommunityName())
+                .eqIfPresent(MemberWaterFaultDO::getCommunityId, reqVO.getCommunityId())
                 .likeIfPresent(MemberWaterFaultDO::getBuildingName, reqVO.getBuildingName())
                 .likeIfPresent(MemberWaterFaultDO::getUnitName, reqVO.getUnitName())
                 .likeIfPresent(MemberWaterFaultDO::getRoomNo, reqVO.getRoomNo())

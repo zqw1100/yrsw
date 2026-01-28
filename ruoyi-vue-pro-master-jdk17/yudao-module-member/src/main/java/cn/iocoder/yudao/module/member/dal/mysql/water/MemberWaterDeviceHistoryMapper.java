@@ -16,6 +16,7 @@ public interface MemberWaterDeviceHistoryMapper extends BaseMapperX<MemberWaterD
     default PageResult<MemberWaterDeviceHistoryDO> selectPage(MemberWaterDeviceHistoryPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterDeviceHistoryDO>()
                 .likeIfPresent(MemberWaterDeviceHistoryDO::getDeviceNo, reqVO.getDeviceNo())
+                .eqIfPresent(MemberWaterDeviceHistoryDO::getCommunityId, reqVO.getCommunityId())
                 .likeIfPresent(MemberWaterDeviceHistoryDO::getDeviceUserName, reqVO.getDeviceUserName())
                 .likeIfPresent(MemberWaterDeviceHistoryDO::getDeviceAddress, reqVO.getDeviceAddress())
                 .eqIfPresent(MemberWaterDeviceHistoryDO::getValveStatus, reqVO.getValveStatus())

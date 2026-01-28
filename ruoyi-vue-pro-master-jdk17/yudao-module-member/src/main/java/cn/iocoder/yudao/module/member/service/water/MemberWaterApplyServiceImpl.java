@@ -110,6 +110,7 @@ public class MemberWaterApplyServiceImpl implements MemberWaterApplyService {
                 .applyId(apply.getId())
                 .waterHouseId(apply.getWaterHouseId())
                 .userId(userId)
+                .communityId(apply.getCommunityId())
                 .ownerName(completeReqVO.getOwnerName())
                 .ownerIdCard(completeReqVO.getOwnerIdCard())
                 .contractImageUrls(completeReqVO.getContractImageUrls())

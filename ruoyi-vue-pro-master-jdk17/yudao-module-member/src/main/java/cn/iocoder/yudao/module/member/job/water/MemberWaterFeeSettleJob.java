@@ -110,6 +110,7 @@ public class MemberWaterFeeSettleJob implements JobHandler {
 
             MemberWaterFeeBillDO bill = MemberWaterFeeBillDO.builder()
                     .deviceNo(deviceNo)
+                    .communityId(device.getCommunityId())
                     .statDate(statDate)
                     .totalUsage(totalUsage)
                     .lastTotalUsage(lastTotalUsage)
@@ -138,6 +139,7 @@ public class MemberWaterFeeSettleJob implements JobHandler {
                 log.warn("[execute][deviceNo({}) 扣费失败：{}]", deviceNo, ex.getMessage());
                 MemberWaterFeeDeductFailDO failDO = new MemberWaterFeeDeductFailDO();
                 failDO.setDeviceNo(deviceNo);
+                failDO.setCommunityId(device.getCommunityId());
                 failDO.setStatDate(statDate);
                 failDO.setTotalUsage(totalUsage);
                 failDO.setLastTotalUsage(lastTotalUsage);

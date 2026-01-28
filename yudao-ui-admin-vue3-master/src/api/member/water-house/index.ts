@@ -15,6 +15,11 @@ export interface WaterHouseVO {
   description?: string
 }
 
+export interface WaterCommunityOption {
+  communityId: string
+  communityName: string
+}
+
 export const getWaterHousePage = async (params: any) => {
   return await request.get({ url: '/member/water-house/page', params })
 }
@@ -38,4 +43,8 @@ export const deleteWaterHouse = async (id: number) => {
 // 下载居民报装房屋导入模板
 export const importWaterHouseTemplate = () => {
   return request.download({ url: '/member/water-house/get-import-template' })
+}
+
+export const getCommunityOptions = async (areaId?: number) => {
+  return await request.get({ url: '/member/water-house/community-options', params: { areaId } })
 }

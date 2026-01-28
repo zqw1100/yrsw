@@ -36,6 +36,10 @@ public class MemberWaterFeeDeductFailDO extends TenantBaseDO {
      */
     private String deviceNo;
     /**
+     * 小区编号
+     */
+    private String communityId;
+    /**
      * 统计日期
      */
     private LocalDate statDate;

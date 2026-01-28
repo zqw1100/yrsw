@@ -73,13 +73,41 @@ public class MemberWaterHouseServiceImpl implements MemberWaterHouseService {
     @Override
     public List<String> getCommunityNameList(Long areaId) {
         return waterHouseMapper.selectList(new cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX<MemberWaterHouseDO>()
-                .eq(MemberWaterHouseDO::getAreaId, areaId)
+                .eqIfPresent(MemberWaterHouseDO::getAreaId, areaId)
                 .select(MemberWaterHouseDO::getCommunityName))
                 .stream()
                 .map(MemberWaterHouseDO::getCommunityName)
                 .filter(Objects::nonNull)
                 .distinct()
                 .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MemberWaterCommunityOptionRespVO> getCommunityOptions(Long areaId) {
+        List<MemberWaterHouseDO> list = waterHouseMapper.selectList(
+                new cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX<MemberWaterHouseDO>()
+                        .eqIfPresent(MemberWaterHouseDO::getAreaId, areaId)
+                        .select(MemberWaterHouseDO::getAreaId, MemberWaterHouseDO::getCommunityId, MemberWaterHouseDO::getCommunityName));
+        return list.stream()
+                .filter(item -> StrUtil.isNotBlank(item.getCommunityName()))
+                .collect(Collectors.toMap(
+                        item -> StrUtil.blankToDefault(item.getCommunityId(),
+                                buildCommunityId(item.getAreaId(), item.getCommunityName())),
+                        item -> {
+                            MemberWaterCommunityOptionRespVO option = new MemberWaterCommunityOptionRespVO();
+                            option.setCommunityId(StrUtil.blankToDefault(item.getCommunityId(),
+                                    buildCommunityId(item.getAreaId(), item.getCommunityName())));
+                            option.setCommunityName(item.getCommunityName());
+                            return option;
+                        },
+                        (first, second) -> first,
+                        LinkedHashMap::new
+                ))
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(MemberWaterCommunityOptionRespVO::getCommunityName,
+                        Comparator.nullsLast(String::compareTo)))
                 .collect(Collectors.toList());
     }
 

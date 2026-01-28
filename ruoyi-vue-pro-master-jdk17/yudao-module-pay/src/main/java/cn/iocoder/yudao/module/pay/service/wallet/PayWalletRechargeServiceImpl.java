@@ -97,6 +97,7 @@ public class PayWalletRechargeServiceImpl implements PayWalletRechargeService {
         PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, userType, reqVO.getDeviceNo());
         PayWalletRechargeDO recharge = INSTANCE.convert(wallet.getId(), wallet.getDeviceNo(),
                 payPrice, bonusPrice, reqVO.getPackageId());
+        recharge.setCommunityId(wallet.getCommunityId());
         walletRechargeMapper.insert(recharge);
 
         // 2.1 创建支付单

@@ -4196,6 +4196,7 @@ CREATE TABLE `member_water_house_owner` (
   `water_house_id` bigint NOT NULL COMMENT '报装房屋编号',
   `apply_id` bigint NOT NULL COMMENT '申请编号',
   `user_id` bigint NOT NULL COMMENT '用户编号',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `owner_name` varchar(64) NOT NULL COMMENT '户主姓名',
   `owner_id_card` varchar(32) NOT NULL COMMENT '户主身份证号',
   `contract_image_urls` varchar(1024) NOT NULL DEFAULT '' COMMENT '合同图片地址列表',
@@ -4245,6 +4246,7 @@ CREATE TABLE `member_water_fault` (
   `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
   `area_name` varchar(255) NOT NULL DEFAULT '' COMMENT '地区名称',
   `community_name` varchar(128) NOT NULL DEFAULT '' COMMENT '小区名称',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `building_name` varchar(128) NOT NULL DEFAULT '' COMMENT '楼栋名称',
   `unit_name` varchar(128) NOT NULL DEFAULT '' COMMENT '单元名称',
   `room_no` varchar(64) NOT NULL DEFAULT '' COMMENT '房间号',
@@ -4273,6 +4275,7 @@ CREATE TABLE `member_water_work_order` (
   `order_type` tinyint NOT NULL COMMENT '工单类型（0 报装 1 报修）',
   `biz_id` bigint NOT NULL COMMENT '业务编号',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '施工状态（0 待接受 1 待施工 2 施工中 3 已完成）',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `worker_id` bigint DEFAULT NULL COMMENT '施工人员编号',
   `assign_time` datetime DEFAULT NULL COMMENT '指派时间',
   `accept_time` datetime DEFAULT NULL COMMENT '接受时间',
@@ -4333,6 +4336,7 @@ DROP TABLE IF EXISTS `member_water_device_history`;
 CREATE TABLE `member_water_device_history` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `device_address` varchar(255) NOT NULL DEFAULT '' COMMENT '设备用户地址',
   `device_user_name` varchar(128) NOT NULL DEFAULT '' COMMENT '设备所属用户名称',
   `device_clock` datetime DEFAULT NULL COMMENT '设备时钟',
@@ -4387,6 +4391,7 @@ DROP TABLE IF EXISTS `member_water_fee_bill`;
 CREATE TABLE `member_water_fee_bill` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `stat_date` date NOT NULL COMMENT '统计日期',
   `total_usage` bigint DEFAULT NULL COMMENT '总用水量（升）',
   `last_total_usage` bigint DEFAULT NULL COMMENT '上次用水量（升）',
@@ -4411,6 +4416,7 @@ DROP TABLE IF EXISTS `member_water_fee_deduct_fail`;
 CREATE TABLE `member_water_fee_deduct_fail` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `device_no` varchar(64) NOT NULL DEFAULT '' COMMENT '设备号',
+  `community_id` varchar(32) NOT NULL DEFAULT '' COMMENT '小区编号',
   `stat_date` date NOT NULL COMMENT '统计日期',
   `total_usage` bigint DEFAULT NULL COMMENT '总用水量（升）',
   `last_total_usage` bigint DEFAULT NULL COMMENT '上次用水量（升）',

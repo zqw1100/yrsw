@@ -23,6 +23,7 @@ public interface MemberWaterFeeBillMapper extends BaseMapperX<MemberWaterFeeBill
     default PageResult<MemberWaterFeeBillDO> selectPage(MemberWaterFeeBillPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MemberWaterFeeBillDO>()
                 .likeIfPresent(MemberWaterFeeBillDO::getDeviceNo, reqVO.getDeviceNo())
+                .eqIfPresent(MemberWaterFeeBillDO::getCommunityId, reqVO.getCommunityId())
                 .betweenIfPresent(MemberWaterFeeBillDO::getStatDate, reqVO.getStatDate())
                 .orderByDesc(MemberWaterFeeBillDO::getId));
     }

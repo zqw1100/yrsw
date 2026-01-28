@@ -9,6 +9,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
+import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.transaction.PayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -40,6 +41,14 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
         return selectPage(pageParam, query);
     }
 
+    default PageResult<PayWalletTransactionDO> selectPage(PayWalletTransactionPageReqVO reqVO) {
+        return selectPage(reqVO, new LambdaQueryWrapperX<PayWalletTransactionDO>()
+                .eqIfPresent(PayWalletTransactionDO::getWalletId, reqVO.getWalletId())
+                .eqIfPresent(PayWalletTransactionDO::getDeviceNo, reqVO.getDeviceNo())
+                .eqIfPresent(PayWalletTransactionDO::getCommunityId, reqVO.getCommunityId())
+                .orderByDesc(PayWalletTransactionDO::getId));
+    }
+
     default Integer selectPriceSum(Long walletId, Integer type, LocalDateTime[] createTime) {
         // SQL sum 查询
         List<Map<String, Object>> result = selectMaps(new QueryWrapperX<PayWalletTransactionDO>()
@@ -64,4 +73,3 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
 
 
 }
-
