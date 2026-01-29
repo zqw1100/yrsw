@@ -4173,6 +4173,27 @@ CREATE TABLE `member_water_house` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='居民报装房屋信息';
 
 -- ----------------------------
+-- 水表手续费配置
+-- ----------------------------
+DROP TABLE IF EXISTS `water_meter_fee_config`;
+CREATE TABLE `water_meter_fee_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `fee_rate` decimal(10,6) NOT NULL COMMENT '手续费比例',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='水表手续费配置';
+
+BEGIN;
+INSERT INTO `water_meter_fee_config` (`id`, `fee_rate`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES (1, 0.006000, '微信手续费', 'admin', NOW(), 'admin', NOW(), b'0');
+COMMIT;
+
+-- ----------------------------
 -- 居民报装申请
 -- ----------------------------
 DROP TABLE IF EXISTS `member_water_apply`;
