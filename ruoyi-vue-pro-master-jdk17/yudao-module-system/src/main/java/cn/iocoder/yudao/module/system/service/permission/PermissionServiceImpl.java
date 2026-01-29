@@ -19,7 +19,6 @@ import cn.iocoder.yudao.module.system.dal.mysql.permission.UserRoleMapper;
 import cn.iocoder.yudao.module.system.dal.mysql.user.UserCommunityMapper;
 import cn.iocoder.yudao.module.system.dal.redis.RedisKeyConstants;
 import cn.iocoder.yudao.module.system.enums.permission.DataScopeEnum;
-import cn.iocoder.yudao.module.system.enums.permission.RoleCodeEnum;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import cn.iocoder.yudao.module.system.service.user.AdminUserService;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
@@ -342,10 +341,6 @@ public class PermissionServiceImpl implements PermissionService {
         List<RoleDO> roles = getEnableUserRoleListByUserIdFromCache(userId);
         CommunityDataPermissionRespDTO result = new CommunityDataPermissionRespDTO();
         if (CollUtil.isEmpty(roles)) {
-            return result;
-        }
-        if (roles.stream().anyMatch(role -> RoleCodeEnum.isSuperAdmin(role.getCode()))) {
-            result.setAll(true);
             return result;
         }
         result.setCommunityIds(convertSet(userCommunityMapper.selectListByUserId(userId),
