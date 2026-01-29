@@ -127,6 +127,27 @@ const remainingRouter: AppRouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: '/water-meter-report',
+    component: Layout,
+    name: 'WaterMeterReport',
+    alwaysShow: true,
+    meta: {
+      title: '水表统计报表',
+      icon: 'ep:data-analysis'
+    },
+    children: [
+      {
+        path: 'finance',
+        component: () => import('@/views/waterMeterReport/finance/index.vue'),
+        name: 'WaterMeterFinanceReport',
+        meta: {
+          title: '财务统计报表',
+          icon: 'ep:document'
+        }
+      }
+    ]
+  },
 
   {
     path: '/codegen',

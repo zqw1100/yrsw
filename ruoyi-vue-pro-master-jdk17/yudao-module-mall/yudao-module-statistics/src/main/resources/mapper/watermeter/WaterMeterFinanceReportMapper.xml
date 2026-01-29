@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.yudao.module.statistics.dal.mysql.watermeter.WaterMeterFinanceReportMapper">
+
+    <sql id="SelectCity">
+        CASE
+            WHEN mwh.area_name LIKE '%/%/%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(mwh.area_name, '/', 2), '/', -1)
+            WHEN mwh.area_name LIKE '%/%' THEN SUBSTRING_INDEX(mwh.area_name, '/', -1)
+            ELSE mwh.area_name
+        END
+    </sql>
+
+    <sql id="SelectCounty">
+        CASE
+            WHEN mwh.area_name LIKE '%/%' THEN SUBSTRING_INDEX(mwh.area_name, '/', -1)
+            ELSE mwh.area_name
+        END
+    </sql>
+
+    <select id="selectMonthlyReport"
+            resultType="cn.iocoder.yudao.module.statistics.controller.admin.watermeter.vo.WaterMeterFinanceMonthlyRespVO">
+        SELECT <include refid="SelectCity"/> AS city,
+               <include refid="SelectCounty"/> AS county,
+               mwh.community_name AS community,
+               YEAR(pwr.pay_time) AS year,
+               DATE_FORMAT(pwr.pay_time, '%m') AS month,
+               COUNT(DISTINCT DATE(pwr.pay_time)) AS billingDays,
+               COUNT(1) AS orderCount,
+               IFNULL(SUM(pwr.pay_price), 0) / 100.0 AS orderAmount,
+               IFNULL(SUM(pwr.bonus_price), 0) / 100.0 AS deliveryAmount,
+               IFNULL(SUM(pwr.total_price), 0) / 100.0 AS paidAmount,
+               COUNT(1) AS wechatCount,
+               IFNULL(SUM(pwr.pay_price), 0) / 100.0 AS wechatAmount,
+               IFNULL(SUM(pwr.refund_pay_price), 0) / 100.0 AS refundAmount
+        FROM pay_wallet_recharge pwr
+                 INNER JOIN member_water_house mwh ON mwh.community_id = pwr.community_id AND mwh.deleted = FALSE
+        WHERE pwr.pay_status = TRUE
+          AND pwr.deleted = FALSE
+        <if test="year != null">
+            AND YEAR(pwr.pay_time) = #{year}
+        </if>
+        <if test="city != null and city != ''">
+            AND (<include refid="SelectCity"/> LIKE CONCAT('%', #{city}, '%'))
+        </if>
+        <if test="county != null and county != ''">
+            AND (<include refid="SelectCounty"/> LIKE CONCAT('%', #{county}, '%'))
+        </if>
+        <if test="community != null and community != ''">
+            AND mwh.community_name LIKE CONCAT('%', #{community}, '%')
+        </if>
+        GROUP BY <include refid="SelectCity"/>, <include refid="SelectCounty"/>, mwh.community_name,
+                 YEAR(pwr.pay_time), DATE_FORMAT(pwr.pay_time, '%m')
+        ORDER BY year DESC, month DESC
+    </select>
+
+    <select id="selectDailyReport"
+            resultType="cn.iocoder.yudao.module.statistics.controller.admin.watermeter.vo.WaterMeterFinanceDailyRespVO">
+        SELECT <include refid="SelectCity"/> AS city,
+               <include refid="SelectCounty"/> AS county,
+               mwh.community_name AS community,
+               YEAR(pwr.pay_time) AS year,
+               DATE_FORMAT(pwr.pay_time, '%m') AS month,
+               DATE(pwr.pay_time) AS date,
+               COUNT(1) AS orderCount,
+               IFNULL(SUM(pwr.pay_price), 0) / 100.0 AS orderAmount,
+               IFNULL(SUM(pwr.bonus_price), 0) / 100.0 AS deliveryAmount,
+               IFNULL(SUM(pwr.total_price), 0) / 100.0 AS paidAmount,
+               COUNT(1) AS wechatCount,
+               IFNULL(SUM(pwr.pay_price), 0) / 100.0 AS wechatAmount,
+               IFNULL(SUM(pwr.refund_pay_price), 0) / 100.0 AS refundAmount
+        FROM pay_wallet_recharge pwr
+                 INNER JOIN member_water_house mwh ON mwh.community_id = pwr.community_id AND mwh.deleted = FALSE
+        WHERE pwr.pay_status = TRUE
+          AND pwr.deleted = FALSE
+        <if test="year != null">
+            AND YEAR(pwr.pay_time) = #{year}
+        </if>
+        <if test="city != null and city != ''">
+            AND (<include refid="SelectCity"/> LIKE CONCAT('%', #{city}, '%'))
+        </if>
+        <if test="county != null and county != ''">
+            AND (<include refid="SelectCounty"/> LIKE CONCAT('%', #{county}, '%'))
+        </if>
+        <if test="community != null and community != ''">
+            AND mwh.community_name LIKE CONCAT('%', #{community}, '%')
+        </if>
+        <if test="startDate != null">
+            AND DATE(pwr.pay_time) &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND DATE(pwr.pay_time) &lt;= #{endDate}
+        </if>
+        GROUP BY <include refid="SelectCity"/>, <include refid="SelectCounty"/>, mwh.community_name,
+                 DATE(pwr.pay_time), YEAR(pwr.pay_time), DATE_FORMAT(pwr.pay_time, '%m')
+        ORDER BY date DESC
+    </select>
+
+</mapper>
