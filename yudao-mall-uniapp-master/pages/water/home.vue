@@ -170,7 +170,11 @@
   ];
 
   onShow(async () => {
-    sheep.$store('user').updateUserData();
+    const userStore = sheep.$store('user');
+    await userStore.updateUserData();
+    if (!userStore.isLogin) {
+      return;
+    }
     await waterDeviceStore.fetchDevices();
     await waterDeviceStore.fetchWallet();
     await fetchHistory();
