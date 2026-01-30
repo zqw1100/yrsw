@@ -13,7 +13,7 @@
           <view class="nickname">{{ displayName }}</view>
           <view v-if="displayAccount" class="account">{{ displayAccount }}</view>
         </view>
-        <view class="wechat-badge">微信授权</view>
+<!--        <view class="wechat-badge">微信授权</view>-->
       </view>
     </view>
 
@@ -134,7 +134,7 @@ function onLogout() {
         return;
       }
       sheep.$store('user').logout();
-      sheep.$router.go('/pages/index/user');
+      sheep.$router.go('/pages/user/water');
     },
   });
 }
