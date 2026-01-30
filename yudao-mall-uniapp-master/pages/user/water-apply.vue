@@ -151,6 +151,7 @@
 <script setup>
   import { reactive, ref } from 'vue';
   import { onLoad } from '@dcloudio/uni-app';
+  import _ from 'lodash-es';
   import AreaApi from '@/sheep/api/system/area';
   import WaterHouseApi from '@/sheep/api/water/house';
 

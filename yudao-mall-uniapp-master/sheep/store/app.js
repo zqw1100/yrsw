@@ -109,9 +109,19 @@ const app = defineStore({
         if (userStore.isLogin) {
           userStore.loginAfter();
         }
+        await this.getAreaData()
         return Promise.resolve(true);
       } else {
         $router.error('InitError', res.msg || '加载失败');
+      }
+    },
+    async getAreaData() {
+      if (_.isEmpty(uni.getStorageSync('areaData'))) {
+        AreaApi.getAreaTree().then((res) => {
+          if (res.code === 0) {
+            uni.setStorageSync('areaData', res.data);
+          }
+        });
       }
     },
     // 设置 paramsForTabbar

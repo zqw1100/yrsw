@@ -29,7 +29,7 @@ public class WaterMeterFinanceReportServiceImpl implements WaterMeterFinanceRepo
     public List<WaterMeterFinanceMonthlyRespVO> getMonthlyReport(WaterMeterFinanceReportReqVO reqVO) {
         List<WaterMeterFinanceMonthlyRespVO> list = waterMeterFinanceReportMapper.selectMonthlyReport(
                 reqVO.getYear(), reqVO.getCity(), reqVO.getCounty(), reqVO.getCommunity());
-        applyWechatFee(list, getFeeRate());
+        applyWechatFeeMonthly(list, getFeeRate());
         return list;
     }
 
@@ -43,7 +43,7 @@ public class WaterMeterFinanceReportServiceImpl implements WaterMeterFinanceRepo
         }
         List<WaterMeterFinanceDailyRespVO> list = waterMeterFinanceReportMapper.selectDailyReport(
                 reqVO.getYear(), reqVO.getCity(), reqVO.getCounty(), reqVO.getCommunity(), startDate, endDate);
-        applyWechatFee(list, getFeeRate());
+        applyWechatFeeDaily(list, getFeeRate());
         return list;
     }
 
@@ -52,14 +52,15 @@ public class WaterMeterFinanceReportServiceImpl implements WaterMeterFinanceRepo
         return config != null && config.getFeeRate() != null ? config.getFeeRate() : DEFAULT_FEE_RATE;
     }
 
-    private void applyWechatFee(List<WaterMeterFinanceMonthlyRespVO> list, BigDecimal feeRate) {
+
+    private void applyWechatFeeDaily(List<WaterMeterFinanceDailyRespVO> list, BigDecimal feeRate) {
         list.forEach(item -> {
             BigDecimal amount = BigDecimal.valueOf(item.getWechatAmount() == null ? 0.0 : item.getWechatAmount());
             item.setWechatFee(calculateFee(amount, feeRate));
         });
     }
 
-    private void applyWechatFee(List<WaterMeterFinanceDailyRespVO> list, BigDecimal feeRate) {
+    private void applyWechatFeeMonthly(List<WaterMeterFinanceMonthlyRespVO> list, BigDecimal feeRate) {
         list.forEach(item -> {
             BigDecimal amount = BigDecimal.valueOf(item.getWechatAmount() == null ? 0.0 : item.getWechatAmount());
             item.setWechatFee(calculateFee(amount, feeRate));

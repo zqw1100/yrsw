@@ -129,48 +129,48 @@
     </uni-forms>
 
     <!-- 当前社交平台的绑定关系，只处理 wechat 微信场景 -->
-    <view v-if="sheep.$platform.name !== 'H5'">
-      <view class="title-box ss-p-l-30">第三方账号绑定</view>
-      <view class="account-list ss-flex ss-row-between">
-        <view v-if="'WechatOfficialAccount' === sheep.$platform.name" class="ss-flex ss-col-center">
-          <image
-            class="list-img"
-            :src="sheep.$url.static('/static/img/shop/platform/WechatOfficialAccount.png')"
-          />
-          <text class="list-name">微信公众号</text>
-        </view>
-        <view v-if="'WechatMiniProgram' === sheep.$platform.name" class="ss-flex ss-col-center">
-          <image
-            class="list-img"
-            :src="sheep.$url.static('/static/img/shop/platform/WechatMiniProgram.png')"
-          />
-          <text class="list-name">微信小程序</text>
-        </view>
-        <view v-if="'App' === sheep.$platform.name" class="ss-flex ss-col-center">
-          <image
-            class="list-img"
-            :src="sheep.$url.static('/static/img/shop/platform/wechat.png')"
-          />
-          <text class="list-name">微信开放平台</text>
-        </view>
-        <view class="ss-flex ss-col-center">
-          <view class="info ss-flex ss-col-center" v-if="state.thirdInfo">
-            <image class="avatar ss-m-r-20" :src="sheep.$url.cdn(state.thirdInfo.avatar)" />
-            <text class="name">{{ state.thirdInfo.nickname }}</text>
-          </view>
-          <view class="bind-box ss-m-l-20">
-            <button
-              v-if="state.thirdInfo.openid"
-              class="ss-reset-button relieve-btn"
-              @tap="unBindThirdOauth"
-            >
-              解绑
-            </button>
-            <button v-else class="ss-reset-button bind-btn" @tap="bindThirdOauth">绑定</button>
-          </view>
-        </view>
-      </view>
-    </view>
+<!--    <view v-if="sheep.$platform.name !== 'H5'">-->
+<!--      <view class="title-box ss-p-l-30">第三方账号绑定</view>-->
+<!--      <view class="account-list ss-flex ss-row-between">-->
+<!--        <view v-if="'WechatOfficialAccount' === sheep.$platform.name" class="ss-flex ss-col-center">-->
+<!--          <image-->
+<!--            class="list-img"-->
+<!--            :src="sheep.$url.static('/static/img/shop/platform/WechatOfficialAccount.png')"-->
+<!--          />-->
+<!--          <text class="list-name">微信公众号</text>-->
+<!--        </view>-->
+<!--        <view v-if="'WechatMiniProgram' === sheep.$platform.name" class="ss-flex ss-col-center">-->
+<!--          <image-->
+<!--            class="list-img"-->
+<!--            :src="sheep.$url.static('/static/img/shop/platform/WechatMiniProgram.png')"-->
+<!--          />-->
+<!--          <text class="list-name">微信小程序</text>-->
+<!--        </view>-->
+<!--        <view v-if="'App' === sheep.$platform.name" class="ss-flex ss-col-center">-->
+<!--          <image-->
+<!--            class="list-img"-->
+<!--            :src="sheep.$url.static('/static/img/shop/platform/wechat.png')"-->
+<!--          />-->
+<!--          <text class="list-name">微信开放平台</text>-->
+<!--        </view>-->
+<!--        <view class="ss-flex ss-col-center">-->
+<!--          <view class="info ss-flex ss-col-center" v-if="state.thirdInfo">-->
+<!--            <image class="avatar ss-m-r-20" :src="sheep.$url.cdn(state.thirdInfo.avatar)" />-->
+<!--            <text class="name">{{ state.thirdInfo.nickname }}</text>-->
+<!--          </view>-->
+<!--          <view class="bind-box ss-m-l-20">-->
+<!--            <button-->
+<!--              v-if="state.thirdInfo.openid"-->
+<!--              class="ss-reset-button relieve-btn"-->
+<!--              @tap="unBindThirdOauth"-->
+<!--            >-->
+<!--              解绑-->
+<!--            </button>-->
+<!--            <button v-else class="ss-reset-button bind-btn" @tap="bindThirdOauth">绑定</button>-->
+<!--          </view>-->
+<!--        </view>-->
+<!--      </view>-->
+<!--    </view>-->
 
     <su-fixed bottom placeholder bg="none">
       <view class="footer-box ss-p-20">
