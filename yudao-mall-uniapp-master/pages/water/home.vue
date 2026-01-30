@@ -130,7 +130,7 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import { onShow } from '@dcloudio/uni-app';
   import sheep from '@/sheep';
   import { fen2yuan } from '@/sheep/hooks/useGoods';
@@ -169,13 +169,37 @@
     { title: '在线缴费', icon: 'wallet', action: onPayRecharge },
   ];
 
-  onShow(async () => {
-    sheep.$store('user').updateUserData();
+  const userStore = sheep.$store('user');
+  const isLoading = ref(false);
+
+  async function loadDeviceData() {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    await userStore.updateUserData();
+    if (!userStore.isLogin) {
+      await getLatestNotice();
+      isLoading.value = false;
+      return;
+    }
     await waterDeviceStore.fetchDevices();
     await waterDeviceStore.fetchWallet();
     await fetchHistory();
     await getLatestNotice();
+    isLoading.value = false;
+  }
+
+  onShow(() => {
+    loadDeviceData();
   });
+
+  watch(
+    () => userStore.isLogin,
+    (isLogin) => {
+      if (isLogin) {
+        loadDeviceData();
+      }
+    }
+  );
 
   function onPlaceholder() {
     uni.showToast({
